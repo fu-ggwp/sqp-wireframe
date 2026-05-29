@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import type { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
-import { CheckCircle2, KeyRound, LogOut, Mail, Save, ShieldCheck, UserPlus } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../auth/AuthContext';
+import { CheckCircle2, Eye, LogOut, Mail, Save, ShieldCheck, UserPlus, X } from 'lucide-react';
 import { users } from '../data/mockData';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
@@ -11,14 +12,12 @@ import { PageHeader } from '../components/ui/PageHeader';
 import { Select } from '../components/ui/Select';
 import { StatusPill } from '../components/ui/StatusPill';
 
-const currentUser = users[0];
-
 export function RegisterPage() {
   const [submitted, setSubmitted] = useState(false);
   const emailError = submitted ? 'Email is required and must be unique.' : undefined;
 
   return (
-    <AuthFrame title='Register Account' description='Guest creates a Learner or Teacher account with local validation state.' uc='UC-07'>
+    <AuthFrame title='Register Account' description='Create a learner or teacher account to save progress and access class features.' uc='UC-07'>
       <div className='grid gap-4 md:grid-cols-2'>
         <Input label='Full Name' placeholder='Nguyen Van A' />
         <Input error={submitted ? 'Required field.' : undefined} label='Email Address' placeholder='user@example.com' type='email' />
@@ -27,7 +26,7 @@ export function RegisterPage() {
         <Input error={submitted ? 'Password must contain at least 8 characters.' : undefined} label='Password' type='password' />
         <Input error={submitted ? 'Confirm password must match password.' : undefined} label='Confirm Password' type='password' />
       </div>
-      <div className='mt-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-800'>Validation mock: duplicate email, password length, required fields, and terms acceptance.</div>
+      <div className='mt-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-800'>Please complete required fields, use a valid email, and choose a secure password.</div>
       <div className='mt-5 flex flex-wrap gap-3'>
         <Button icon={<UserPlus size={17} />} onClick={() => setSubmitted(true)}>Create Account</Button>
         <Button icon={<Mail size={17} />} variant='secondary'>Continue with Google</Button>
@@ -40,21 +39,96 @@ export function RegisterPage() {
 
 export function LoginPage() {
   const [message, setMessage] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const { currentUser, loginAs, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const inferRole = () => {
+    const normalized = email.trim().toLowerCase();
+    const matchedUser = users.find((user) => user.email.toLowerCase() === normalized || user.username.toLowerCase() === normalized);
+    if (matchedUser?.role === 'Teacher' || matchedUser?.role === 'Admin' || matchedUser?.role === 'Learner') return matchedUser.role;
+    if (normalized.includes('teacher')) return 'Teacher';
+    if (normalized.includes('admin')) return 'Admin';
+    return 'Learner';
+  };
+
+  const enterAccount = (role: 'Learner' | 'Teacher' | 'Admin') => {
+    const target = role === 'Learner' ? '/learner/dashboard' : role === 'Teacher' ? '/teacher/dashboard' : '/admin/dashboard';
+    loginAs(role);
+    navigate(target);
+  };
+
+  const handleLogin = () => {
+    if (!email.trim() || !password.trim()) {
+      setMessage('Email and password are required.');
+      return;
+    }
+    enterAccount(inferRole());
+  };
+
+  const handleLogout = () => {
+    logout();
+    setMessage('Signed out. You can login again.');
+  };
 
   return (
-    <AuthFrame title='Login with Account' description='Mock account login and Google OAuth button. Role switch only changes target navigation.' uc='UC-08, UC-09, UC-11'>
-      <div className='space-y-4'>
-        <Input label='Email Address' placeholder='linh@sqp.edu.vn' type='email' />
-        <Input label='Password' placeholder='Enter password' type='password' />
-        <Select label='Mock Login Role' options={[{ value: 'learner', label: 'Learner dashboard' }, { value: 'teacher', label: 'Teacher dashboard' }, { value: 'admin', label: 'Admin dashboard' }]} />
-      </div>
-      <div className='mt-5 flex flex-wrap gap-3'>
-        <Button icon={<KeyRound size={17} />} onClick={() => setMessage('Login successful. Session and Supabase token are mocked.')}>Login</Button>
-        <Button icon={<Mail size={17} />} onClick={() => setMessage('Google OAuth popup mocked. No external provider called.')} variant='secondary'>Continue with Google</Button>
-        <Link to='/auth/forgot-password'><Button variant='ghost'>Forgot password</Button></Link>
-      </div>
-      {message ? <p className='mt-4 rounded-lg bg-emerald-50 p-3 text-sm font-semibold text-emerald-700'>{message}</p> : null}
-    </AuthFrame>
+    <div className='-mx-4 -my-6 grid min-h-[calc(100vh-4rem)] overflow-hidden rounded-lg bg-white shadow-sm sm:-mx-6 lg:-mx-8 lg:-my-8 lg:grid-cols-[0.95fr_1fr]'>
+      <section className='relative hidden overflow-hidden bg-violet-200 p-10 lg:block'>
+        <div className='relative z-10 max-w-sm'>
+          <h1 className='text-5xl font-bold leading-tight text-slate-900'>Study better, without the pressure.</h1>
+        </div>
+        <img alt='Colorful notebooks and headphones' className='absolute bottom-0 right-[-90px] h-[78%] w-[82%] object-cover object-center' src='https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80' />
+        <div className='absolute bottom-10 left-10 text-4xl font-bold text-white'>SQP</div>
+      </section>
+
+      <section className='relative flex items-center justify-center px-5 py-10 sm:px-8'>
+        <Link className='absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200' to='/'><X size={20} /></Link>
+        <div className='w-full max-w-xl'>
+          <div className='mb-8 flex justify-center gap-9 text-xl font-bold text-slate-500'>
+            <Link className='hover:text-slate-900' to='/auth/register'>Register</Link>
+            <span className='text-slate-900 underline decoration-violet-400 decoration-4 underline-offset-8'>Login</span>
+          </div>
+
+          <div className='space-y-4'>
+            {['Google', 'Facebook', 'Apple', 'WhatsApp'].map((provider) => (
+              <button className='focus-ring flex h-14 w-full items-center justify-center gap-3 rounded-full bg-slate-100 text-sm font-bold text-slate-600 transition hover:bg-slate-200' key={provider} onClick={() => setMessage(`${provider} login is not connected yet.`)}>
+                <span className='flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs font-black text-indigo-600'>{provider[0]}</span>
+                Login with {provider}
+              </button>
+            ))}
+          </div>
+
+          <div className='my-8 grid grid-cols-[1fr_auto_1fr] items-center gap-4 text-sm font-semibold text-slate-500'>
+            <span className='h-px bg-slate-200' />
+            <span>or email</span>
+            <span className='h-px bg-slate-200' />
+          </div>
+
+          {currentUser ? <div className='mb-5 rounded-lg bg-blue-50 p-4 text-sm font-semibold text-blue-700'>Signed in as {currentUser.fullName}. <button className='ml-1 font-bold underline' onClick={handleLogout}>Logout</button></div> : null}
+
+          <div className='space-y-4'>
+            <Input label='Email' onChange={(event) => setEmail(event.target.value)} placeholder='Enter your email or username' type='email' value={email} />
+            <div className='relative'>
+              <Input label='Password' onChange={(event) => setPassword(event.target.value)} placeholder='Enter your password' type={showPassword ? 'text' : 'password'} value={password} />
+              <button className='absolute bottom-3 right-3 text-slate-500 hover:text-slate-900' onClick={() => setShowPassword((value) => !value)} type='button'><Eye size={19} /></button>
+            </div>
+          </div>
+
+          <div className='mt-3 flex justify-end'>
+            <Link className='text-sm font-bold text-indigo-600 hover:text-indigo-700' to='/auth/forgot-password'>Forgot password</Link>
+          </div>
+
+          <p className='mx-auto mt-6 max-w-md text-center text-xs leading-6 text-slate-500'>By logging in, you agree to the platform terms and privacy policy.</p>
+
+          <Button className='mt-7 h-14 w-full rounded-full bg-indigo-600 hover:bg-indigo-700' disabled={Boolean(currentUser)} onClick={handleLogin}>Login</Button>
+
+          <Link className='mt-4 flex h-12 items-center justify-center rounded-full bg-slate-100 text-sm font-bold text-slate-600 hover:bg-slate-200' to='/auth/register'>New to Smart Quiz Platform? Create account</Link>
+          {message ? <p className={`mt-4 rounded-lg p-3 text-sm font-semibold ${message.includes('required') ? 'bg-rose-50 text-rose-700' : 'bg-slate-50 text-slate-700'}`}>{message}</p> : null}
+        </div>
+      </section>
+    </div>
   );
 }
 
@@ -62,13 +136,13 @@ export function ForgotPasswordPage() {
   const [sent, setSent] = useState(false);
 
   return (
-    <AuthFrame title='Forgot Password' description='User requests a password reset email. Email service action is mocked.' uc='UC-10'>
+    <AuthFrame title='Forgot Password' description='Enter your account email to receive a password reset link.' uc='UC-10'>
       <Input label='Registered Email Address' placeholder='user@example.com' type='email' />
       <div className='mt-5 flex gap-3'>
         <Button icon={<Mail size={17} />} onClick={() => setSent(true)}>Send Reset Link</Button>
         <Link to='/auth/login'><Button variant='ghost'>Back to login</Button></Link>
       </div>
-      {sent ? <p className='mt-4 rounded-lg bg-blue-50 p-3 text-sm font-semibold text-blue-700'>Reset link sent. Mock email delivery status: queued.</p> : null}
+      {sent ? <p className='mt-4 rounded-lg bg-blue-50 p-3 text-sm font-semibold text-blue-700'>Reset link sent. Check your email inbox.</p> : null}
     </AuthFrame>
   );
 }
@@ -77,7 +151,7 @@ export function ResetPasswordPage() {
   const [saved, setSaved] = useState(false);
 
   return (
-    <AuthFrame title='Reset Password' description='User enters reset token and new password. Validation state is shown locally.' uc='UC-10'>
+    <AuthFrame title='Reset Password' description='Enter the reset token and choose a new password.' uc='UC-10'>
       <div className='space-y-4'>
         <Input label='Reset Token' placeholder='Token from email link' />
         <Input label='New Password' type='password' />
@@ -87,23 +161,33 @@ export function ResetPasswordPage() {
         <Button icon={<ShieldCheck size={17} />} onClick={() => setSaved(true)}>Reset Password</Button>
         <Link to='/auth/login'><Button variant='secondary'>Login</Button></Link>
       </div>
-      {saved ? <p className='mt-4 rounded-lg bg-emerald-50 p-3 text-sm font-semibold text-emerald-700'>Password reset successful. Login session remains mocked.</p> : null}
+      {saved ? <p className='mt-4 rounded-lg bg-emerald-50 p-3 text-sm font-semibold text-emerald-700'>Password reset successful. You can now sign in.</p> : null}
     </AuthFrame>
   );
 }
 
 export function ProfilePage() {
   const [loggedOut, setLoggedOut] = useState(false);
+  const { currentUser, logout } = useAuth();
+  const navigate = useNavigate();
+
+  if (!currentUser) return null;
+
+  const handleLogout = () => {
+    logout();
+    setLoggedOut(true);
+    navigate('/auth/login');
+  };
 
   return (
     <div className='space-y-6'>
       <PageHeader
-        actions={<><Link to='/profile/edit'><Button icon={<Save size={17} />} variant='secondary'>Edit Profile</Button></Link><Button icon={<LogOut size={17} />} onClick={() => setLoggedOut(true)} variant='ghost'>Logout Mock</Button></>}
+        actions={<><Link to='/profile/edit'><Button icon={<Save size={17} />} variant='secondary'>Edit Profile</Button></Link><Button icon={<LogOut size={17} />} onClick={handleLogout} variant='ghost'>Logout</Button></>}
         description='View personal profile information before making updates.'
         eyebrow='UC-12, UC-11'
         title='View Personal Profile'
       />
-      {loggedOut ? <div className='rounded-lg bg-amber-50 p-4 text-sm font-semibold text-amber-800'>Logout action mocked. No session token was destroyed.</div> : null}
+      {loggedOut ? <div className='rounded-lg bg-amber-50 p-4 text-sm font-semibold text-amber-800'>You have been signed out.</div> : null}
       <Card>
         <CardBody className='grid gap-6 lg:grid-cols-[260px_1fr]'>
           <div className='rounded-lg bg-slate-50 p-6 text-center'>
@@ -122,12 +206,23 @@ export function ProfilePage() {
           </div>
         </CardBody>
       </Card>
+      <Card>
+        <CardBody>
+          <h2 className='mb-4 text-lg font-bold text-slate-950'>{currentUser.role} access summary</h2>
+          <div className='grid gap-3 md:grid-cols-4'>
+            {roleProfileFields(currentUser.role).map((field) => <ProfileField key={field.label} label={field.label} value={field.value} />)}
+          </div>
+        </CardBody>
+      </Card>
     </div>
   );
 }
 
 export function EditProfilePage() {
   const [saved, setSaved] = useState(false);
+  const { currentUser } = useAuth();
+
+  if (!currentUser) return null;
 
   return (
     <div className='space-y-6'>
@@ -137,7 +232,7 @@ export function EditProfilePage() {
           <div className='grid gap-4 md:grid-cols-2'>
             <Input defaultValue={currentUser.fullName} label='Full Name' />
             <Input defaultValue={currentUser.phone} label='Phone Number' />
-            <Input defaultValue={currentUser.avatar} helper='Use 2 letters for mock avatar.' label='Avatar Initials' maxLength={2} />
+            <Input defaultValue={currentUser.avatar} helper='Use 2 letters for profile avatar.' label='Avatar Initials' maxLength={2} />
             <Input defaultValue={currentUser.username} label='Username' />
           </div>
           <label className='block space-y-1.5'>
@@ -148,7 +243,7 @@ export function EditProfilePage() {
             <Button icon={<Save size={17} />} onClick={() => setSaved(true)}>Save Changes</Button>
             <Link to='/profile'><Button variant='secondary'>Cancel</Button></Link>
           </div>
-          {saved ? <p className='rounded-lg bg-emerald-50 p-3 text-sm font-semibold text-emerald-700'>Profile changes saved locally for prototype only.</p> : null}
+          {saved ? <p className='rounded-lg bg-emerald-50 p-3 text-sm font-semibold text-emerald-700'>Profile changes saved.</p> : null}
         </CardBody>
       </Card>
     </div>
@@ -189,4 +284,31 @@ function ProfileField({ label, value }: { label: string; value: ReactNode }) {
       <div className='mt-2 text-sm font-semibold text-slate-800'>{value}</div>
     </div>
   );
+}
+
+function roleProfileFields(role: string) {
+  if (role === 'Teacher') {
+    return [
+      { label: 'Class Permission', value: 'Create and manage classes' },
+      { label: 'Question Permission', value: 'Create, import, AI generate' },
+      { label: 'Exam Permission', value: 'Configure and monitor exams' },
+      { label: 'Report Permission', value: 'Export analytics reports' },
+    ];
+  }
+
+  if (role === 'Admin') {
+    return [
+      { label: 'User Permission', value: 'Manage roles and status' },
+      { label: 'Resource Permission', value: 'Hide public resources' },
+      { label: 'System Permission', value: 'View service status' },
+      { label: 'Audit Scope', value: 'Platform-wide' },
+    ];
+  }
+
+  return [
+    { label: 'Class Access', value: 'Join by code or invite' },
+    { label: 'Study Access', value: 'Flashcards and quizzes' },
+    { label: 'Exam Access', value: 'Take assigned exams' },
+    { label: 'AI Explanation', value: 'Premium only' },
+  ];
 }

@@ -42,20 +42,21 @@ This mapping follows SRS Section 1.3 Use Cases, Section 1.4 Screen Authorization
 | 3.7.2 | Create Question Bank | /teacher/question-banks/create | Teacher | UC-34 | Title, subject, topic, visibility, description | Create question bank |
 | 3.7.3 | Question Bank Detail | /teacher/question-banks/:id | Teacher | UC-33, UC-40, UC-41, UC-42 | Metadata, question table, edit/delete question actions | Edit bank, create question, import, AI generate, delete question mock |
 | 3.7.4 | Update Question Bank Information | /teacher/question-banks/:id/edit | Teacher | UC-35, UC-36 | Title, subject, topic, visibility, description, delete message | Save changes, delete bank mock |
-| 3.7.5 | Create Question | /teacher/question-banks/:id/questions/create | Teacher | UC-40 | Type, content, options, correct answer, score, tags, metadata, explanation | Create question |
-| 3.7.6 | Update Question | /teacher/question-banks/:id/questions/:questionId/edit | Teacher | UC-41 | Existing question fields, options, correct answer, score, explanation, difficulty | Save question updates |
+| 3.7.5 | Create Question | /teacher/question-banks/:id/questions/create | Teacher | UC-40 | Inherited bank metadata, type, content, options, correct answer, score, difficulty, explanation, AI generate entry | Create question, open AI generation |
+| 3.7.6 | Update Question | /teacher/question-banks/:id/questions/:questionId/edit | Teacher | UC-41 | Inherited bank metadata, existing content, options, correct answer, score, explanation, difficulty | Save question updates |
 | 3.7.7 | Import Questions from Excel | /teacher/question-banks/:id/import | Teacher | UC-37 | File input, template rules, uploaded file preview, validation result | Validate file, view errors, preview valid rows |
 | 3.7.8 | View Question Import Errors | /teacher/question-banks/:id/import/errors | Teacher | UC-38 | Error table with row, field, raw value, message | Review invalid rows |
 | 3.7.9 | Preview Imported Questions | /teacher/question-banks/:id/import/preview | Teacher | UC-39 | Valid question preview table, status | Save imported questions mock |
-| 3.7.10 | Generate Questions from Material | /teacher/question-banks/:id/ai-generate | Teacher | UC-43 | Material file, type, count, difficulty, topic focus, generated preview | Generate questions mock |
-| 3.8.1 | Create Study Set | /teacher/study-sets/create | Teacher | UC-44 | Title, subject, topic, visibility, description, selected questions | Create study set |
-| 3.8.2 | Exam Sessions | /teacher/exams | Teacher | UC-46, UC-48 | Search exams, exam table, status, actions | Search, create, configure, info, monitor |
-| 3.8.3 | Create Exam Session | /teacher/exams/create | Teacher | UC-46 | Title, class, question source, status, start time, duration, attempts, visibility | Create exam session |
-| 3.8.4 | Configure Exam Settings | /teacher/exams/:id/configure | Teacher | UC-47 | Time, duration, attempts, randomization toggles, result visibility | Save exam settings |
-| 3.8.5 | View Exam Information as Teacher | /teacher/exams/:id/info | Teacher | UC-48 | Class, question bank, time, attempts, randomization, visibility, status | Configure, monitor |
-| 3.8.6 | Monitor Exam Session | /teacher/exams/:id/monitor | Teacher | Exam Monitoring | Status metrics, learner attempt table, auto-save activity | Monitor attempts |
-| 3.9.1 | View Learning Analytics | /teacher/analytics | Teacher | UC-49 | Analytics cards, score/accuracy bars, weak topic table | Export report |
-| 3.9.2 | Export Report | /teacher/reports/export | Teacher | UC-50 | Report type, class, format, date range, export status | Export report mock |
+| 3.7.10 | Generate Questions from Material | /teacher/question-banks/:id/ai-generate | Teacher | UC-43 | Material file, type, count, difficulty, topic focus, generated preview | Open from Create Question, generate draft questions mock |
+| 3.8.1 | Study Set Management | /teacher/study-sets | Teacher | UC-44, UC-45 | Search, visibility filter, study set table, source bank, assigned classes, learners, actions | Search, create study set, preview, assign |
+| 3.8.2 | Create Study Set | /teacher/study-sets/create | Teacher | UC-44 | Title, source question bank, inherited subject/topic, visibility, description, selected bank questions | Create study set |
+| 3.8.3 | Exam Sessions | /teacher/exams | Teacher | UC-46, UC-48 | Search exams, exam table, status, actions | Search, create, configure, info, monitor |
+| 3.8.4 | Create Exam Session | /teacher/exams/create | Teacher | UC-46 | Title, class, question source, status, start time, duration, attempts, visibility | Create exam session |
+| 3.8.5 | Configure Exam Settings | /teacher/exams/:id/configure | Teacher | UC-47 | Time, duration, attempts, randomization toggles, result visibility | Save exam settings |
+| 3.8.6 | View Exam Information as Teacher | /teacher/exams/:id/info | Teacher | UC-48 | Class, question bank, time, attempts, randomization, visibility, status | Configure, monitor |
+| 3.8.7 | Monitor Exam Session | /teacher/exams/:id/monitor | Teacher | Exam Monitoring | Status metrics, learner attempt table, auto-save activity | Monitor attempts |
+| 3.9.1 | View Exam Analytics | /teacher/analytics | Teacher | UC-49 | Exam cards, submission count, average score, accuracy, weak topic table | Review exam performance, export exam report |
+| 3.9.2 | Export Exam Report | /teacher/reports/export | Teacher | UC-50 | Exam selector, report type, format, post-exam summary, learner attempt table, export status | Export selected exam report mock |
 | 3.10.1 | View Premium Plans | /premium | Guest, Learner, Teacher | UC-06 | Plan cards, price, audience, benefits, highlighted plan | Select plan, upgrade |
 | 3.10.2 | Upgrade to Premium | /premium/upgrade | Learner, Teacher | UC-15 | Plan selector, payment method, billing email, promotion code, gateway status | Proceed to payment mock |
 | 3.10.3 | Payment Result | /premium/payment-result | Learner, Teacher | UC-15 | Success state, transaction id, plan, amount, paid at | Confirm premium activation mock |

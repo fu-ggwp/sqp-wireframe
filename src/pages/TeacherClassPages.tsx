@@ -27,6 +27,30 @@ export function TeacherDashboardPage() {
         <Metric label='Assigned sets' value={`${studySets.length}`} helper='Public and class-only' />
         <Metric label='Premium tools' value='AI' helper='Question generation enabled' />
       </div>
+      <div className='grid gap-6 lg:grid-cols-[1fr_1fr]'>
+        <Card>
+          <CardBody className='space-y-4'>
+            <h2 className='text-lg font-bold text-slate-950'>Teaching workflow</h2>
+            <div className='grid gap-3 md:grid-cols-2'>
+              <Info label='Current Class' value='Biology 12A Exam Prep' />
+              <Info label='Next Exam' value='2026-05-30 08:00' />
+              <Info label='Draft Content' value='2 study sets' />
+              <Info label='Report Format' value='Excel + PDF' />
+            </div>
+          </CardBody>
+        </Card>
+        <Card>
+          <CardBody className='space-y-4'>
+            <h2 className='text-lg font-bold text-slate-950'>Class health</h2>
+            <div className='grid gap-3 md:grid-cols-2'>
+              <Info label='Average Accuracy' value='74%' />
+              <Info label='Learners Behind' value='5' />
+              <Info label='Weak Topic' value='Cell Membrane' />
+              <Info label='Pending Join Requests' value='1' />
+            </div>
+          </CardBody>
+        </Card>
+      </div>
       <TeacherClassTable />
     </div>
   );
@@ -51,7 +75,7 @@ export function CreateClassPage() {
   return (
     <div className='space-y-6'>
       <PageHeader description='Teacher creates a new online class. Class code is auto-generated in real system.' eyebrow='UC-28' title='Create Class' />
-      <Card><CardBody className='max-w-3xl space-y-4'><div className='grid gap-4 md:grid-cols-2'><Input label='Class Name' placeholder='Biology 12A Exam Prep' /><Input label='Subject' placeholder='Biology' /><Input helper='Generated after save in real system.' label='Class Code' placeholder='AUTO-GENERATED' /><Select label='Status' options={[{ value: 'active', label: 'Active' }, { value: 'archived', label: 'Archived' }]} /></div><label className='block space-y-1.5'><span className='text-sm font-semibold text-slate-700'>Description</span><textarea className='focus-ring min-h-28 w-full rounded-lg border border-slate-200 p-3 text-sm' placeholder='Class goals, rules, and learning plan.' /></label><Button icon={<Plus size={17} />} onClick={() => setCreated(true)}>Create Class</Button>{created ? <p className='rounded-lg bg-emerald-50 p-3 text-sm font-semibold text-emerald-700'>Class created locally. Generated code: BIO12A-2026.</p> : null}</CardBody></Card>
+      <Card><CardBody className='max-w-4xl space-y-4'><div className='grid gap-4 md:grid-cols-2'><Input label='Class Name' placeholder='Biology 12A Exam Prep' /><Input label='Subject' placeholder='Biology' /><Input label='Grade / Level' placeholder='Grade 12' /><Input label='Academic Year' placeholder='2025-2026' /><Input helper='Generated after save in real system.' label='Class Code' placeholder='AUTO-GENERATED' /><Input label='Learner Capacity' placeholder='40' type='number' /><Select label='Join Policy' options={[{ value: 'approval', label: 'Teacher approval required' }, { value: 'auto', label: 'Auto-approve by code' }, { value: 'closed', label: 'Invitation only' }]} /><Select label='Status' options={[{ value: 'active', label: 'Active' }, { value: 'archived', label: 'Archived' }]} /></div><label className='block space-y-1.5'><span className='text-sm font-semibold text-slate-700'>Description</span><textarea className='focus-ring min-h-28 w-full rounded-lg border border-slate-200 p-3 text-sm' placeholder='Class goals, rules, and learning plan.' /></label><Button icon={<Plus size={17} />} onClick={() => setCreated(true)}>Create Class</Button>{created ? <p className='rounded-lg bg-emerald-50 p-3 text-sm font-semibold text-emerald-700'>Class created locally. Generated code: BIO12A-2026.</p> : null}</CardBody></Card>
     </div>
   );
 }
@@ -69,8 +93,8 @@ export function TeacherClassDetailPage() {
         title={room.name}
       />
       <div className='grid gap-6 lg:grid-cols-[0.8fr_1.2fr]'>
-        <Card><CardBody className='space-y-4'><Info label='Subject' value={room.subject} /><Info label='Code' value={room.code} /><Info label='Teacher' value={room.teacherName} /><Info label='Members' value={`${room.memberIds.length}`} /><Info label='Status' value={room.status} /></CardBody></Card>
-        <Card><CardBody><h2 className='mb-4 text-lg font-bold text-slate-950'>Assigned study sets</h2><Table headers={['Study Set', 'Subject', 'Visibility', 'Actions']} rows={studySets.filter((set) => room.studySetIds.includes(set.id)).map((set) => [set.title, set.subject, <Badge>{set.visibility}</Badge>, <Link to={`/learner/study-sets/${set.id}`}><Button size='sm' variant='secondary'>Preview</Button></Link>])} /></CardBody></Card>
+        <Card><CardBody className='space-y-4'><Info label='Subject' value={room.subject} /><Info label='Code' value={room.code} /><Info label='Teacher' value={room.teacherName} /><Info label='Members' value={`${room.memberIds.length}`} /><Info label='Join Policy' value='Approval required' /><Info label='Default Due Time' value='23:59' /><Info label='Status' value={room.status} /></CardBody></Card>
+        <Card><CardBody><h2 className='mb-4 text-lg font-bold text-slate-950'>Assigned study sets</h2><Table headers={['Study Set', 'Subject', 'Visibility', 'Actions']} rows={studySets.filter((set) => room.studySetIds.includes(set.id)).map((set) => [set.title, set.subject, <Badge>{set.visibility}</Badge>, <Link to={`/sets/${set.id}/public`}><Button size='sm' variant='secondary'>Preview</Button></Link>])} /></CardBody></Card>
       </div>
     </div>
   );
@@ -84,7 +108,7 @@ export function ClassInvitationPage() {
 
   return (
     <div className='space-y-6'>
-      <PageHeader description='Teacher generates invitation link and sends invitation via email. Sending is mocked.' eyebrow='UC-29' title='Generate Class Invitation' />
+      <PageHeader description='Create an invitation link and send it to learners by email.' eyebrow='UC-29' title='Generate Class Invitation' />
       <Card><CardBody className='space-y-4'><Input label='Class Code' readOnly value={room.code} /><Input label='Invitation Link' readOnly value={inviteLink} /><Input label='Recipient Emails' placeholder='learner1@example.com, learner2@example.com' /><div className='flex flex-wrap gap-3'><Button icon={<Copy size={17} />} onClick={() => setCopied(true)} variant='secondary'>Copy Link</Button><Button icon={<Send size={17} />} onClick={() => setCopied(true)}>Send Invitation Email</Button></div>{copied ? <p className='rounded-lg bg-blue-50 p-3 text-sm font-semibold text-blue-700'>Invitation action completed locally. Email service not called.</p> : null}</CardBody></Card>
     </div>
   );
@@ -100,7 +124,7 @@ export function ClassMembersPage() {
     <div className='space-y-6'>
       <PageHeader actions={<Link to={`/teacher/classes/${room.id}/join-requests`}><Button variant='secondary'>Join Requests</Button></Link>} description='Teacher views learner list and can remove a learner from class.' eyebrow='UC-30, UC-32' title='View Class Member List' />
       <Table headers={['Learner', 'Email', 'Premium', 'Status', 'Action']} rows={members.map((member) => [member.fullName, member.email, member.premium ? <Badge tone='amber'>Premium</Badge> : <Badge>Free</Badge>, <StatusPill label={member.status} tone='success' />, <Button icon={<Trash2 size={15} />} onClick={() => setRemoved((current) => [...current, member.id])} size='sm' variant='danger'>Remove</Button>])} />
-      {members.length === 0 ? <EmptyState title='No class members' description='All mock members were removed from local state.' /> : null}
+      {members.length === 0 ? <EmptyState title='No class members' description='No active learners remain in this class.' /> : null}
     </div>
   );
 }
@@ -127,7 +151,7 @@ export function AssignStudySetPage() {
   return (
     <div className='space-y-6'>
       <PageHeader description='Teacher assigns a selected study set to a class or learners.' eyebrow='UC-45' title='Assign Study Set to Class' />
-      <Card><CardBody className='max-w-3xl space-y-4'><Input label='Class' readOnly value={room.name} /><Select label='Study Set' options={studySets.map((set) => ({ value: set.id, label: `${set.title} - ${set.subject}` }))} /><Select label='Assign To' options={[{ value: 'all', label: 'All class members' }, { value: 'selected', label: 'Selected learners' }]} /><Input helper='Optional date for teacher planning.' label='Due Date' type='date' /><Button icon={<BookIcon />} onClick={() => setAssigned(true)}>Assign Study Set</Button>{assigned ? <p className='rounded-lg bg-emerald-50 p-3 text-sm font-semibold text-emerald-700'>Study set assigned locally. Notification sending is mocked.</p> : null}</CardBody></Card>
+      <Card><CardBody className='max-w-3xl space-y-4'><Input label='Class' readOnly value={room.name} /><Select label='Study Set' options={studySets.map((set) => ({ value: set.id, label: `${set.title} - ${set.subject}` }))} /><Select label='Assign To' options={[{ value: 'all', label: 'All class members' }, { value: 'selected', label: 'Selected learners' }]} /><Input helper='Optional date for teacher planning.' label='Due Date' type='date' /><Button icon={<BookIcon />} onClick={() => setAssigned(true)}>Assign Study Set</Button>{assigned ? <p className='rounded-lg bg-emerald-50 p-3 text-sm font-semibold text-emerald-700'>Study set assigned. Learners will see it in their study list.</p> : null}</CardBody></Card>
     </div>
   );
 }

@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { useAuth } from '../auth/AuthContext';
 import { AlertTriangle, CheckCircle2, Download, EyeOff, ShieldAlert, Sparkles } from 'lucide-react';
-import { analyticsRecords, notifications, paymentResult, premiumPlans, studySets, systemServices, users } from '../data/mockData';
+import { examAttempts, exams, notifications, paymentResult, premiumPlans, questions, studySets, systemServices, users } from '../data/mockData';
 import type { Role } from '../types';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
@@ -15,50 +16,139 @@ import { Select } from '../components/ui/Select';
 import { StatusPill } from '../components/ui/StatusPill';
 import { Table } from '../components/ui/Table';
 
+function getExamReports() {
+  return exams.map((exam) => {
+    const attempts = examAttempts.filter((attempt) => attempt.examId === exam.id);
+    const submittedAttempts = attempts.filter((attempt) => attempt.status === 'submitted');
+    const averageScore = submittedAttempts.length ? Math.round(submittedAttempts.reduce((sum, attempt) => sum + attempt.score, 0) / submittedAttempts.length) : 0;
+    const accuracy = submittedAttempts.length ? Math.round(submittedAttempts.reduce((sum, attempt) => sum + attempt.accuracy, 0) / submittedAttempts.length) : 0;
+    const weakQuestion = questions.find((question) => exam.questionIds.includes(question.id) && question.learnerAnswer && question.learnerAnswer !== question.correctAnswer)
+      ?? questions.find((question) => exam.questionIds.includes(question.id));
+
+    return {
+      exam,
+      totalAttempts: attempts.length,
+      submitted: submittedAttempts.length,
+      inProgress: attempts.filter((attempt) => attempt.status === 'in-progress').length,
+      averageScore,
+      accuracy,
+      weakTopic: weakQuestion?.topic ?? 'No weak topic yet',
+    };
+  });
+}
+
 export function AnalyticsPage() {
+  const examReports = getExamReports();
+
   return (
     <div className='space-y-6'>
-      <PageHeader actions={<Link to='/teacher/reports/export'><Button icon={<Download size={17} />} variant='secondary'>Export Report</Button></Link>} description='Teacher views learning, exam, learner, question, and class performance analytics.' eyebrow='UC-49' title='View Learning Analytics' />
-      <div className='grid gap-4 md:grid-cols-3'>{analyticsRecords.map((record) => <Card key={record.id}><CardBody><p className='text-sm font-semibold text-slate-500'>{record.className}</p><h2 className='mt-2 font-bold text-slate-950'>{record.studySetTitle}</h2><div className='mt-4 space-y-3'><Progress label='Average Score' value={record.averageScore} /><Progress label='Accuracy' value={record.accuracy} /></div><p className='mt-3 text-sm text-slate-600'>Weak topic: <strong>{record.weakTopic}</strong></p></CardBody></Card>)}</div>
-      <Table headers={['Class', 'Study Set', 'Average Score', 'Accuracy', 'Weak Topic', 'Completed']} rows={analyticsRecords.map((record) => [record.className, record.studySetTitle, `${record.averageScore}%`, `${record.accuracy}%`, record.weakTopic, record.learnersCompleted])} />
+      <PageHeader actions={<Link to='/teacher/reports/export'><Button icon={<Download size={17} />} variant='secondary'>Export Exam Report</Button></Link>} description='Review performance after each exam, including submissions, score, accuracy, and weak topics.' eyebrow='UC-49' title='Exam Analytics' />
+      <div className='grid gap-4 md:grid-cols-2 xl:grid-cols-3'>
+        {examReports.map((report) => (
+          <Card key={report.exam.id}>
+            <CardBody>
+              <div className='flex items-start justify-between gap-3'>
+                <div>
+                  <p className='text-sm font-semibold text-slate-500'>{report.exam.className}</p>
+                  <h2 className='mt-2 font-bold text-slate-950'>{report.exam.title}</h2>
+                </div>
+                <StatusPill label={report.exam.status} tone={report.exam.status === 'open' ? 'success' : 'warning'} />
+              </div>
+              <div className='mt-4 space-y-3'><Progress label='Average Score' value={report.averageScore} /><Progress label='Accuracy' value={report.accuracy} /></div>
+              <div className='mt-4 grid gap-2 text-sm font-semibold text-slate-600 sm:grid-cols-2'>
+                <span>{report.submitted} submitted</span>
+                <span>{report.inProgress} in progress</span>
+              </div>
+              <p className='mt-3 text-sm text-slate-600'>Weak topic: <strong>{report.weakTopic}</strong></p>
+            </CardBody>
+          </Card>
+        ))}
+      </div>
+      <Table headers={['Exam', 'Class', 'Status', 'Submissions', 'Average Score', 'Accuracy', 'Weak Topic', 'Action']} rows={examReports.map((report) => [<div><p className='font-bold text-slate-950'>{report.exam.title}</p><p className='text-xs text-slate-500'>{report.exam.startTime}</p></div>, report.exam.className, <StatusPill label={report.exam.status} tone={report.exam.status === 'open' ? 'success' : 'warning'} />, `${report.submitted}/${report.totalAttempts}`, `${report.averageScore}%`, `${report.accuracy}%`, report.weakTopic, <Link to='/teacher/reports/export'><Button size='sm' variant='secondary'>Export</Button></Link>])} />
     </div>
   );
 }
 
 export function ExportReportPage() {
   const [exported, setExported] = useState(false);
+  const [selectedExamId, setSelectedExamId] = useState(exams[0].id);
+  const [reportType, setReportType] = useState('exam-scoreboard');
+  const selectedExam = exams.find((exam) => exam.id === selectedExamId) ?? exams[0];
+  const report = getExamReports().find((item) => item.exam.id === selectedExam.id) ?? getExamReports()[0];
+  const attempts = examAttempts.filter((attempt) => attempt.examId === selectedExam.id);
+
   return (
     <div className='space-y-6'>
-      <PageHeader description='Teacher exports scoreboards or reports to Excel, PDF, or CSV. Download file generation is mocked.' eyebrow='UC-50' title='Export Report' />
-      <Card><CardBody className='max-w-3xl space-y-4'><Select label='Report Type' options={[{ value: 'scoreboard', label: 'Scoreboard' }, { value: 'learning-analytics', label: 'Learning Analytics' }, { value: 'question-performance', label: 'Question Performance' }]} /><Select label='Class' options={[{ value: 'class-bio-12a', label: 'Biology 12A Exam Prep' }, { value: 'class-math-11b', label: 'Mathematics 11B' }]} /><Select label='Format' options={[{ value: 'xlsx', label: 'Excel (.xlsx)' }, { value: 'pdf', label: 'PDF' }, { value: 'csv', label: 'CSV' }]} /><div className='grid gap-4 md:grid-cols-2'><Input label='From Date' type='date' /><Input label='To Date' type='date' /></div><Button icon={<Download size={17} />} onClick={() => setExported(true)}>Export Report</Button>{exported ? <p className='rounded-lg bg-emerald-50 p-3 text-sm font-semibold text-emerald-700'>Report export mocked. No file was generated.</p> : null}</CardBody></Card>
+      <PageHeader description='Choose one exam and export its post-test score table, learner attempts, question analysis, and weak-topic summary.' eyebrow='UC-50' title='Export Exam Report' />
+      <div className='grid gap-6 xl:grid-cols-[0.9fr_1.1fr]'>
+        <Card>
+          <CardBody className='space-y-4'>
+            <Select label='Exam' onChange={(event) => setSelectedExamId(event.target.value)} options={exams.map((exam) => ({ value: exam.id, label: `${exam.title} - ${exam.className}` }))} value={selectedExamId} />
+            <Select label='Report Type' onChange={(event) => setReportType(event.target.value)} options={[{ value: 'exam-scoreboard', label: 'Exam Scoreboard' }, { value: 'learner-attempts', label: 'Learner Attempt Details' }, { value: 'question-analysis', label: 'Question Performance Analysis' }, { value: 'weak-topic-summary', label: 'Weak Topic Summary' }]} value={reportType} />
+            <Select label='Format' options={[{ value: 'xlsx', label: 'Excel (.xlsx)' }, { value: 'pdf', label: 'PDF' }, { value: 'csv', label: 'CSV' }]} />
+            <div className='grid gap-4 md:grid-cols-2'><Input label='Generated From' readOnly value={selectedExam.startTime} /><Input label='Generated At' readOnly value='2026-05-29 15:40' /></div>
+            <Button icon={<Download size={17} />} onClick={() => setExported(true)}>Export Exam Report</Button>
+            {exported ? <p className='rounded-lg bg-emerald-50 p-3 text-sm font-semibold text-emerald-700'>{selectedExam.title} report is ready to download.</p> : null}
+          </CardBody>
+        </Card>
+        <Card>
+          <CardBody className='space-y-4'>
+            <h2 className='text-lg font-bold text-slate-950'>Post-exam summary</h2>
+            <div className='grid gap-3 md:grid-cols-2'>
+              <Info label='Exam' value={selectedExam.title} />
+              <Info label='Class' value={selectedExam.className} />
+              <Info label='Average Score' value={`${report.averageScore}%`} />
+              <Info label='Accuracy' value={`${report.accuracy}%`} />
+              <Info label='Submitted' value={`${report.submitted}/${report.totalAttempts}`} />
+              <Info label='Weak Topic' value={report.weakTopic} />
+              <Info label='Report Type' value={reportType.replace(/-/g, ' ')} />
+              <Info label='Exam Status' value={selectedExam.status} />
+            </div>
+          </CardBody>
+        </Card>
+      </div>
+      <Table emptyMessage='No attempts recorded for this exam yet.' headers={['Learner', 'Status', 'Score', 'Accuracy', 'Submitted At']} rows={attempts.map((attempt) => [attempt.learnerName, <StatusPill label={attempt.status} tone={attempt.status === 'submitted' ? 'success' : 'warning'} />, attempt.score, `${attempt.accuracy}%`, attempt.submittedAt ?? 'Not submitted'])} />
     </div>
   );
 }
 
 export function PremiumPlansPage() {
+  const { role } = useAuth();
+  const plans = premiumPlans.filter((plan) => !role || plan.audience === role || plan.audience === 'Both');
+  const title = role ? `${role} Premium Plans` : 'Premium Plans';
+  const description = role === 'Learner'
+    ? 'Upgrade your learner account for AI explanations and deeper progress insights.'
+    : role === 'Teacher'
+      ? 'Upgrade your teacher account for AI question generation and advanced class analytics.'
+      : 'Choose a plan that matches how you use Smart Quiz Platform.';
+
   return (
     <div className='space-y-6'>
-      <PageHeader actions={<Link to='/premium/upgrade'><Button icon={<Sparkles size={17} />}>Upgrade</Button></Link>} description='User views available Premium plans and benefits.' eyebrow='UC-06' title='View Premium Plans' />
-      <div className='grid gap-4 lg:grid-cols-3'>{premiumPlans.map((plan) => <Card className={plan.highlighted ? 'border-teal-300 shadow-soft' : ''} key={plan.id}><CardBody className='space-y-4'><Badge tone={plan.highlighted ? 'teal' : 'slate'}>{plan.audience}</Badge><h2 className='text-xl font-bold text-slate-950'>{plan.name}</h2><p className='text-3xl font-bold text-slate-950'>{plan.price}<span className='text-sm font-medium text-slate-500'> / {plan.interval}</span></p><ul className='space-y-2 text-sm text-slate-600'>{plan.benefits.map((benefit) => <li className='flex gap-2' key={benefit}><CheckCircle2 className='mt-0.5 text-emerald-600' size={16} />{benefit}</li>)}</ul><Link to='/premium/upgrade'><Button className='w-full' variant={plan.highlighted ? 'primary' : 'secondary'}>Select Plan</Button></Link></CardBody></Card>)}</div>
+      <PageHeader actions={role ? <Link to='/premium/upgrade'><Button icon={<Sparkles size={17} />}>Upgrade</Button></Link> : <Link to='/auth/login'><Button icon={<Sparkles size={17} />}>Login to Upgrade</Button></Link>} description={description} eyebrow='UC-06' title={title} />
+      <div className='grid gap-4 lg:grid-cols-3'>{plans.map((plan) => <Card className={plan.highlighted ? 'border-teal-300 shadow-soft' : ''} key={plan.id}><CardBody className='space-y-4'><Badge tone={plan.highlighted ? 'teal' : 'slate'}>{plan.audience === 'Both' ? 'Team' : plan.audience}</Badge><h2 className='text-xl font-bold text-slate-950'>{plan.name}</h2><p className='text-3xl font-bold text-slate-950'>{plan.price}<span className='text-sm font-medium text-slate-500'> / {plan.interval}</span></p><ul className='space-y-2 text-sm text-slate-600'>{plan.benefits.map((benefit) => <li className='flex gap-2' key={benefit}><CheckCircle2 className='mt-0.5 text-emerald-600' size={16} />{benefit}</li>)}</ul><Link to={role ? '/premium/upgrade' : '/auth/login'}><Button className='w-full' variant={plan.highlighted ? 'primary' : 'secondary'}>{role ? 'Select Plan' : 'Login to Select'}</Button></Link></CardBody></Card>)}</div>
     </div>
   );
 }
 
 export function UpgradePremiumPage() {
   const [method, setMethod] = useState('vnpay');
+  const { role, currentUser } = useAuth();
+  const plans = premiumPlans.filter((plan) => plan.audience === role || plan.audience === 'Both');
   return (
     <div className='space-y-6'>
-      <PageHeader description='Learner or Teacher selects a Premium plan, completes payment, and receives Premium access after success.' eyebrow='UC-15' title='Upgrade to Premium' />
-      <div className='grid gap-6 lg:grid-cols-[1fr_0.8fr]'><Card><CardBody className='space-y-4'><Select label='Selected Plan' options={premiumPlans.map((plan) => ({ value: plan.id, label: `${plan.name} - ${plan.price}` }))} /><Select label='Payment Method' onChange={(event) => setMethod(event.target.value)} options={[{ value: 'vnpay', label: 'VNPay Gateway Mock' }, { value: 'card', label: 'Credit Card Mock' }, { value: 'bank', label: 'Bank Transfer Mock' }]} value={method} /><Input label='Billing Email' placeholder='user@example.com' /><Input label='Promotion Code' placeholder='Optional' /><Link to='/premium/payment-result'><Button>Proceed to Payment</Button></Link></CardBody></Card><Card><CardBody><h2 className='font-bold text-slate-950'>Payment Gateway Mock</h2><p className='mt-2 text-sm text-slate-600'>No payment provider is called. Use payment result route to capture success state.</p><div className='mt-4 rounded-lg bg-slate-50 p-4 text-sm'><p>Method: {method}</p><p>Security: redirect token mocked</p><p>Status: waiting for user confirmation</p></div></CardBody></Card></div>
+      <PageHeader description='Choose a plan for the account currently signed in.' eyebrow='UC-15' title='Upgrade to Premium' />
+      <div className='grid gap-6 lg:grid-cols-[1fr_0.8fr]'><Card><CardBody className='space-y-4'><Input label='Account' readOnly value={`${currentUser?.fullName ?? ''} - ${role ?? ''}`} /><Select label='Selected Plan' options={plans.map((plan) => ({ value: plan.id, label: `${plan.name} - ${plan.price}` }))} /><Select label='Payment Method' onChange={(event) => setMethod(event.target.value)} options={[{ value: 'vnpay', label: 'VNPay Gateway' }, { value: 'card', label: 'Credit Card' }, { value: 'bank', label: 'Bank Transfer' }]} value={method} /><Input label='Billing Email' placeholder='user@example.com' /><Input label='Promotion Code' placeholder='Optional' /><Link to='/premium/payment-result'><Button>Proceed to Payment</Button></Link></CardBody></Card><Card><CardBody><h2 className='font-bold text-slate-950'>Payment Summary</h2><p className='mt-2 text-sm text-slate-600'>Review your plan and payment method before continuing.</p><div className='mt-4 rounded-lg bg-slate-50 p-4 text-sm'><p>Method: {method}</p><p>Account type: {role}</p><p>Status: waiting for confirmation</p></div></CardBody></Card></div>
     </div>
   );
 }
 
 export function PaymentResultPage() {
+  const { role } = useAuth();
+  const plan = premiumPlans.find((item) => item.audience === role) ?? paymentResult;
   return (
     <div className='space-y-6'>
-      <PageHeader description='Payment result screen shows success state after gateway callback.' eyebrow='UC-15' title='Payment Result' />
-      <Card><CardBody className='text-center'><CheckCircle2 className='mx-auto text-emerald-600' size={54} /><h2 className='mt-4 text-2xl font-bold text-slate-950'>Payment successful</h2><p className='mt-2 text-slate-600'>Premium access activated for selected account in mock state.</p><div className='mx-auto mt-6 grid max-w-2xl gap-3 text-left md:grid-cols-2'><Info label='Transaction ID' value={paymentResult.transactionId} /><Info label='Plan' value={paymentResult.planName} /><Info label='Amount' value={paymentResult.amount} /><Info label='Paid At' value={paymentResult.paidAt} /></div></CardBody></Card>
+      <PageHeader description='Your premium subscription is active.' eyebrow='UC-15' title='Payment Result' />
+      <Card><CardBody className='text-center'><CheckCircle2 className='mx-auto text-emerald-600' size={54} /><h2 className='mt-4 text-2xl font-bold text-slate-950'>Payment successful</h2><p className='mt-2 text-slate-600'>Premium access has been activated for this account.</p><div className='mx-auto mt-6 grid max-w-2xl gap-3 text-left md:grid-cols-2'><Info label='Transaction ID' value={paymentResult.transactionId} /><Info label='Plan' value={'name' in plan ? plan.name : paymentResult.planName} /><Info label='Amount' value={'price' in plan ? plan.price : paymentResult.amount} /><Info label='Paid At' value={paymentResult.paidAt} /></div></CardBody></Card>
     </div>
   );
 }
@@ -94,7 +184,7 @@ export function AdminUserDetailPage() {
   return (
     <div className='space-y-6'>
       <PageHeader description='Admin views user detail and updates user role. Role dropdown changes local state.' eyebrow='UC-52' title='User Detail and Role Update' />
-      <div className='grid gap-6 lg:grid-cols-[0.7fr_1.3fr]'><Card><CardBody className='space-y-4'><Info label='Full Name' value={user.fullName} /><Info label='Email' value={user.email} /><Info label='Phone' value={user.phone} /><Info label='Status' value={user.status} /><Info label='Last Active' value={user.lastActive} /></CardBody></Card><Card><CardBody className='space-y-4'><Select label='User Role' onChange={(event) => setRole(event.target.value as Role)} options={[{ value: 'Learner', label: 'Learner' }, { value: 'Teacher', label: 'Teacher' }, { value: 'Admin', label: 'Admin' }]} value={role} /><Select label='Account Status' options={[{ value: 'active', label: 'Active' }, { value: 'pending', label: 'Pending' }, { value: 'locked', label: 'Locked' }]} /><Button onClick={() => setSaved(true)}>Update User Role</Button>{saved ? <p className='rounded-lg bg-emerald-50 p-3 text-sm font-semibold text-emerald-700'>Role changed locally to {role}. No authorization backend called.</p> : null}</CardBody></Card></div>
+      <div className='grid gap-6 lg:grid-cols-[0.7fr_1.3fr]'><Card><CardBody className='space-y-4'><Info label='Full Name' value={user.fullName} /><Info label='Email' value={user.email} /><Info label='Phone' value={user.phone} /><Info label='Premium' value={user.premium ? 'Premium' : 'Free'} /><Info label='Status' value={user.status} /><Info label='Joined At' value={user.joinedAt} /><Info label='Last Active' value={user.lastActive} /></CardBody></Card><Card><CardBody className='space-y-4'><Select label='User Role' onChange={(event) => setRole(event.target.value as Role)} options={[{ value: 'Learner', label: 'Learner' }, { value: 'Teacher', label: 'Teacher' }, { value: 'Admin', label: 'Admin' }]} value={role} /><Select label='Account Status' options={[{ value: 'active', label: 'Active' }, { value: 'pending', label: 'Pending' }, { value: 'locked', label: 'Locked' }]} /><Select label='Permission Scope' options={[{ value: 'standard', label: 'Standard role permissions' }, { value: 'limited', label: 'Limited access' }, { value: 'expanded', label: 'Expanded support access' }]} /><Input label='Role Change Reason' placeholder='Teacher account approved after verification' /><Input label='Effective Date' type='date' /><Button onClick={() => setSaved(true)}>Update User Role</Button>{saved ? <p className='rounded-lg bg-emerald-50 p-3 text-sm font-semibold text-emerald-700'>Role changed locally to {role}. No authorization backend called.</p> : null}</CardBody></Card></div>
     </div>
   );
 }
@@ -105,7 +195,8 @@ export function ResourceManagementPage() {
   return (
     <div className='space-y-6'>
       <PageHeader description='Admin manages public learning resources and hides inappropriate or invalid resources.' eyebrow='UC-53' title='Resource Management' />
-      <Table headers={['Resource', 'Owner', 'Subject', 'Status', 'Action']} rows={resources.map((set) => [<div><p className='font-bold text-slate-950'>{set.title}</p><p className='text-xs text-slate-500'>{set.description}</p></div>, set.ownerName, set.subject, hiddenIds.includes(set.id) ? <StatusPill label='hidden' tone='danger' /> : <StatusPill label='public' tone='success' />, <Button disabled={hiddenIds.includes(set.id)} icon={<EyeOff size={15} />} onClick={() => setHiddenIds((current) => [...current, set.id])} size='sm' variant='danger'>Hide Public Learning Resource</Button>])} />
+      <Card><CardBody className='grid gap-4 md:grid-cols-3'><Select label='Resource Type' options={[{ value: 'study-set', label: 'Public study set' }, { value: 'question-bank', label: 'Public question bank' }]} /><Select label='Review Status' options={[{ value: 'all', label: 'All statuses' }, { value: 'flagged', label: 'Flagged' }, { value: 'approved', label: 'Approved' }]} /><Input label='Keyword' placeholder='Title, owner, subject' /></CardBody></Card>
+      <Table headers={['Resource', 'Owner', 'Subject', 'Visibility', 'Review Note', 'Action']} rows={resources.map((set) => [<div><p className='font-bold text-slate-950'>{set.title}</p><p className='text-xs text-slate-500'>{set.description}</p></div>, set.ownerName, set.subject, hiddenIds.includes(set.id) ? <StatusPill label='hidden' tone='danger' /> : <StatusPill label='public' tone='success' />, 'No policy violation found', <Button disabled={hiddenIds.includes(set.id)} icon={<EyeOff size={15} />} onClick={() => setHiddenIds((current) => [...current, set.id])} size='sm' variant='danger'>Hide Public Learning Resource</Button>])} />
     </div>
   );
 }
@@ -136,11 +227,13 @@ export function NotificationsPage() {
 }
 
 export function AccessDeniedPage() {
-  return <MessagePage icon={<ShieldAlert size={44} />} title='Access Denied' description='Current mock role is not authorized to access this screen. Use sidebar to navigate to permitted prototype pages.' action={<Link to='/'><Button>Go Home</Button></Link>} />;
+  const { role } = useAuth();
+  const home = role === 'Learner' ? '/learner/dashboard' : role === 'Teacher' ? '/teacher/dashboard' : role === 'Admin' ? '/admin/dashboard' : '/';
+  return <MessagePage icon={<ShieldAlert size={44} />} title='Access Denied' description='Current account role is not authorized to access this screen.' action={<Link to={home}><Button>Return to My Dashboard</Button></Link>} />;
 }
 
 export function NotFoundPage() {
-  return <MessagePage icon={<AlertTriangle size={44} />} title='Not Found' description='Requested prototype route does not exist. Use navigation to open a mapped SRS screen.' action={<Link to='/'><Button>Go Home</Button></Link>} />;
+  return <MessagePage icon={<AlertTriangle size={44} />} title='Not Found' description='The page you requested does not exist.' action={<Link to='/'><Button>Go Home</Button></Link>} />;
 }
 
 function MessagePage({ icon, title, description, action }: { icon: ReactNode; title: string; description: string; action: ReactNode }) {

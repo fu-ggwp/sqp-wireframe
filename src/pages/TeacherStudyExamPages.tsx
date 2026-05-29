@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Eye, Plus, Settings, TimerReset } from 'lucide-react';
+import { Download, Eye, Plus, Settings, TimerReset } from 'lucide-react';
 import { classes, examAttempts, exams, getExamById, questionBanks, questions, studySets } from '../data/mockData';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
@@ -12,13 +12,57 @@ import { Select } from '../components/ui/Select';
 import { StatusPill } from '../components/ui/StatusPill';
 import { Table } from '../components/ui/Table';
 
-export function CreateStudySetPage() {
-  const [created, setCreated] = useState(false);
+export function TeacherStudySetsPage() {
+  const [query, setQuery] = useState('');
+  const [visibility, setVisibility] = useState('all');
+  const filtered = studySets.filter((set) => {
+    const matchesQuery = [set.title, set.subject, set.topic, set.ownerName].join(' ').toLowerCase().includes(query.toLowerCase());
+    const matchesVisibility = visibility === 'all' || set.visibility === visibility;
+    return matchesQuery && matchesVisibility;
+  });
 
   return (
     <div className='space-y-6'>
-      <PageHeader description='Teacher creates a study set from selected questions.' eyebrow='UC-44' title='Create Study Set' />
-      <Card><CardBody className='space-y-4'><div className='grid gap-4 md:grid-cols-2'><Input label='Study Set Title' placeholder='Cell Biology Essentials' /><Input label='Subject' placeholder='Biology' /><Input label='Topic' placeholder='Cell Structure' /><Select label='Visibility' options={[{ value: 'public', label: 'Public' }, { value: 'private', label: 'Private' }, { value: 'class-only', label: 'Class Only' }]} /></div><label className='block space-y-1.5'><span className='text-sm font-semibold text-slate-700'>Description</span><textarea className='focus-ring min-h-24 w-full rounded-lg border border-slate-200 p-3 text-sm' /></label><div className='rounded-lg border border-slate-200 bg-slate-50 p-4'><p className='font-bold text-slate-950'>Select Questions</p><div className='mt-3 grid gap-2'>{questions.slice(0, 4).map((question) => <label className='flex items-start gap-3 rounded-lg bg-white p-3 text-sm' key={question.id}><input className='mt-1' defaultChecked type='checkbox' /><span>{question.content}</span></label>)}</div></div><Button icon={<Plus size={17} />} onClick={() => setCreated(true)}>Create Study Set</Button>{created ? <p className='rounded-lg bg-emerald-50 p-3 text-sm font-semibold text-emerald-700'>Study set created locally from selected questions.</p> : null}</CardBody></Card>
+      <PageHeader actions={<Link to='/teacher/study-sets/create'><Button icon={<Plus size={17} />}>Create Study Set</Button></Link>} description='Manage study sets created from question banks, check visibility, assigned classes, and learner activity.' eyebrow='UC-44' title='Study Sets' />
+      <Card><CardBody className='grid gap-4 md:grid-cols-[1fr_220px]'><Input label='Search Study Sets' onChange={(event) => setQuery(event.target.value)} placeholder='Title, subject, topic, owner' value={query} /><Select label='Visibility' onChange={(event) => setVisibility(event.target.value)} options={[{ value: 'all', label: 'All visibility' }, { value: 'public', label: 'Public' }, { value: 'private', label: 'Private' }, { value: 'class-only', label: 'Class Only' }]} value={visibility} /></CardBody></Card>
+      {filtered.length ? <TeacherStudySetTable source={filtered} /> : <EmptyState title='No study sets found' description='Create a study set from a question bank or change the current filters.' />}
+    </div>
+  );
+}
+
+export function CreateStudySetPage() {
+  const [created, setCreated] = useState(false);
+  const [bankId, setBankId] = useState(questionBanks[0].id);
+  const selectedBank = questionBanks.find((bank) => bank.id === bankId) ?? questionBanks[0];
+  const bankQuestions = questions.filter((question) => selectedBank.questionIds.includes(question.id));
+
+  return (
+    <div className='space-y-6'>
+      <PageHeader description='Create a study set from questions in one selected question bank.' eyebrow='UC-44' title='Create Study Set' />
+      <Card>
+        <CardBody className='space-y-4'>
+          <div className='grid gap-4 md:grid-cols-2'>
+            <Input label='Study Set Title' placeholder='Cell Biology Essentials' />
+            <Select label='Source Question Bank' onChange={(event) => setBankId(event.target.value)} options={questionBanks.map((bank) => ({ value: bank.id, label: bank.title }))} value={bankId} />
+            <Input label='Subject' readOnly value={selectedBank.subject} />
+            <Input label='Topic' readOnly value={selectedBank.topic} />
+            <Select label='Visibility' options={[{ value: 'public', label: 'Public' }, { value: 'private', label: 'Private' }, { value: 'class-only', label: 'Class Only' }]} />
+            <Input label='Estimated Study Time' placeholder='20 minutes' />
+          </div>
+          <label className='block space-y-1.5'><span className='text-sm font-semibold text-slate-700'>Description</span><textarea className='focus-ring min-h-24 w-full rounded-lg border border-slate-200 p-3 text-sm' placeholder='What learners should practice in this set.' /></label>
+          <div className='rounded-lg border border-slate-200 bg-slate-50 p-4'>
+            <div className='flex flex-wrap items-center justify-between gap-3'>
+              <div><p className='font-bold text-slate-950'>Select Questions</p><p className='mt-1 text-sm text-slate-500'>{bankQuestions.length} questions from {selectedBank.title}</p></div>
+              <Badge tone='teal'>{selectedBank.visibility}</Badge>
+            </div>
+            <div className='mt-3 grid gap-2'>
+              {bankQuestions.map((question) => <label className='flex items-start gap-3 rounded-lg bg-white p-3 text-sm' key={question.id}><input className='mt-1' defaultChecked type='checkbox' /><span><span className='font-semibold text-slate-800'>{question.content}</span><span className='mt-1 block text-xs text-slate-500'>{question.type} - {question.difficulty} - {question.score} point</span></span></label>)}
+            </div>
+          </div>
+          <Button icon={<Plus size={17} />} onClick={() => setCreated(true)}>Create Study Set</Button>
+          {created ? <p className='rounded-lg bg-emerald-50 p-3 text-sm font-semibold text-emerald-700'>Study set created from {selectedBank.title}.</p> : null}
+        </CardBody>
+      </Card>
     </div>
   );
 }
@@ -43,7 +87,7 @@ export function CreateExamSessionPage() {
     <div className='space-y-6'>
       <PageHeader description='Teacher creates an official exam session for a class.' eyebrow='UC-46' title='Create Exam Session' />
       <ExamForm actionLabel='Create Exam Session' onSubmit={() => setCreated(true)} />
-      {created ? <p className='rounded-lg bg-emerald-50 p-3 text-sm font-semibold text-emerald-700'>Exam session created locally. Open configure screen for settings.</p> : null}
+      {created ? <p className='rounded-lg bg-emerald-50 p-3 text-sm font-semibold text-emerald-700'>Exam session created. Open configure settings before publishing.</p> : null}
     </div>
   );
 }
@@ -68,7 +112,7 @@ export function TeacherExamInfoPage() {
 
   return (
     <div className='space-y-6'>
-      <PageHeader actions={<><Link to={`/teacher/exams/${exam.id}/configure`}><Button icon={<Settings size={17} />} variant='secondary'>Configure</Button></Link><Link to={`/teacher/exams/${exam.id}/monitor`}><Button icon={<Eye size={17} />}>Monitor</Button></Link></>} description='Teacher views configured exam information, selected class, question source, timing, attempts, and visibility rules.' eyebrow='UC-48' title='View Exam Information as Teacher' />
+      <PageHeader actions={<><Link to={`/teacher/exams/${exam.id}/configure`}><Button icon={<Settings size={17} />} variant='secondary'>Configure</Button></Link><Link to='/teacher/reports/export'><Button icon={<Download size={17} />} variant='secondary'>Export Report</Button></Link><Link to={`/teacher/exams/${exam.id}/monitor`}><Button icon={<Eye size={17} />}>Monitor</Button></Link></>} description='Exam configuration, timing, question source, result settings, and report access.' eyebrow='UC-48' title={exam.title} />
       <Card><CardBody className='grid gap-4 md:grid-cols-2'><Info label='Exam Title' value={exam.title} /><Info label='Class' value={exam.className} /><Info label='Question Bank' value={exam.questionBankId} /><Info label='Start Time' value={exam.startTime} /><Info label='Duration' value={`${exam.durationMinutes} minutes`} /><Info label='Attempts Allowed' value={`${exam.attemptsAllowed}`} /><Info label='Question Randomization' value={exam.randomizeQuestions ? 'Enabled' : 'Disabled'} /><Info label='Answer Randomization' value={exam.randomizeAnswers ? 'Enabled' : 'Disabled'} /><Info label='Result Visibility' value={exam.showResult ? 'Visible' : 'Hidden'} /><Info label='Status' value={exam.status} /></CardBody></Card>
     </div>
   );
@@ -90,12 +134,51 @@ export function MonitorExamSessionPage() {
 
 function ExamForm({ exam, actionLabel, onSubmit }: { exam?: typeof exams[number]; actionLabel: string; onSubmit: () => void }) {
   return (
-    <Card><CardBody className='space-y-4'><div className='grid gap-4 md:grid-cols-2'><Input defaultValue={exam?.title} label='Exam Title' placeholder='Biology 12A Midterm Simulation' /><Select defaultValue={exam?.classId ?? classes[0].id} label='Class' options={classes.map((room) => ({ value: room.id, label: room.name }))} /><Select defaultValue={exam?.questionBankId ?? questionBanks[0].id} label='Question Source' options={questionBanks.map((bank) => ({ value: bank.id, label: bank.title }))} /><Select defaultValue={exam?.status ?? 'draft'} label='Status' options={[{ value: 'draft', label: 'Draft' }, { value: 'scheduled', label: 'Scheduled' }, { value: 'open', label: 'Open' }, { value: 'closed', label: 'Closed' }]} /><Input defaultValue={exam?.startTime} label='Start Time' placeholder='2026-05-30 08:00' /><Input defaultValue={exam?.durationMinutes} label='Duration Minutes' type='number' /><Input defaultValue={exam?.attemptsAllowed} label='Allowed Attempts' type='number' /><Select defaultValue={exam?.showResult ? 'visible' : 'hidden'} label='Result Visibility' options={[{ value: 'visible', label: 'Visible after submit' }, { value: 'hidden', label: 'Hidden by teacher' }]} /></div><div className='grid gap-3 md:grid-cols-2'><label className='flex items-center gap-3 rounded-lg border border-slate-200 p-3 text-sm font-semibold'><input defaultChecked={exam?.randomizeQuestions} type='checkbox' /> Randomize Questions</label><label className='flex items-center gap-3 rounded-lg border border-slate-200 p-3 text-sm font-semibold'><input defaultChecked={exam?.randomizeAnswers} type='checkbox' /> Randomize Answers</label></div><Button icon={<TimerReset size={17} />} onClick={onSubmit}>{actionLabel}</Button></CardBody></Card>
+    <Card>
+      <CardBody className='space-y-4'>
+        <div className='grid gap-4 md:grid-cols-2'>
+          <Input defaultValue={exam?.title} label='Exam Title' placeholder='Biology 12A Midterm Simulation' />
+          <Select defaultValue={exam?.classId ?? classes[0].id} label='Class' options={classes.map((room) => ({ value: room.id, label: room.name }))} />
+          <Select defaultValue={exam?.questionBankId ?? questionBanks[0].id} label='Question Source' options={questionBanks.map((bank) => ({ value: bank.id, label: bank.title }))} />
+          <Select defaultValue={exam?.status ?? 'draft'} label='Status' options={[{ value: 'draft', label: 'Draft' }, { value: 'scheduled', label: 'Scheduled' }, { value: 'open', label: 'Open' }, { value: 'closed', label: 'Closed' }]} />
+          <Input defaultValue={exam?.startTime} label='Start Time' placeholder='2026-05-30 08:00' />
+          <Input defaultValue={exam?.durationMinutes} label='Duration Minutes' type='number' />
+          <Input defaultValue={exam?.attemptsAllowed} label='Allowed Attempts' type='number' />
+          <Input label='Passing Score' placeholder='70' type='number' />
+          <Input label='Late Join Grace Period' placeholder='5 minutes' />
+          <Input label='Auto-submit Before End' placeholder='30 seconds' />
+          <Select defaultValue={exam?.showResult ? 'visible' : 'hidden'} label='Result Visibility' options={[{ value: 'visible', label: 'Visible after submit' }, { value: 'hidden', label: 'Hidden by teacher' }]} />
+          <Select label='Review Permission' options={[{ value: 'score-only', label: 'Score only' }, { value: 'with-answer', label: 'Show answer review' }, { value: 'hidden', label: 'Hide all results' }]} />
+        </div>
+        <div className='grid gap-3 md:grid-cols-2'>
+          <label className='flex items-center gap-3 rounded-lg border border-slate-200 p-3 text-sm font-semibold'><input defaultChecked={exam?.randomizeQuestions} type='checkbox' /> Randomize Questions</label>
+          <label className='flex items-center gap-3 rounded-lg border border-slate-200 p-3 text-sm font-semibold'><input defaultChecked={exam?.randomizeAnswers} type='checkbox' /> Randomize Answers</label>
+          <label className='flex items-center gap-3 rounded-lg border border-slate-200 p-3 text-sm font-semibold'><input defaultChecked type='checkbox' /> Enable Auto-save</label>
+          <label className='flex items-center gap-3 rounded-lg border border-slate-200 p-3 text-sm font-semibold'><input type='checkbox' /> Require Full-screen Warning</label>
+        </div>
+        <Button icon={<TimerReset size={17} />} onClick={onSubmit}>{actionLabel}</Button>
+      </CardBody>
+    </Card>
   );
 }
 
 function TeacherExamTable({ source }: { source: typeof exams }) {
-  return <Table headers={['Exam', 'Class', 'Start Time', 'Status', 'Actions']} rows={source.map((exam) => [<div><p className='font-bold text-slate-950'>{exam.title}</p><p className='text-xs text-slate-500'>{exam.description}</p></div>, exam.className, exam.startTime, <StatusPill label={exam.status} tone={exam.status === 'open' ? 'success' : 'warning'} />, <div className='flex flex-wrap gap-2'><Link to={`/teacher/exams/${exam.id}/info`}><Button size='sm' variant='secondary'>Info</Button></Link><Link to={`/teacher/exams/${exam.id}/configure`}><Button size='sm' variant='secondary'>Configure</Button></Link><Link to={`/teacher/exams/${exam.id}/monitor`}><Button size='sm'>Monitor</Button></Link></div>])} />;
+  return <Table headers={['Exam', 'Class', 'Start Time', 'Status', 'Actions']} rows={source.map((exam) => [<div><p className='font-bold text-slate-950'>{exam.title}</p><p className='text-xs text-slate-500'>{exam.description}</p></div>, exam.className, exam.startTime, <StatusPill label={exam.status} tone={exam.status === 'open' ? 'success' : 'warning'} />, <div className='flex flex-wrap gap-2'><Link to={`/teacher/exams/${exam.id}/info`}><Button size='sm' variant='secondary'>Info</Button></Link><Link to={`/teacher/exams/${exam.id}/configure`}><Button size='sm' variant='secondary'>Configure</Button></Link><Link to='/teacher/reports/export'><Button size='sm' variant='secondary'>Report</Button></Link><Link to={`/teacher/exams/${exam.id}/monitor`}><Button size='sm'>Monitor</Button></Link></div>])} />;
+}
+
+function TeacherStudySetTable({ source }: { source: typeof studySets }) {
+  return <Table headers={['Study Set', 'Source', 'Visibility', 'Questions', 'Assigned Classes', 'Learners', 'Actions']} rows={source.map((set) => {
+    const bank = questionBanks.find((item) => item.subject === set.subject && set.topic.toLowerCase().includes(item.topic.split(' ')[0].toLowerCase())) ?? questionBanks.find((item) => item.subject === set.subject) ?? questionBanks[0];
+    return [
+      <div><p className='font-bold text-slate-950'>{set.title}</p><p className='text-xs text-slate-500'>{set.subject} - {set.topic}</p></div>,
+      bank.title,
+      <Badge tone={set.visibility === 'public' ? 'emerald' : set.visibility === 'class-only' ? 'amber' : 'slate'}>{set.visibility}</Badge>,
+      `${set.questionCount}`,
+      set.assignedClassIds.length ? set.assignedClassIds.join(', ') : 'Not assigned',
+      `${set.learners}`,
+      <div className='flex flex-wrap gap-2'><Link to={`/sets/${set.id}/public`}><Button size='sm' variant='secondary'>Preview</Button></Link><Link to='/teacher/classes/class-bio-12a/assign-study-set'><Button size='sm'>Assign</Button></Link></div>,
+    ];
+  })} />;
 }
 
 function Metric({ label, value, helper }: { label: string; value: string; helper: string }) {

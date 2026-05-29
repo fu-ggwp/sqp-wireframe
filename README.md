@@ -4,6 +4,18 @@ Frontend prototype for the Smart Quiz Platform (SQP) SRS. The goal of this proje
 
 This is not a production backend implementation. Authentication, payment, AI, email, import validation, report export, exam auto-save, and persistence are mocked locally in React state or mock data.
 
+## Demo Accounts and Role Workspaces
+
+The prototype separates the interface by role. Use the login screen to enter one demo account at a time:
+
+| Role | Demo Email | Demo Password | Workspace |
+| ---- | ---------- | ------------- | --------- |
+| Learner | `linh@sqp.edu.vn` | `learner123` | `/learner/dashboard` |
+| Teacher | `an.teacher@sqp.edu.vn` | `teacher123` | `/teacher/dashboard` |
+| Admin | `admin@sqp.edu.vn` | `admin123` | `/admin/dashboard` |
+
+Each workspace has its own sidebar, account context, search placeholder, dashboard fields, and role-specific feature shortcuts. After login, users cannot switch roles from the app shell. To use another role, logout and choose another demo account.
+
 ## Tech Stack
 
 - React + Vite
@@ -132,6 +144,7 @@ docs/
 
 ### H. Teacher Study Set & Exam
 
+- `/teacher/study-sets`
 - `/teacher/study-sets/create`
 - `/teacher/exams`
 - `/teacher/exams/create`

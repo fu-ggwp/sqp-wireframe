@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
-import { ArrowRight, BookOpen, Filter, Search, Star, Users } from 'lucide-react';
+import { ArrowRight, BookOpen, Brain, ClipboardCheck, Filter, Layers3, PlayCircle, Search, Star, Trophy, Users } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { studySets, users, getStudySetById, questions } from '../data/mockData';
 import { Badge } from '../components/ui/Badge';
@@ -8,57 +8,134 @@ import { Card, CardBody } from '../components/ui/Card';
 import { EmptyState } from '../components/ui/EmptyState';
 import { Input } from '../components/ui/Input';
 import { PageHeader } from '../components/ui/PageHeader';
-import { Progress } from '../components/ui/Progress';
 import { Select } from '../components/ui/Select';
 import { Table } from '../components/ui/Table';
 
 export function HomePage() {
   const publicSets = studySets.filter((set) => set.visibility === 'public');
+  const modeCards = [
+    { title: 'Learn', description: 'Build a topic with short practice rounds and instant feedback.', icon: Brain, route: '/search/study-sets', tone: 'bg-teal-50 text-teal-700' },
+    { title: 'Flashcards', description: 'Flip terms, definitions, and examples from public study sets.', icon: Layers3, route: '/sets/set-bio-cell/flashcards', tone: 'bg-indigo-50 text-indigo-700' },
+    { title: 'Test', description: 'Try multiple-choice, true/false, and written questions.', icon: ClipboardCheck, route: '/sets/set-bio-cell/public', tone: 'bg-amber-50 text-amber-700' },
+    { title: 'Review', description: 'Open weak topics and compare answers before signing up.', icon: Trophy, route: '/search/study-sets', tone: 'bg-rose-50 text-rose-700' },
+  ];
 
   return (
-    <div className='space-y-8'>
-      <section className='overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm'>
-        <div className='grid gap-0 lg:grid-cols-[1.1fr_0.9fr]'>
-          <div className='p-8 lg:p-10'>
-            <Badge tone='teal'>SRS prototype for Section 3 capture</Badge>
-            <h1 className='mt-5 max-w-3xl text-4xl font-bold tracking-tight text-slate-950'>Smart Quiz Platform</h1>
-            <p className='mt-4 max-w-2xl text-base leading-7 text-slate-600'>
-              Browse public study sets, preview flashcards, register accounts, and navigate every Learner, Teacher, and Admin workflow required by the SRS.
-            </p>
-            <div className='mt-6 flex max-w-2xl flex-col gap-3 sm:flex-row'>
-              <Input aria-label='Search keyword' placeholder='Search biology, chemistry, users, classes' />
-              <Link to='/search/study-sets'>
-                <Button className='w-full sm:w-auto' icon={<Search size={18} />} size='lg'>Search</Button>
-              </Link>
+    <div className='space-y-14'>
+      <section className='-mx-4 bg-slate-50 px-4 py-14 lg:-mx-6 lg:px-6 lg:py-20'>
+        <div className='mx-auto max-w-5xl text-center'>
+          <h1 className='text-4xl font-bold tracking-tight text-slate-950 sm:text-5xl'>How do you want to study?</h1>
+          <p className='mx-auto mt-4 max-w-2xl text-base leading-7 text-slate-600'>
+            Search public study sets, preview flashcards, and practice sample questions before creating an account.
+          </p>
+          <div className='mx-auto mt-7 flex max-w-3xl flex-col gap-3 rounded-lg border border-slate-200 bg-white p-2 shadow-sm sm:flex-row'>
+            <div className='flex min-h-12 flex-1 items-center gap-3 px-3 text-left text-sm text-slate-500'>
+              <Search size={19} />
+              <span>Search biology, chemistry, math, flashcards</span>
             </div>
-            <div className='mt-6 flex flex-wrap gap-3'>
-              <Link to='/auth/register'><Button variant='secondary'>Register</Button></Link>
-              <Link to='/auth/login'><Button variant='ghost'>Login</Button></Link>
-              <Link to='/learner/dashboard'><Button variant='ghost'>Open Learner Dashboard</Button></Link>
-            </div>
+            <Link to='/search/study-sets'><Button className='w-full sm:w-auto' size='lg'>Search</Button></Link>
           </div>
-          <div className='min-h-80 bg-slate-900'>
-            <img alt='Learners studying online quiz cards' className='h-full w-full object-cover opacity-90' src='https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80' />
+          <div className='mt-6 flex flex-wrap justify-center gap-3'>
+            <Link to='/auth/register'><Button size='lg'>Sign up for free</Button></Link>
+            <Link to='/search/study-sets'><Button size='lg' variant='secondary'>Browse study sets</Button></Link>
           </div>
         </div>
-      </section>
-
-      <section className='grid gap-4 md:grid-cols-3'>
-        <Card><CardBody><p className='text-sm font-semibold text-slate-500'>Public study sets</p><p className='mt-2 text-3xl font-bold text-slate-950'>{publicSets.length}</p><p className='mt-1 text-sm text-slate-500'>Search and preview public learning resources.</p></CardBody></Card>
-        <Card><CardBody><p className='text-sm font-semibold text-slate-500'>Use cases mapped</p><p className='mt-2 text-3xl font-bold text-slate-950'>54</p><p className='mt-1 text-sm text-slate-500'>Based on SRS Section 1.3 UC table.</p></CardBody></Card>
-        <Card><CardBody><p className='text-sm font-semibold text-slate-500'>Actor navigation</p><p className='mt-2 text-3xl font-bold text-slate-950'>4</p><p className='mt-1 text-sm text-slate-500'>Guest, Learner, Teacher, Admin routes.</p></CardBody></Card>
       </section>
 
       <section className='space-y-4'>
-        <div className='flex items-center justify-between'>
-          <h2 className='text-xl font-bold text-slate-950'>Featured public study sets</h2>
+        <div className='flex flex-wrap items-end justify-between gap-3'>
+          <div>
+            <h2 className='text-2xl font-bold text-slate-950'>Choose a study mode</h2>
+            <p className='mt-1 text-sm text-slate-500'>Explore modes without signing in. History and class work start after login.</p>
+          </div>
+          <Link className='inline-flex items-center gap-1 text-sm font-bold text-teal-700' to='/auth/register'>Create free account <ArrowRight size={16} /></Link>
+        </div>
+        <div className='grid gap-4 md:grid-cols-2 xl:grid-cols-4'>
+          {modeCards.map((mode) => {
+            const Icon = mode.icon;
+            return (
+              <Link className='group rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-md' key={mode.title} to={mode.route}>
+                <span className={`flex h-12 w-12 items-center justify-center rounded-lg ${mode.tone}`}><Icon size={22} /></span>
+                <h3 className='mt-5 text-lg font-bold text-slate-950'>{mode.title}</h3>
+                <p className='mt-2 text-sm leading-6 text-slate-600'>{mode.description}</p>
+                <span className='mt-4 inline-flex items-center gap-1 text-sm font-bold text-teal-700'>Open <ArrowRight size={15} /></span>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className='grid gap-8 lg:grid-cols-2 lg:items-center'>
+        <div className='space-y-4'>
+          <Badge tone='teal'>Public learning library</Badge>
+          <h2 className='text-3xl font-bold tracking-tight text-slate-950'>Find sets for any class or exam topic</h2>
+          <p className='text-base leading-7 text-slate-600'>
+            Start from public cards by subject, topic, teacher, or keyword. Open a set, preview questions, then decide whether to sign in.
+          </p>
+          <div className='grid gap-3 sm:grid-cols-2'>
+            <InfoTile label='Subjects' value='Biology, Chemistry, Math' />
+            <InfoTile label='Question formats' value='Multiple choice, true/false, written' />
+            <InfoTile label='Public access' value='Search, preview, flashcards' />
+            <InfoTile label='Account access' value='Classes, exams, saved history' />
+          </div>
+        </div>
+        <div className='overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm'>
+          <img alt='Students reviewing study cards together' className='h-72 w-full object-cover' src='https://images.unsplash.com/photo-1513258496099-48168024aec0?auto=format&fit=crop&w=1200&q=80' />
+          <div className='grid gap-3 p-4 sm:grid-cols-2'>
+            <div className='rounded-lg bg-slate-50 p-4'><p className='text-xs font-bold uppercase text-slate-400'>Term</p><p className='mt-2 font-bold text-slate-900'>Selective permeability</p></div>
+            <div className='rounded-lg bg-teal-50 p-4'><p className='text-xs font-bold uppercase text-teal-600'>Definition</p><p className='mt-2 text-sm font-semibold text-teal-900'>Membrane allows some substances through and controls others.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section className='grid gap-8 lg:grid-cols-2 lg:items-center'>
+        <div className='order-2 rounded-lg border border-slate-200 bg-white p-5 shadow-sm lg:order-1'>
+          <div className='mb-4 flex items-center justify-between'><Badge tone='amber'>Sample practice</Badge><span className='text-sm font-bold text-slate-500'>3 questions</span></div>
+          <div className='space-y-3'>
+            {questions.slice(0, 3).map((question, index) => (
+              <div className='rounded-lg border border-slate-200 p-4' key={question.id}>
+                <p className='text-xs font-bold uppercase text-slate-400'>Question {index + 1}</p>
+                <p className='mt-2 text-sm font-semibold text-slate-800'>{question.content}</p>
+              </div>
+            ))}
+          </div>
+          <Link className='mt-5 inline-flex' to='/sets/set-bio-cell/public'><Button icon={<PlayCircle size={17} />}>Try sample set</Button></Link>
+        </div>
+        <div className='order-1 space-y-4 lg:order-2'>
+          <Badge tone='amber'>Study your way</Badge>
+          <h2 className='text-3xl font-bold tracking-tight text-slate-950'>Preview cards, then switch to practice when ready</h2>
+          <p className='text-base leading-7 text-slate-600'>
+            Start as a guest, then sign in later if you want saved history, classes, and exams.
+          </p>
+          <div className='flex flex-wrap gap-3'>
+            <Link to='/sets/set-bio-cell/flashcards'><Button variant='secondary'>Open flashcards</Button></Link>
+            <Link to='/auth/login'><Button variant='ghost'>Login to save history</Button></Link>
+          </div>
+        </div>
+      </section>
+
+      <section className='space-y-4'>
+        <div className='flex items-center justify-between gap-3'>
+          <h2 className='text-2xl font-bold text-slate-950'>Popular study sets</h2>
           <Link className='inline-flex items-center gap-1 text-sm font-bold text-teal-700' to='/search/study-sets'>View all <ArrowRight size={16} /></Link>
         </div>
         <div className='grid gap-4 md:grid-cols-2 xl:grid-cols-3'>
-          {publicSets.map((set) => (
-            <StudySetCard key={set.id} set={set} />
-          ))}
+          {publicSets.map((set) => <StudySetCard key={set.id} set={set} />)}
         </div>
+      </section>
+
+      <section className='grid gap-6 border-t border-slate-200 pt-8 md:grid-cols-4'>
+        {[
+          ['Study', 'Flashcards', 'Practice tests', 'Public sets'],
+          ['Subjects', 'Biology', 'Chemistry', 'Mathematics'],
+          ['Account', 'Login', 'Register', 'Premium'],
+          ['Platform', 'Teachers', 'Resources', 'Help'],
+        ].map(([heading, ...links]) => (
+          <div key={heading}>
+            <h3 className='font-bold text-slate-950'>{heading}</h3>
+            <div className='mt-3 space-y-2 text-sm font-semibold text-slate-500'>{links.map((item) => <p key={item}>{item}</p>)}</div>
+          </div>
+        ))}
       </section>
     </div>
   );
@@ -79,9 +156,9 @@ export function SearchStudySetsPage() {
     <div className='space-y-6'>
       <PageHeader
         actions={<Link to='/sets/set-bio-cell/public'><Button icon={<BookOpen size={18} />}>Open sample set</Button></Link>}
-        description='Search public study sets by keyword, subject, topic, and tag. Empty state appears when no mock record matches.'
+        description='Find public sets by keyword, subject, topic, or tag.'
         eyebrow='UC-02'
-        title='Search Public Study Sets'
+        title='Search Study Sets'
       />
       <Card>
         <CardBody className='grid gap-4 md:grid-cols-[1fr_220px_auto]'>
@@ -112,7 +189,7 @@ export function SearchUsersPage() {
 
   return (
     <div className='space-y-6'>
-      <PageHeader description='Search public user account profiles by keyword and role.' eyebrow='UC-03' title='Search Public User Accounts' />
+      <PageHeader description='Find public learner and teacher profiles.' eyebrow='UC-03' title='Find People' />
       <Card>
         <CardBody className='grid gap-4 md:grid-cols-[1fr_220px]'>
           <Input label='Keyword' onChange={(event) => setQuery(event.target.value)} placeholder='Name, username, email, profile detail' value={query} />
@@ -142,8 +219,8 @@ export function PublicStudySetDetailPage() {
   return (
     <div className='space-y-6'>
       <PageHeader
-        actions={<><Link to={`/learner/study-sets/${set.id}/flashcards`}><Button>Study Flashcards</Button></Link><Link to='/auth/register'><Button variant='secondary'>Register to save progress</Button></Link></>}
-        description='Public detail page shows title, description, subject, topic, tags, owner, content preview, and study mode entry points.'
+        actions={<><Link to={`/sets/${set.id}/flashcards`}><Button>Study Flashcards</Button></Link><Link to='/auth/register'><Button variant='secondary'>Sign up to save history</Button></Link></>}
+        description='Preview questions, tags, owner, and available study modes.'
         eyebrow='UC-04, UC-05'
         title={set.title}
       />
@@ -158,7 +235,7 @@ export function PublicStudySetDetailPage() {
         </Card>
         <div className='space-y-4'>
           <Card><CardBody className='space-y-4'><Info label='Owner' value={set.ownerName} /><Info label='Subject' value={set.subject} /><Info label='Topic' value={set.topic} /><Info label='Visibility' value={set.visibility} /><Info label='Questions' value={`${set.questionCount}`} /><Info label='Learners' value={`${set.learners}`} /><div className='flex items-center gap-1 text-amber-500'><Star size={18} fill='currentColor' /> <span className='font-bold text-slate-800'>{set.rating}</span></div></CardBody></Card>
-          <Card><CardBody><Progress label='Mock learner progress' value={set.progress ?? 0} /><p className='mt-3 text-sm text-slate-500'>Guests can preview public flashcards. Learner account required for quiz and progress tracking.</p></CardBody></Card>
+          <Card><CardBody><p className='text-sm leading-6 text-slate-600'>Guests can preview public flashcards and set details. Login is required for saved history, quizzes, classes, and exams.</p><Link className='mt-4 inline-flex' to='/auth/register'><Button className='w-full' variant='secondary'>Create account</Button></Link></CardBody></Card>
         </div>
       </div>
     </div>
@@ -193,6 +270,15 @@ function Info({ label, value }: { label: string; value: string }) {
     <div className='flex items-center justify-between gap-4 border-b border-slate-100 pb-3 last:border-0 last:pb-0'>
       <span className='text-sm font-semibold text-slate-500'>{label}</span>
       <span className='text-right text-sm font-bold text-slate-900'>{value}</span>
+    </div>
+  );
+}
+
+function InfoTile({ label, value }: { label: string; value: string }) {
+  return (
+    <div className='rounded-lg border border-slate-200 bg-white p-4'>
+      <p className='text-xs font-bold uppercase text-slate-400'>{label}</p>
+      <p className='mt-2 text-sm font-semibold text-slate-800'>{value}</p>
     </div>
   );
 }
