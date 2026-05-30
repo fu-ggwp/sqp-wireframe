@@ -17,14 +17,17 @@ export function RegisterPage() {
   const emailError = submitted ? 'Email is required and must be unique.' : undefined;
 
   return (
-    <AuthFrame title='Register Account' description='Create a learner or teacher account to save progress and access class features.' uc='UC-07'>
+    <AuthFrame title='Register Account' description='Create a learner or teacher account to save progress and access class features.' eyebrow='Account setup'>
       <div className='grid gap-4 md:grid-cols-2'>
         <Input label='Full Name' placeholder='Nguyen Van A' />
         <Input error={submitted ? 'Required field.' : undefined} label='Email Address' placeholder='user@example.com' type='email' />
         <Input label='Phone Number' placeholder='+84 900 000 000' />
+        <Input label='Username' placeholder='nguyenvana' />
         <Select label='Requested Role' options={[{ value: 'Learner', label: 'Learner' }, { value: 'Teacher', label: 'Teacher' }]} />
         <Input error={submitted ? 'Password must contain at least 8 characters.' : undefined} label='Password' type='password' />
         <Input error={submitted ? 'Confirm password must match password.' : undefined} label='Confirm Password' type='password' />
+        <Select label='Learning Goal' options={[{ value: 'exam', label: 'Prepare for exams' }, { value: 'class', label: 'Join class study' }, { value: 'create', label: 'Create learning content' }]} />
+        <Input label='Referral Code' placeholder='Optional' />
       </div>
       <div className='mt-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-800'>Please complete required fields, use a valid email, and choose a secure password.</div>
       <div className='mt-5 flex flex-wrap gap-3'>
@@ -116,7 +119,8 @@ export function LoginPage() {
             </div>
           </div>
 
-          <div className='mt-3 flex justify-end'>
+          <div className='mt-3 flex flex-wrap items-center justify-between gap-3'>
+            <label className='flex items-center gap-2 text-sm font-semibold text-slate-600'><input type='checkbox' /> Remember me</label>
             <Link className='text-sm font-bold text-indigo-600 hover:text-indigo-700' to='/auth/forgot-password'>Forgot password</Link>
           </div>
 
@@ -136,8 +140,8 @@ export function ForgotPasswordPage() {
   const [sent, setSent] = useState(false);
 
   return (
-    <AuthFrame title='Forgot Password' description='Enter your account email to receive a password reset link.' uc='UC-10'>
-      <Input label='Registered Email Address' placeholder='user@example.com' type='email' />
+    <AuthFrame title='Forgot Password' description='Enter your account email to receive a password reset link.' eyebrow='Account recovery'>
+      <div className='grid gap-4 md:grid-cols-2'><Input label='Registered Email Address' placeholder='user@example.com' type='email' /><Select label='Reset Delivery Method' options={[{ value: 'email', label: 'Email link' }, { value: 'sms', label: 'SMS code' }]} /><Input label='Account Username' placeholder='Optional username' /><Input label='Verification Code' placeholder='If already received' /></div>
       <div className='mt-5 flex gap-3'>
         <Button icon={<Mail size={17} />} onClick={() => setSent(true)}>Send Reset Link</Button>
         <Link to='/auth/login'><Button variant='ghost'>Back to login</Button></Link>
@@ -151,11 +155,13 @@ export function ResetPasswordPage() {
   const [saved, setSaved] = useState(false);
 
   return (
-    <AuthFrame title='Reset Password' description='Enter the reset token and choose a new password.' uc='UC-10'>
+    <AuthFrame title='Reset Password' description='Enter the reset token and choose a new password.' eyebrow='Account recovery'>
       <div className='space-y-4'>
         <Input label='Reset Token' placeholder='Token from email link' />
+        <Input label='Registered Email' placeholder='user@example.com' type='email' />
         <Input label='New Password' type='password' />
         <Input helper='Must match the new password field.' label='Confirm New Password' type='password' />
+        <Select label='Logout Other Devices' options={[{ value: 'yes', label: 'Yes, logout other devices' }, { value: 'no', label: 'No, keep sessions' }]} />
       </div>
       <div className='mt-5 flex gap-3'>
         <Button icon={<ShieldCheck size={17} />} onClick={() => setSaved(true)}>Reset Password</Button>
@@ -184,7 +190,7 @@ export function ProfilePage() {
       <PageHeader
         actions={<><Link to='/profile/edit'><Button icon={<Save size={17} />} variant='secondary'>Edit Profile</Button></Link><Button icon={<LogOut size={17} />} onClick={handleLogout} variant='ghost'>Logout</Button></>}
         description='View personal profile information before making updates.'
-        eyebrow='UC-12, UC-11'
+        eyebrow='Profile'
         title='View Personal Profile'
       />
       {loggedOut ? <div className='rounded-lg bg-amber-50 p-4 text-sm font-semibold text-amber-800'>You have been signed out.</div> : null}
@@ -203,6 +209,10 @@ export function ProfilePage() {
             <ProfileField label='Joined At' value={currentUser.joinedAt} />
             <ProfileField label='Last Active' value={currentUser.lastActive} />
             <ProfileField label='Bio' value={currentUser.bio} />
+            <ProfileField label='Preferred Language' value='English' />
+            <ProfileField label='Notification Preference' value='Email + in-app' />
+            <ProfileField label='Timezone' value='Asia/Bangkok' />
+            <ProfileField label='Two-factor Auth' value='Disabled' />
           </div>
         </CardBody>
       </Card>
@@ -226,7 +236,7 @@ export function EditProfilePage() {
 
   return (
     <div className='space-y-6'>
-      <PageHeader description='Update allowed personal profile fields: full name, phone, avatar text, and profile details.' eyebrow='UC-13' title='Edit Personal Profile' />
+      <PageHeader description='Update allowed personal profile fields: full name, phone, avatar text, and profile details.' eyebrow='Profile settings' title='Edit Personal Profile' />
       <Card>
         <CardBody className='space-y-4'>
           <div className='grid gap-4 md:grid-cols-2'>
@@ -234,7 +244,10 @@ export function EditProfilePage() {
             <Input defaultValue={currentUser.phone} label='Phone Number' />
             <Input defaultValue={currentUser.avatar} helper='Use 2 letters for profile avatar.' label='Avatar Initials' maxLength={2} />
             <Input defaultValue={currentUser.username} label='Username' />
+            <Input label='Preferred Language' placeholder='English' />
+            <Input label='Timezone' placeholder='Asia/Bangkok' />
           </div>
+          <div className='grid gap-4 md:grid-cols-2'><Select label='Notification Preference' options={[{ value: 'email', label: 'Email' }, { value: 'in-app', label: 'In-app' }, { value: 'both', label: 'Email + in-app' }]} /><Select label='Profile Visibility' options={[{ value: 'public', label: 'Public profile' }, { value: 'private', label: 'Private profile' }]} /></div>
           <label className='block space-y-1.5'>
             <span className='text-sm font-semibold text-slate-700'>Profile Details</span>
             <textarea className='focus-ring min-h-28 w-full rounded-lg border border-slate-200 p-3 text-sm' defaultValue={currentUser.bio} />
@@ -255,12 +268,14 @@ export function ChangePasswordPage() {
 
   return (
     <div className='space-y-6'>
-      <PageHeader description='Change password after accessing personal profile. Current password and confirmation are validated locally.' eyebrow='UC-14' title='Change Password' />
+      <PageHeader description='Change password after accessing personal profile. Current password and confirmation are validated locally.' eyebrow='Security settings' title='Change Password' />
       <Card>
         <CardBody className='max-w-2xl space-y-4'>
           <Input error={submitted ? 'Current password is required.' : undefined} label='Current Password' type='password' />
           <Input error={submitted ? 'Minimum 8 characters, include number and letter.' : undefined} label='New Password' type='password' />
           <Input error={submitted ? 'Confirm password must match new password.' : undefined} label='Confirm New Password' type='password' />
+          <Input label='Security Code' placeholder='Optional 2FA code' />
+          <Select label='Logout Other Devices' options={[{ value: 'yes', label: 'Yes' }, { value: 'no', label: 'No' }]} />
           <Button icon={<CheckCircle2 size={17} />} onClick={() => setSubmitted(true)}>Update Password</Button>
         </CardBody>
       </Card>
@@ -268,10 +283,10 @@ export function ChangePasswordPage() {
   );
 }
 
-function AuthFrame({ children, title, description, uc }: { children: ReactNode; title: string; description: string; uc: string }) {
+function AuthFrame({ children, title, description, eyebrow }: { children: ReactNode; title: string; description: string; eyebrow: string }) {
   return (
     <div className='mx-auto max-w-3xl space-y-6'>
-      <PageHeader description={description} eyebrow={uc} title={title} />
+      <PageHeader description={description} eyebrow={eyebrow} title={title} />
       <Card><CardBody>{children}</CardBody></Card>
     </div>
   );

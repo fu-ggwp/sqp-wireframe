@@ -10,8 +10,10 @@ import { Input } from '../components/ui/Input';
 import { Modal } from '../components/ui/Modal';
 import { PageHeader } from '../components/ui/PageHeader';
 import { Progress } from '../components/ui/Progress';
+import { Select } from '../components/ui/Select';
 import { StatusPill } from '../components/ui/StatusPill';
 import { Table } from '../components/ui/Table';
+import { FieldNote, ListFieldBar, PaginationBar } from '../components/ui/FieldControls';
 
 const learner = users[0];
 const learnerStudySets = studySets.filter((set) => set.visibility === 'public' || set.assignedClassIds.length > 0);
@@ -119,8 +121,17 @@ export function LearnerDashboardPage() {
 export function LearnerClassesPage() {
   return (
     <div className='space-y-6'>
-      <PageHeader actions={<Link to='/learner/classes/join'><Button>Join Class</Button></Link>} description='Classes you joined, with assigned study sets and exams from teachers.' eyebrow='UC-16' title='My Classes' />
+      <PageHeader actions={<Link to='/learner/classes/join'><Button>Join Class</Button></Link>} description='Classes you joined, with assigned study sets and exams from teachers.' eyebrow='Classroom' title='My Classes' />
+      <ListFieldBar
+        filters={[
+          { label: 'Subject Filter', options: [{ value: 'all', label: 'All subjects' }, { value: 'Biology', label: 'Biology' }, { value: 'Mathematics', label: 'Mathematics' }] },
+          { label: 'Status Filter', options: [{ value: 'all', label: 'All statuses' }, { value: 'active', label: 'Active' }, { value: 'archived', label: 'Archived' }] },
+        ]}
+        searchLabel='Search Classes'
+        searchPlaceholder='Class name, subject, teacher, code'
+      />
       <ClassTable />
+      <PaginationBar label='Showing 1-2 of 2 joined classes' />
     </div>
   );
 }
@@ -130,11 +141,17 @@ export function JoinClassPage() {
 
   return (
     <div className='space-y-6'>
-      <PageHeader description='Enter a class code or invitation link to request access.' eyebrow='UC-17' title='Join Class' />
+      <PageHeader description='Enter a class code or invitation link to request access.' eyebrow='Class access' title='Join Class' />
       <Card>
         <CardBody className='max-w-2xl space-y-4'>
-          <Input helper='Example: BIO12A-2026' label='Class Code' placeholder='Enter teacher class code' />
-          <Input helper='Paste invitation link if available.' label='Invitation Link' placeholder='https://sqp.local/invite/...' />
+          <div className='grid gap-4 md:grid-cols-2'>
+            <Input helper='Example: BIO12A-2026' label='Class Code' placeholder='Enter teacher class code' />
+            <Input helper='Paste invitation link if available.' label='Invitation Link' placeholder='https://sqp.local/invite/...' />
+            <Select label='Request Type' options={[{ value: 'join', label: 'Join class' }, { value: 'exam', label: 'Request exam access' }, { value: 'materials', label: 'Request materials only' }]} />
+            <Input label='Learner Email' placeholder='linh@sqp.edu.vn' type='email' />
+            <Select label='Preferred Section' options={[{ value: 'morning', label: 'Morning section' }, { value: 'afternoon', label: 'Afternoon section' }, { value: 'online', label: 'Online only' }]} />
+            <Input label='Parent / Guardian Contact' placeholder='Optional phone or email' />
+          </div>
           <label className='block space-y-1.5'>
             <span className='text-sm font-semibold text-slate-700'>Request Message</span>
             <textarea className='focus-ring min-h-24 w-full rounded-lg border border-slate-200 p-3 text-sm' placeholder='Tell teacher why you want to join this class.' />
@@ -154,7 +171,15 @@ export function LearnerClassDetailPage() {
 
   return (
     <div className='space-y-6'>
-      <PageHeader actions={<Link to='/learner/classes'><Button icon={<ArrowLeft size={17} />} variant='secondary'>Back to Classes</Button></Link>} description='Class materials, teacher information, and assigned practice.' eyebrow='UC-16' title={room.name} />
+      <PageHeader actions={<Link to='/learner/classes'><Button icon={<ArrowLeft size={17} />} variant='secondary'>Back to Classes</Button></Link>} description='Class materials, teacher information, and assigned practice.' eyebrow='Classroom' title={room.name} />
+      <ListFieldBar
+        filters={[
+          { label: 'Material Type', options: [{ value: 'all', label: 'All materials' }, { value: 'study-set', label: 'Study sets' }, { value: 'exam', label: 'Exams' }] },
+          { label: 'Completion Status', options: [{ value: 'all', label: 'All statuses' }, { value: 'todo', label: 'Not started' }, { value: 'progress', label: 'In progress' }, { value: 'done', label: 'Completed' }] },
+        ]}
+        searchLabel='Search Class Materials'
+        searchPlaceholder='Study set, topic, due date'
+      />
       <div className='grid gap-6 lg:grid-cols-[0.8fr_1.4fr]'>
         <Card><CardBody className='space-y-4'><Info label='Teacher' value={room.teacherName} /><Info label='Subject' value={room.subject} /><Info label='Class Code' value={room.code} /><Info label='Members' value={`${room.memberIds.length}`} /><Info label='Status' value={room.status} /></CardBody></Card>
         <Card><CardBody><h2 className='mb-4 text-lg font-bold text-slate-950'>Assigned study sets</h2><div className='grid gap-3 md:grid-cols-2'>{assignedSets.map((set) => <StudySetMini key={set.id} id={set.id} title={set.title} progress={set.progress ?? 0} />)}</div></CardBody></Card>
@@ -169,11 +194,22 @@ export function LearnerStudySetsPage() {
 
   return (
     <div className='space-y-6'>
-      <PageHeader description='Continue assigned sets, public sets, flashcards, quizzes, and mistake review.' eyebrow='UC-18' title='Study Sets' />
-      <Card><CardBody><Input label='Search Study Sets' onChange={(event) => setQuery(event.target.value)} placeholder='Search by title, subject, topic' value={query} /></CardBody></Card>
+      <PageHeader description='Continue assigned sets, public sets, flashcards, quizzes, and mistake review.' eyebrow='Study library' title='Study Sets' />
+      <ListFieldBar
+        filters={[
+          { label: 'Subject Filter', options: [{ value: 'all', label: 'All subjects' }, { value: 'Biology', label: 'Biology' }, { value: 'Chemistry', label: 'Chemistry' }, { value: 'Mathematics', label: 'Mathematics' }] },
+          { label: 'Progress Filter', options: [{ value: 'all', label: 'All progress' }, { value: 'not-started', label: 'Not started' }, { value: 'in-progress', label: 'In progress' }, { value: 'completed', label: 'Completed' }] },
+          { label: 'Visibility Filter', options: [{ value: 'all', label: 'All visibility' }, { value: 'public', label: 'Public' }, { value: 'class-only', label: 'Class only' }] },
+        ]}
+        onSearchChange={setQuery}
+        searchLabel='Search Study Sets'
+        searchPlaceholder='Search by title, subject, topic'
+        searchValue={query}
+      />
       <div className='grid gap-4 md:grid-cols-2 xl:grid-cols-3'>
         {filtered.map((set) => <StudySetLearnerCard key={set.id} set={set} />)}
       </div>
+      <PaginationBar label={`Showing ${filtered.length} study sets`} />
     </div>
   );
 }
@@ -189,7 +225,7 @@ export function LearnerStudySetDetailPage() {
       <PageHeader
         actions={<><Link to={`/learner/study-sets/${set.id}/flashcards`}><Button>Flashcards</Button></Link><Link to={`/learner/study-sets/${set.id}/quiz`}><Button variant='secondary'>Take Quiz</Button></Link>{wrongAnswers.length ? <Link to={`/learner/study-sets/${set.id}/review`}><Button variant='ghost'>Review mistakes</Button></Link> : null}</>}
         description='Review set details, continue flashcards, take a quiz, or revisit missed questions.'
-        eyebrow='UC-18, UC-19'
+        eyebrow='Study set'
         title={set.title}
       />
       <div className='grid gap-6 lg:grid-cols-[1.3fr_0.7fr]'>
@@ -216,7 +252,8 @@ export function FlashcardStudyPage() {
 
   return (
     <div className='space-y-6'>
-      <PageHeader description='Flip each card, reveal the answer, and continue through this study set.' eyebrow='UC-05' title={`Flashcards: ${set.title}`} />
+      <PageHeader description='Flip each card, reveal the answer, and continue through this study set.' eyebrow='Flashcards' title={`Flashcards: ${set.title}`} />
+      <Card><CardBody className='grid gap-4 md:grid-cols-4'><Select label='Card Order' options={[{ value: 'default', label: 'Default order' }, { value: 'shuffle', label: 'Shuffle cards' }, { value: 'weak-first', label: 'Weak answers first' }]} /><Select label='Answer Mode' options={[{ value: 'tap', label: 'Tap to reveal' }, { value: 'type', label: 'Type before reveal' }]} /><Select label='Confidence' options={[{ value: 'unknown', label: 'Not sure' }, { value: 'learning', label: 'Learning' }, { value: 'known', label: 'Known' }]} /><label className='flex items-center gap-3 rounded-lg border border-slate-200 p-3 text-sm font-semibold'><input type='checkbox' /> Mark card for review</label></CardBody></Card>
       <Card className='mx-auto max-w-4xl'>
         <CardBody>
           <div className='mb-4 flex items-center justify-between'><Badge tone='teal'>Card {index + 1} of {setQuestions.length}</Badge><Progress value={Math.round(((index + 1) / setQuestions.length) * 100)} /></div>
@@ -242,7 +279,8 @@ export function StudySetQuizPage() {
 
   return (
     <div className='space-y-6'>
-      <PageHeader description='Answer questions from this study set and review feedback after submitting.' eyebrow='UC-19' title={`Quiz: ${set.title}`} />
+      <PageHeader description='Answer questions from this study set and review feedback after submitting.' eyebrow='Practice quiz' title={`Quiz: ${set.title}`} />
+      <Card><CardBody className='grid gap-4 md:grid-cols-4'><Select label='Question Count' options={[{ value: '3', label: '3 questions' }, { value: '10', label: '10 questions' }, { value: 'all', label: 'All questions' }]} /><Select label='Question Type Filter' options={[{ value: 'all', label: 'All types' }, { value: 'multiple-choice', label: 'Multiple choice' }, { value: 'written-answer', label: 'Written answer' }]} /><Input label='Time Limit' placeholder='15 minutes' /><label className='flex items-center gap-3 rounded-lg border border-slate-200 p-3 text-sm font-semibold'><input type='checkbox' /> Show instant feedback</label></CardBody></Card>
       <div className='space-y-4'>
         {quizQuestions.map((question, idx) => (
           <Card key={question.id}>
@@ -270,9 +308,11 @@ export function QuizResultPage() {
 
   return (
     <div className='space-y-6'>
-      <PageHeader actions={<Link to={`/learner/study-sets/${set.id}/review`}><Button>Review Wrong Answers</Button></Link>} description={`Result for ${set.title}. Check missed questions and continue practice.`} eyebrow='UC-19, UC-20' title='Quiz Result' />
+      <PageHeader actions={<Link to={`/learner/study-sets/${set.id}/review`}><Button>Review Wrong Answers</Button></Link>} description={`Result for ${set.title}. Check missed questions and continue practice.`} eyebrow='Quiz result' title='Quiz Result' />
       <div className='grid gap-4 md:grid-cols-3'><MetricCard label='Score' value={`${correctCount}/${resultQuestions.length}`} helper='Practice attempt' /><MetricCard label='Correct answers' value={`${correctCount}`} helper='Based on current answers' /><MetricCard label='Wrong answers' value={`${wrongCount}`} helper={wrongCount ? 'Review recommended' : 'No missed questions'} /></div>
+      <ListFieldBar filters={[{ label: 'Answer Status', options: [{ value: 'all', label: 'All answers' }, { value: 'correct', label: 'Correct only' }, { value: 'wrong', label: 'Wrong only' }] }, { label: 'Question Type', options: [{ value: 'all', label: 'All types' }, { value: 'multiple-choice', label: 'Multiple choice' }, { value: 'written-answer', label: 'Written answer' }] }]} searchLabel='Search Answer Review' searchPlaceholder='Question or answer keyword' />
       <Table headers={['Question', 'Your Answer', 'Correct Answer', 'Status']} rows={resultQuestions.map((question) => [question.content, question.learnerAnswer ?? question.correctAnswer, question.correctAnswer, (question.learnerAnswer ?? question.correctAnswer) === question.correctAnswer ? <StatusPill label='Correct' tone='success' /> : <StatusPill label='Wrong' tone='danger' />])} />
+      <PaginationBar label={`Showing ${resultQuestions.length} answer rows`} />
     </div>
   );
 }
@@ -285,7 +325,7 @@ export function ReviewWrongAnswersPage() {
 
   return (
     <div className='space-y-6'>
-      <PageHeader actions={<Link to={`/learner/study-sets/${set.id}`}><Button variant='secondary'>Back to Study Set</Button></Link>} description={`Missed questions grouped under ${set.title}.`} eyebrow='UC-20, UC-21' title='Review Wrong Answers' />
+      <PageHeader actions={<Link to={`/learner/study-sets/${set.id}`}><Button variant='secondary'>Back to Study Set</Button></Link>} description={`Missed questions grouped under ${set.title}.`} eyebrow='Mistake review' title='Review Wrong Answers' />
       <Card>
         <CardBody className='grid gap-3 md:grid-cols-4'>
           <Info label='Study Set' value={set.title} />
@@ -294,6 +334,7 @@ export function ReviewWrongAnswersPage() {
           <Info label='Review Mode' value='Wrong answers only' />
         </CardBody>
       </Card>
+      <ListFieldBar filters={[{ label: 'Difficulty Filter', options: [{ value: 'all', label: 'All difficulties' }, { value: 'easy', label: 'Easy' }, { value: 'medium', label: 'Medium' }, { value: 'hard', label: 'Hard' }] }, { label: 'Review Status', options: [{ value: 'all', label: 'All review status' }, { value: 'new', label: 'New mistakes' }, { value: 'reviewed', label: 'Reviewed' }] }]} searchLabel='Search Wrong Answers' searchPlaceholder='Question, topic, explanation' />
       {wrong.length ? wrong.map((question) => (
         <Card key={question.id}>
           <CardBody className='space-y-3'>
@@ -301,7 +342,7 @@ export function ReviewWrongAnswersPage() {
             <h2 className='text-lg font-bold text-slate-950'>{question.content}</h2>
             <div className='grid gap-3 md:grid-cols-2'><Info label='Your Answer' value={question.learnerAnswer ?? '-'} /><Info label='Correct Answer' value={question.correctAnswer} /></div>
             <p className='rounded-lg bg-slate-50 p-3 text-sm text-slate-700'>{question.explanation}</p>
-            <Button icon={<Sparkles size={17} />} onClick={() => setAiState(learner.premium ? question.aiExplanation : 'Upgrade required. Non-premium learners cannot request AI answer explanations.')}>Request AI Answer Explanation</Button>
+            <div className='flex flex-wrap gap-2'><Button icon={<Sparkles size={17} />} onClick={() => setAiState(learner.premium ? question.aiExplanation : 'Upgrade required. Non-premium learners cannot request AI answer explanations.')}>Request AI Answer Explanation</Button><Button variant='secondary'>Mark Reviewed</Button><Button variant='ghost'>Retry Question</Button></div>
           </CardBody>
         </Card>
       )) : <EmptyState icon={<CheckCircle2 size={22} />} title='No wrong answers in this study set' description='Continue studying or take another quiz to generate review items.' />}
@@ -313,7 +354,8 @@ export function ReviewWrongAnswersPage() {
 export function LearnerProgressPage() {
   return (
     <div className='space-y-6'>
-      <PageHeader description='Track accuracy, practiced questions, repeated mistakes, and weak topics.' eyebrow='UC-22' title='Learning Progress' />
+      <PageHeader description='Track accuracy, practiced questions, repeated mistakes, and weak topics.' eyebrow='Learning progress' title='Learning Progress' />
+      <ListFieldBar filters={[{ label: 'Subject Filter', options: [{ value: 'all', label: 'All subjects' }, { value: 'Biology', label: 'Biology' }, { value: 'Chemistry', label: 'Chemistry' }, { value: 'Mathematics', label: 'Mathematics' }] }, { label: 'Period Filter', options: [{ value: '7d', label: 'Last 7 days' }, { value: '30d', label: 'Last 30 days' }, { value: 'term', label: 'Current term' }] }]} searchLabel='Search Topic Progress' searchPlaceholder='Weak topic or study set' />
       <div className='grid gap-4 md:grid-cols-4'>{progressMetrics.map((metric) => <MetricCard key={metric.label} label={metric.label} value={`${metric.value}${metric.unit === '%' ? '%' : ''}`} helper={metric.trend} />)}</div>
       <Card><CardBody><h2 className='mb-4 text-lg font-bold text-slate-950'>Weak topic breakdown</h2><Table headers={['Topic', 'Accuracy', 'Repeated Mistakes', 'Recommended Action']} rows={[[ 'Cell Membrane', '58%', '7', 'Review flashcards and explanation' ], [ 'Chemical Bonding', '63%', '4', 'Retake practice quiz' ], [ 'Quadratic Graphs', '69%', '3', 'Study graph transformations' ]]} /></CardBody></Card>
     </div>
@@ -326,9 +368,9 @@ export function AvailableExamsPage() {
 
   return (
     <div className='space-y-6'>
-      <PageHeader description='Upcoming and open exams assigned to your classes.' eyebrow='UC-23' title='Available Exams' />
-      <Card><CardBody><Input label='Search Exams' onChange={(event) => setQuery(event.target.value)} placeholder='Search by title, class, status' value={query} /></CardBody></Card>
-      {filtered.length ? <ExamTable examsOverride={filtered} /> : <EmptyState icon={<GraduationCap size={22} />} title='No exams found' description='Change search keyword to view available exam sessions.' />}
+      <PageHeader description='Upcoming and open exams assigned to your classes.' eyebrow='Exam list' title='Available Exams' />
+      <ListFieldBar filters={[{ label: 'Status Filter', options: [{ value: 'all', label: 'All statuses' }, { value: 'open', label: 'Open' }, { value: 'scheduled', label: 'Scheduled' }, { value: 'submitted', label: 'Submitted' }] }, { label: 'Class Filter', options: [{ value: 'all', label: 'All classes' }, { value: 'bio', label: 'Biology 12A' }, { value: 'math', label: 'Mathematics 11B' }] }]} onSearchChange={setQuery} searchLabel='Search Exams' searchPlaceholder='Search by title, class, status' searchValue={query} />
+      {filtered.length ? <><ExamTable examsOverride={filtered} /><PaginationBar label={`Showing ${filtered.length} available exams`} /></> : <EmptyState icon={<GraduationCap size={22} />} title='No exams found' description='Change search keyword to view available exam sessions.' />}
     </div>
   );
 }
@@ -339,8 +381,8 @@ export function ExamInfoPage() {
 
   return (
     <div className='space-y-6'>
-      <PageHeader actions={<Link to={`/learner/exams/${exam.id}/take`}><Button>Start Exam</Button></Link>} description='Check schedule, duration, attempts, question rules, and result visibility before starting.' eyebrow='UC-24' title={exam.title} />
-      <Card><CardBody className='grid gap-4 md:grid-cols-2'><Info label='Class' value={exam.className} /><Info label='Start Time' value={exam.startTime} /><Info label='Duration' value={`${exam.durationMinutes} minutes`} /><Info label='Attempts Allowed' value={`${exam.attemptsAllowed}`} /><Info label='Result Visibility' value={exam.showResult ? 'Visible after submit' : 'Hidden by teacher'} /><Info label='Randomization' value={`${exam.randomizeQuestions ? 'Questions' : 'No questions'} / ${exam.randomizeAnswers ? 'Answers' : 'No answers'}`} /></CardBody></Card>
+      <PageHeader actions={<Link to={`/learner/exams/${exam.id}/take`}><Button>Start Exam</Button></Link>} description='Check schedule, duration, attempts, question rules, and result visibility before starting.' eyebrow='Exam information' title={exam.title} />
+      <Card><CardBody className='grid gap-4 md:grid-cols-3'><Input label='Exam Access Code' placeholder='Enter code if required' /><Select label='Attempt Selection' options={[{ value: 'first', label: 'Attempt 1' }, { value: 'retake', label: 'Retake if allowed' }]} /><label className='flex items-center gap-3 rounded-lg border border-slate-200 p-3 text-sm font-semibold'><input type='checkbox' /> I have read exam rules</label><Info label='Class' value={exam.className} /><Info label='Start Time' value={exam.startTime} /><Info label='Duration' value={`${exam.durationMinutes} minutes`} /><Info label='Attempts Allowed' value={`${exam.attemptsAllowed}`} /><Info label='Result Visibility' value={exam.showResult ? 'Visible after submit' : 'Hidden by teacher'} /><Info label='Randomization' value={`${exam.randomizeQuestions ? 'Questions' : 'No questions'} / ${exam.randomizeAnswers ? 'Answers' : 'No answers'}`} /></CardBody></Card>
     </div>
   );
 }
@@ -355,9 +397,9 @@ export function TakeExamPage() {
 
   return (
     <div className='space-y-6'>
-      <PageHeader description='Answer each question, watch the timer, and submit when ready.' eyebrow='UC-25' title={`Take Exam: ${exam.title}`} />
+      <PageHeader description='Answer each question, watch the timer, and submit when ready.' eyebrow='Exam attempt' title={`Take Exam: ${exam.title}`} />
       <Card><CardBody className='flex flex-wrap items-center justify-between gap-3'><span className='inline-flex items-center gap-2 font-bold text-slate-800'><Clock size={18} /> 42:15 remaining</span><StatusPill label='Auto-saved 20 seconds ago' tone='info' /><Badge tone='amber'>Attempt 1 of {exam.attemptsAllowed}</Badge></CardBody></Card>
-      <Card><CardBody className='grid gap-3 md:grid-cols-4'><Info label='Candidate' value={learner.fullName} /><Info label='Exam Code' value={exam.id} /><Info label='Result Rule' value={exam.showResult ? 'Visible after submit' : 'Hidden'} /><Info label='Network Status' value='Stable' /></CardBody></Card>
+      <Card><CardBody className='grid gap-3 md:grid-cols-4'><Info label='Candidate' value={learner.fullName} /><Info label='Exam Code' value={exam.id} /><Info label='Result Rule' value={exam.showResult ? 'Visible after submit' : 'Hidden'} /><Info label='Network Status' value='Stable' /><Select label='Question Status Filter' options={[{ value: 'all', label: 'All questions' }, { value: 'answered', label: 'Answered' }, { value: 'unanswered', label: 'Unanswered' }, { value: 'flagged', label: 'Flagged' }]} /><Select label='Confidence Level' options={[{ value: 'low', label: 'Low confidence' }, { value: 'medium', label: 'Medium confidence' }, { value: 'high', label: 'High confidence' }]} /><label className='flex items-center gap-3 rounded-lg border border-slate-200 p-3 text-sm font-semibold'><input type='checkbox' /> Flag current question</label><FieldNote>Question Navigator: 1 2 3</FieldNote></CardBody></Card>
       {examQuestions.map((question, index) => (
         <Card key={question.id}><CardBody className='space-y-4'><h2 className='font-bold text-slate-950'>Question {index + 1}</h2><p>{question.content}</p><div className='grid gap-2 md:grid-cols-2'>{question.options.map((option) => <button key={option} className={`focus-ring rounded-lg border p-3 text-left text-sm font-semibold ${answers[question.id] === option ? 'border-teal-500 bg-teal-50 text-teal-800' : 'border-slate-200 bg-white text-slate-700'}`} onClick={() => setAnswers((current) => ({ ...current, [question.id]: option }))}>{option}</button>)}</div></CardBody></Card>
       ))}
@@ -377,9 +419,10 @@ export function ExamResultPage() {
 
   return (
     <div className='space-y-6'>
-      <PageHeader description='Exam score and answer details appear when the teacher makes results visible.' eyebrow='UC-26' title='Exam Result' />
+      <PageHeader description='Exam score and answer details appear when the teacher makes results visible.' eyebrow='Exam result' title='Exam Result' />
       <div className='grid gap-4 md:grid-cols-3'><MetricCard label='Score' value={`${attempt.score}`} helper='Out of 100' /><MetricCard label='Accuracy' value={`${attempt.accuracy}%`} helper='Based on submitted answers' /><MetricCard label='Status' value={attempt.status} helper={attempt.submittedAt ?? 'Not submitted'} /></div>
-      {exam.showResult ? <Table headers={['Question', 'Your Answer', 'Correct Answer']} rows={questions.slice(0, 3).map((question) => [question.content, attempt.answers[question.id] ?? '-', question.correctAnswer])} /> : <EmptyState icon={<FileQuestion size={22} />} title='Result hidden' description='Teacher configured this exam to hide detailed results.' />}
+      <ListFieldBar filters={[{ label: 'Result Status', options: [{ value: 'all', label: 'All results' }, { value: 'correct', label: 'Correct only' }, { value: 'wrong', label: 'Wrong only' }] }, { label: 'Question Type', options: [{ value: 'all', label: 'All types' }, { value: 'multiple-choice', label: 'Multiple choice' }, { value: 'written', label: 'Written answer' }] }]} searchLabel='Search Result Detail' searchPlaceholder='Question or answer keyword' />
+      {exam.showResult ? <><Table headers={['Question', 'Your Answer', 'Correct Answer']} rows={questions.slice(0, 3).map((question) => [question.content, attempt.answers[question.id] ?? '-', question.correctAnswer])} /><PaginationBar label='Showing 1-3 of 3 result rows' /></> : <EmptyState icon={<FileQuestion size={22} />} title='Result hidden' description='Teacher configured this exam to hide detailed results.' />}
     </div>
   );
 }

@@ -10,6 +10,7 @@ import { Input } from '../components/ui/Input';
 import { PageHeader } from '../components/ui/PageHeader';
 import { Select } from '../components/ui/Select';
 import { Table } from '../components/ui/Table';
+import { ListFieldBar, PaginationBar } from '../components/ui/FieldControls';
 
 export function HomePage() {
   const publicSets = studySets.filter((set) => set.visibility === 'public');
@@ -31,7 +32,7 @@ export function HomePage() {
           <div className='mx-auto mt-7 flex max-w-3xl flex-col gap-3 rounded-lg border border-slate-200 bg-white p-2 shadow-sm sm:flex-row'>
             <div className='flex min-h-12 flex-1 items-center gap-3 px-3 text-left text-sm text-slate-500'>
               <Search size={19} />
-              <span>Search biology, chemistry, math, flashcards</span>
+              <input className='h-10 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400' placeholder='Search biology, chemistry, math, flashcards' />
             </div>
             <Link to='/search/study-sets'><Button className='w-full sm:w-auto' size='lg'>Search</Button></Link>
           </div>
@@ -157,16 +158,10 @@ export function SearchStudySetsPage() {
       <PageHeader
         actions={<Link to='/sets/set-bio-cell/public'><Button icon={<BookOpen size={18} />}>Open sample set</Button></Link>}
         description='Find public sets by keyword, subject, topic, or tag.'
-        eyebrow='UC-02'
+        eyebrow='Public discovery'
         title='Search Study Sets'
       />
-      <Card>
-        <CardBody className='grid gap-4 md:grid-cols-[1fr_220px_auto]'>
-          <Input label='Keyword' onChange={(event) => setQuery(event.target.value)} placeholder='Cell biology, bonding, flashcards' value={query} />
-          <Select label='Subject' onChange={(event) => setSubject(event.target.value)} options={[{ value: 'all', label: 'All subjects' }, { value: 'Biology', label: 'Biology' }, { value: 'Chemistry', label: 'Chemistry' }, { value: 'Mathematics', label: 'Mathematics' }]} value={subject} />
-          <div className='flex items-end'><Button icon={<Filter size={17} />} variant='secondary'>Apply Filter</Button></div>
-        </CardBody>
-      </Card>
+      <ListFieldBar filters={[{ label: 'Subject', options: [{ value: 'all', label: 'All subjects' }, { value: 'Biology', label: 'Biology' }, { value: 'Chemistry', label: 'Chemistry' }, { value: 'Mathematics', label: 'Mathematics' }], value: subject }, { label: 'Study Mode', options: [{ value: 'all', label: 'All modes' }, { value: 'flashcards', label: 'Flashcards' }, { value: 'quiz', label: 'Quiz practice' }] }, { label: 'Rating Filter', options: [{ value: 'all', label: 'All ratings' }, { value: '4plus', label: '4+ stars' }, { value: 'popular', label: 'Most popular' }] }]} onSearchChange={setQuery} searchLabel='Keyword' searchPlaceholder='Cell biology, bonding, flashcards' searchValue={query}><Button icon={<Filter size={17} />} variant='secondary'>Advanced</Button></ListFieldBar>
       {results.length ? (
         <div className='grid gap-4 md:grid-cols-2 xl:grid-cols-3'>
           {results.map((set) => <StudySetCard key={set.id} set={set} />)}
@@ -174,6 +169,7 @@ export function SearchStudySetsPage() {
       ) : (
         <EmptyState icon={<Search size={22} />} title='No public study set found' description='Adjust keyword or subject filter to view matching public resources.' />
       )}
+      {results.length ? <PaginationBar label={`Showing ${results.length} public study sets`} /> : null}
     </div>
   );
 }
@@ -189,13 +185,8 @@ export function SearchUsersPage() {
 
   return (
     <div className='space-y-6'>
-      <PageHeader description='Find public learner and teacher profiles.' eyebrow='UC-03' title='Find People' />
-      <Card>
-        <CardBody className='grid gap-4 md:grid-cols-[1fr_220px]'>
-          <Input label='Keyword' onChange={(event) => setQuery(event.target.value)} placeholder='Name, username, email, profile detail' value={query} />
-          <Select label='Role' onChange={(event) => setRole(event.target.value)} options={[{ value: 'all', label: 'All roles' }, { value: 'Learner', label: 'Learner' }, { value: 'Teacher', label: 'Teacher' }, { value: 'Admin', label: 'Admin' }]} value={role} />
-        </CardBody>
-      </Card>
+      <PageHeader description='Find public learner and teacher profiles.' eyebrow='People search' title='Find People' />
+      <ListFieldBar filters={[{ label: 'Role', options: [{ value: 'all', label: 'All roles' }, { value: 'Learner', label: 'Learner' }, { value: 'Teacher', label: 'Teacher' }, { value: 'Admin', label: 'Admin' }], value: role }, { label: 'Premium Status', options: [{ value: 'all', label: 'All accounts' }, { value: 'premium', label: 'Premium' }, { value: 'free', label: 'Free' }] }, { label: 'Account Status', options: [{ value: 'all', label: 'All statuses' }, { value: 'active', label: 'Active' }, { value: 'pending', label: 'Pending' }] }]} onSearchChange={setQuery} searchLabel='Keyword' searchPlaceholder='Name, username, email, profile detail' searchValue={query} />
       <Table
         emptyMessage='No public account matches current filter.'
         headers={['Account', 'Role', 'Premium', 'Status', 'Last Active']}
@@ -207,6 +198,7 @@ export function SearchUsersPage() {
           user.lastActive,
         ])}
       />
+      <PaginationBar label={`Showing ${filteredUsers.length} public accounts`} />
     </div>
   );
 }
@@ -221,7 +213,7 @@ export function PublicStudySetDetailPage() {
       <PageHeader
         actions={<><Link to={`/sets/${set.id}/flashcards`}><Button>Study Flashcards</Button></Link><Link to='/auth/register'><Button variant='secondary'>Sign up to save history</Button></Link></>}
         description='Preview questions, tags, owner, and available study modes.'
-        eyebrow='UC-04, UC-05'
+        eyebrow='Public study set'
         title={set.title}
       />
       <div className='grid gap-6 lg:grid-cols-[1.5fr_0.8fr]'>
@@ -230,12 +222,14 @@ export function PublicStudySetDetailPage() {
           <CardBody className='space-y-4'>
             <p className='leading-7 text-slate-600'>{set.description}</p>
             <div className='flex flex-wrap gap-2'>{set.tags.map((tag) => <Badge key={tag} tone='slate'>{tag}</Badge>)}</div>
+            <ListFieldBar filters={[{ label: 'Question Type', options: [{ value: 'all', label: 'All types' }, { value: 'multiple-choice', label: 'Multiple choice' }, { value: 'true-false', label: 'True/False' }, { value: 'written-answer', label: 'Written answer' }] }, { label: 'Difficulty', options: [{ value: 'all', label: 'All difficulties' }, { value: 'easy', label: 'Easy' }, { value: 'medium', label: 'Medium' }, { value: 'hard', label: 'Hard' }] }]} searchLabel='Search Preview Questions' searchPlaceholder='Question keyword' />
             <Table headers={['Question Preview', 'Type', 'Difficulty']} rows={sampleQuestions.map((question) => [question.content, question.type, question.difficulty])} />
+            <PaginationBar label='Showing 1-3 of 3 preview questions' />
           </CardBody>
         </Card>
         <div className='space-y-4'>
           <Card><CardBody className='space-y-4'><Info label='Owner' value={set.ownerName} /><Info label='Subject' value={set.subject} /><Info label='Topic' value={set.topic} /><Info label='Visibility' value={set.visibility} /><Info label='Questions' value={`${set.questionCount}`} /><Info label='Learners' value={`${set.learners}`} /><div className='flex items-center gap-1 text-amber-500'><Star size={18} fill='currentColor' /> <span className='font-bold text-slate-800'>{set.rating}</span></div></CardBody></Card>
-          <Card><CardBody><p className='text-sm leading-6 text-slate-600'>Guests can preview public flashcards and set details. Login is required for saved history, quizzes, classes, and exams.</p><Link className='mt-4 inline-flex' to='/auth/register'><Button className='w-full' variant='secondary'>Create account</Button></Link></CardBody></Card>
+          <Card><CardBody><p className='text-sm leading-6 text-slate-600'>Guests can preview public flashcards and set details. Login is required for saved history, quizzes, classes, and exams.</p><div className='mt-4 grid gap-3'><Select label='Guest Study Mode' options={[{ value: 'flashcards', label: 'Flashcards preview' }, { value: 'learn', label: 'Learn mode after signup' }, { value: 'quiz', label: 'Quiz after login' }]} /><Link className='inline-flex' to='/auth/register'><Button className='w-full' variant='secondary'>Create account</Button></Link></div></CardBody></Card>
         </div>
       </div>
     </div>
