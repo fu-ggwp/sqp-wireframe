@@ -92,6 +92,7 @@ export const router = createBrowserRouter([
       { path: 'profile', element: authenticatedOnly(<ProfilePage />) },
       { path: 'profile/edit', element: authenticatedOnly(<EditProfilePage />) },
       { path: 'profile/change-password', element: authenticatedOnly(<ChangePasswordPage />) },
+      { path: 'profile/reset-password', element: authenticatedOnly(<ResetPasswordPage />) },
       { path: 'learner/dashboard', element: learnerOnly(<LearnerDashboardPage />) },
       { path: 'learner/classes', element: learnerOnly(<LearnerClassesPage />) },
       { path: 'learner/classes/join', element: learnerOnly(<JoinClassPage />) },

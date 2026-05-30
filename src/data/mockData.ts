@@ -489,7 +489,7 @@ export const screenRoutes: RouteMeta[] = [
   { section: '3.2.1', screen: 'Register Account', route: '/auth/register', actor: 'Guest', relatedUc: 'UC-07', group: 'Authentication & Profile' },
   { section: '3.2.2', screen: 'Login with Account', route: '/auth/login', actor: 'Guest, Learner, Teacher, Admin', relatedUc: 'UC-08, UC-09, UC-11', group: 'Authentication & Profile' },
   { section: '3.2.3', screen: 'Forgot Password', route: '/auth/forgot-password', actor: 'Learner, Teacher, Admin', relatedUc: 'UC-10', group: 'Authentication & Profile' },
-  { section: '3.2.4', screen: 'Reset Password', route: '/auth/reset-password', actor: 'Learner, Teacher, Admin', relatedUc: 'UC-10', group: 'Authentication & Profile' },
+  { section: '3.2.4', screen: 'Reset Password', route: '/profile/reset-password', actor: 'Learner, Teacher, Admin', relatedUc: 'UC-10', group: 'Authentication & Profile' },
   { section: '3.2.5', screen: 'View Personal Profile', route: '/profile', actor: 'Learner, Teacher, Admin', relatedUc: 'UC-12, UC-11', group: 'Authentication & Profile' },
   { section: '3.2.6', screen: 'Edit Personal Profile', route: '/profile/edit', actor: 'Learner, Teacher, Admin', relatedUc: 'UC-13', group: 'Authentication & Profile' },
   { section: '3.2.7', screen: 'Change Password', route: '/profile/change-password', actor: 'Learner, Teacher, Admin', relatedUc: 'UC-14', group: 'Authentication & Profile' },

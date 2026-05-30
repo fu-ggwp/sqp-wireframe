@@ -11,7 +11,7 @@ This mapping follows SRS Section 1.3 Use Cases, Section 1.4 Screen Authorization
 | 3.2.1 | Register Account | /auth/register | Guest | UC-07 | Full name, email, phone, requested role, password, confirm password, Google button | Create account, Google login mock, go login |
 | 3.2.2 | Login with Account | /auth/login | Guest, Learner, Teacher, Admin | UC-08, UC-09, UC-11 | Email, password, mock role, Google login button, login message | Login, Google login mock, forgot password, logout target |
 | 3.2.3 | Forgot Password | /auth/forgot-password | Learner, Teacher, Admin | UC-10 | Registered email, queued email status | Send reset link, back to login |
-| 3.2.4 | Reset Password | /auth/reset-password | Learner, Teacher, Admin | UC-10 | Reset token, new password, confirm password, success state | Reset password, go login |
+| 3.2.4 | Reset Password | /profile/reset-password | Learner, Teacher, Admin | UC-10 | Account email, verification token, new password, confirm password, logout other devices, token/success messages | Send token, reset password, back to profile edit |
 | 3.2.5 | View Personal Profile | /profile | Learner, Teacher, Admin | UC-12, UC-11 | Avatar, full name, username, role, premium, email, phone, status, bio | Edit profile, logout mock |
 | 3.2.6 | Edit Personal Profile | /profile/edit | Learner, Teacher, Admin | UC-13 | Full name, phone, avatar initials, username, profile details | Save changes, cancel |
 | 3.2.7 | Change Password | /profile/change-password | Learner, Teacher, Admin | UC-14 | Current password, new password, confirm password, validation errors | Update password |

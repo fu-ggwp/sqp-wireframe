@@ -41,6 +41,7 @@ const roleNav: Record<AuthRole, NavGroup[]> = {
       label: 'Account',
       items: [
         { label: 'Profile', to: '/profile', icon: Users },
+        { label: 'Security', to: '/profile/reset-password', icon: Shield },
         { label: 'Notifications', to: '/notifications', icon: Bell, badge: String(notifications.filter((item) => item.status === 'unread').length) },
         { label: 'Premium', to: '/premium', icon: CreditCard },
       ],
@@ -68,6 +69,7 @@ const roleNav: Record<AuthRole, NavGroup[]> = {
       label: 'Account',
       items: [
         { label: 'Profile', to: '/profile', icon: Users },
+        { label: 'Security', to: '/profile/reset-password', icon: Shield },
         { label: 'Notifications', to: '/notifications', icon: Bell, badge: String(notifications.filter((item) => item.status === 'unread').length) },
         { label: 'Premium', to: '/premium', icon: CreditCard },
       ],
@@ -87,6 +89,7 @@ const roleNav: Record<AuthRole, NavGroup[]> = {
       label: 'Shared',
       items: [
         { label: 'Profile', to: '/profile', icon: Users },
+        { label: 'Security', to: '/profile/reset-password', icon: Shield },
         { label: 'Notifications', to: '/notifications', icon: Bell, badge: String(notifications.filter((item) => item.status === 'unread').length) },
       ],
     },

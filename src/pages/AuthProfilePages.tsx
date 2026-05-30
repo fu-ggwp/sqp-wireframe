@@ -153,22 +153,44 @@ export function ForgotPasswordPage() {
 
 export function ResetPasswordPage() {
   const [saved, setSaved] = useState(false);
+  const [tokenSent, setTokenSent] = useState(false);
+  const { currentUser } = useAuth();
+  const isProfileFlow = Boolean(currentUser);
 
-  return (
-    <AuthFrame title='Reset Password' description='Enter the reset token and choose a new password.' eyebrow='Account recovery'>
+  const content = (
+    <>
       <div className='space-y-4'>
-        <Input label='Reset Token' placeholder='Token from email link' />
-        <Input label='Registered Email' placeholder='user@example.com' type='email' />
+        {currentUser ? (
+          <Input helper='Verification token will be sent to this account email.' label='Account Email' readOnly value={currentUser.email} />
+        ) : (
+          <Input label='Registered Email' placeholder='user@example.com' type='email' />
+        )}
+        <div className='flex flex-wrap items-end gap-3'>
+          <Input className='min-w-72 flex-1' label='Verification Token' placeholder='Enter token from email' />
+          <Button icon={<Mail size={17} />} onClick={() => setTokenSent(true)} variant='secondary'>Send Verification Token</Button>
+        </div>
         <Input label='New Password' type='password' />
         <Input helper='Must match the new password field.' label='Confirm New Password' type='password' />
         <Select label='Logout Other Devices' options={[{ value: 'yes', label: 'Yes, logout other devices' }, { value: 'no', label: 'No, keep sessions' }]} />
       </div>
-      <div className='mt-5 flex gap-3'>
+      <div className='mt-5 flex flex-wrap gap-3'>
         <Button icon={<ShieldCheck size={17} />} onClick={() => setSaved(true)}>Reset Password</Button>
-        <Link to='/auth/login'><Button variant='secondary'>Login</Button></Link>
+        <Link to={isProfileFlow ? '/profile/edit' : '/auth/login'}><Button variant='secondary'>{isProfileFlow ? 'Back to Profile Edit' : 'Login'}</Button></Link>
       </div>
-      {saved ? <p className='mt-4 rounded-lg bg-emerald-50 p-3 text-sm font-semibold text-emerald-700'>Password reset successful. You can now sign in.</p> : null}
-    </AuthFrame>
+      {tokenSent ? <p className='mt-4 rounded-lg bg-blue-50 p-3 text-sm font-semibold text-blue-700'>Verification token sent locally. Email service is not connected.</p> : null}
+      {saved ? <p className='mt-4 rounded-lg bg-emerald-50 p-3 text-sm font-semibold text-emerald-700'>Password reset successful.</p> : null}
+    </>
+  );
+
+  if (!isProfileFlow) {
+    return <AuthFrame title='Reset Password' description='Enter your registered email, request a verification token, then choose a new password.' eyebrow='Account recovery'>{content}</AuthFrame>;
+  }
+
+  return (
+    <div className='mx-auto max-w-3xl space-y-6'>
+      <PageHeader description='Reset password for the signed-in account. Email is read-only because it belongs to the current profile.' eyebrow='Security settings' title='Reset Password' />
+      <Card><CardBody>{content}</CardBody></Card>
+    </div>
   );
 }
 
@@ -188,7 +210,7 @@ export function ProfilePage() {
   return (
     <div className='space-y-6'>
       <PageHeader
-        actions={<><Link to='/profile/edit'><Button icon={<Save size={17} />} variant='secondary'>Edit Profile</Button></Link><Button icon={<LogOut size={17} />} onClick={handleLogout} variant='ghost'>Logout</Button></>}
+        actions={<><Link to='/profile/edit'><Button icon={<Save size={17} />} variant='secondary'>Edit Profile</Button></Link><Link to='/profile/reset-password'><Button icon={<ShieldCheck size={17} />} variant='secondary'>Reset Password</Button></Link><Button icon={<LogOut size={17} />} onClick={handleLogout} variant='ghost'>Logout</Button></>}
         description='View personal profile information before making updates.'
         eyebrow='Profile'
         title='View Personal Profile'
@@ -236,7 +258,7 @@ export function EditProfilePage() {
 
   return (
     <div className='space-y-6'>
-      <PageHeader description='Update allowed personal profile fields: full name, phone, avatar text, and profile details.' eyebrow='Profile settings' title='Edit Personal Profile' />
+      <PageHeader actions={<Link to='/profile/reset-password'><Button icon={<ShieldCheck size={17} />} variant='secondary'>Reset Password</Button></Link>} description='Update allowed personal profile fields: full name, phone, avatar text, and profile details.' eyebrow='Profile settings' title='Edit Personal Profile' />
       <Card>
         <CardBody className='space-y-4'>
           <div className='grid gap-4 md:grid-cols-2'>

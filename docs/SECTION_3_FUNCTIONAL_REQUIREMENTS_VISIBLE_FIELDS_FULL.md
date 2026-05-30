@@ -227,10 +227,10 @@ Actor: Guest
 
 This screen allows the user to:
 - create a learner or teacher account with role request, learning goal, credential fields, and validation feedback.
-- Use the visible fields and actions listed in the Field Description table.
+- use Google sign-up mock or navigate to login.
 
 On the screen, s/he can also:
-- View status, validation, empty, pagination, or mock interaction states where applicable.
+- view validation messages after submitting incomplete or invalid data.
 
 UI Layout / Prototype:
 http://127.0.0.1:5173/auth/register
@@ -239,38 +239,37 @@ Field Description
 
 | Field Name | Description |
 | ---------- | ----------- |
-| Full Name | Visible field. User views or enters this value on the screen. |
-| Email Address | Email field. User enters email address or triggers email-related processing. |
-| Phone Number | Numeric field. User views or enters a numeric value. |
-| Username | Visible field. User views or enters this value on the screen. |
-| Requested Role | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Password | Password field. User enters or updates protected credential data. |
-| Confirm Password | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Learning Goal | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Referral Code | Visible field. User views or enters this value on the screen. |
-| Create Account | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Continue With Google | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Already Have Account | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Validation Message | Visible message/state field. Shows validation, success, warning, empty, or system state. |
+| Full Name | Text input. User enters display name. |
+| Email Address | Email input. Required account email. |
+| Phone Number | Text input. User enters contact phone number. |
+| Username | Text input. User enters username. |
+| Requested Role | Dropdown/select field. User chooses Learner or Teacher. |
+| Password | Password field. User enters new account password. |
+| Confirm Password | Password field. Must match Password. |
+| Learning Goal | Dropdown/select field. User chooses main learning goal. |
+| Referral Code | Text input. Optional invitation or referral code. |
+| Create Account | Action field. Submits registration form. |
+| Continue With Google | Action field. Starts Google sign-up mock. |
+| Already Have Account | Action field. Opens Login screen. |
+| Validation Message | Visible message/state field. Shows required-field, email, password, or confirmation error. |
 
 Field count: 13
 Complexity level: Level 5
 
 Main Actions:
-- Requested Role.
-- Confirm Password.
 - Create Account.
 - Continue With Google.
 - Already Have Account.
 
 Business Rules:
 - Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
+- Guest can request Learner or Teacher account only; Admin account is not self-registered.
 - Prototype data and actions use local mock state unless explicitly integrated with backend later.
 
 System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
+- Email is required and must be unique.
+- Password must contain at least 8 characters.
+- Confirm password must match password.
 
 ### 3.2.2 Login With Account And Social Login
 
@@ -328,14 +327,14 @@ System Messages:
 ### 3.2.3 Forgot Password
 
 Related Use Case: UC-10
-Actor: Learner, Teacher, Administrator
+Actor: Guest, Learner, Teacher, Administrator
 
 This screen allows the user to:
 - request a password reset by registered email and selected delivery method.
-- Use the visible fields and actions listed in the Field Description table.
+- enter optional username or existing verification code if already received.
 
 On the screen, s/he can also:
-- View status, validation, empty, pagination, or mock interaction states where applicable.
+- send reset link/token and return to login.
 
 UI Layout / Prototype:
 http://127.0.0.1:5173/auth/forgot-password
@@ -344,79 +343,75 @@ Field Description
 
 | Field Name | Description |
 | ---------- | ----------- |
-| Registered Email Address | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Reset Delivery Method | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Account Username | Numeric field. User views or enters a numeric value. |
-| Verification Code | Visible field. User views or enters this value on the screen. |
-| Send Reset Link | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Back To Login | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Sent Message | Visible message/state field. Shows validation, success, warning, empty, or system state. |
+| Registered Email Address | Email input. User enters account email to receive reset link or token. |
+| Reset Delivery Method | Dropdown/select field. User chooses Email link or SMS code. |
+| Account Username | Text input. Optional username for account verification. |
+| Verification Code | Text input. Optional code if user already received one. |
+| Send Reset Link | Action field. Sends password reset link/token in production. |
+| Back To Login | Action field. Returns to Login screen. |
+| Sent Message | Visible message/state field. Shows reset-link sent confirmation. |
 
 Field count: 7
 Complexity level: Level 2
 
 Main Actions:
-- Registered Email Address.
-- Reset Delivery Method.
 - Send Reset Link.
 - Back To Login.
 
 Business Rules:
 - Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
+- Public recovery needs Registered Email Address because user is not signed in.
 - Prototype data and actions use local mock state unless explicitly integrated with backend later.
 
 System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
+- Reset link sent. Check your email inbox.
 
 ### 3.2.4 Reset Password
 
-Related Use Case: UC-10
+Related Use Case: UC-10, UC-14
 Actor: Learner, Teacher, Administrator
 
 This screen allows the user to:
-- enter reset token, choose new password, choose session handling, and return to login.
-- Use the visible fields and actions listed in the Field Description table.
+- reset password from the signed-in profile security area.
+- request a verification token for the current account email, then enter new password and confirmation.
 
 On the screen, s/he can also:
-- View status, validation, empty, pagination, or mock interaction states where applicable.
+- return to profile edit and view token-sent or reset-success messages.
 
 UI Layout / Prototype:
-http://127.0.0.1:5173/auth/reset-password
+http://127.0.0.1:5173/profile/reset-password
 
 Field Description
 
 | Field Name | Description |
 | ---------- | ----------- |
-| Reset Token | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Registered Email | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| New Password | Password field. User enters or updates protected credential data. |
-| Confirm New Password | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Logout Other Devices | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Reset Password | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Login | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Success Message | Visible message/state field. Shows validation, success, warning, empty, or system state. |
+| Account Email | Read-only field. Shows current signed-in account email; user does not re-enter it. |
+| Verification Token | Text input. User enters token received by email. |
+| Send Verification Token | Action field. Sends token to current account email in production. |
+| New Password | Password field. User enters new password. |
+| Confirm New Password | Password field. Must match New Password. |
+| Logout Other Devices | Dropdown/select field. User chooses whether to invalidate other sessions. |
+| Reset Password | Action field. Submits password reset for current account. |
+| Back To Profile Edit | Action field. Returns to Edit Personal Profile screen. |
+| Token Sent Message | Visible message/state field. Shows token request result. |
+| Success Message | Visible message/state field. Shows password reset success. |
 
-Field count: 8
-Complexity level: Level 3
+Field count: 10
+Complexity level: Level 4
 
 Main Actions:
-- Reset Token.
-- Registered Email.
-- Confirm New Password.
-- Logout Other Devices.
+- Send Verification Token.
 - Reset Password.
-- Login.
+- Back To Profile Edit.
 
 Business Rules:
 - Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
+- Route requires authenticated user; account email is taken from current profile and displayed read-only.
 - Prototype data and actions use local mock state unless explicitly integrated with backend later.
 
 System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
+- Verification token sent locally. Email service is not connected.
+- Password reset successful.
 
 ### 3.2.5 View Personal Profile
 
@@ -424,11 +419,11 @@ Related Use Case: UC-12, UC-11
 Actor: Learner, Teacher, Administrator
 
 This screen allows the user to:
-- view profile data, role access summary, premium status, and logout or edit profile.
-- Use the visible fields and actions listed in the Field Description table.
+- view profile data, role access summary, premium status, and account security action.
+- edit profile, reset password, or logout current account.
 
 On the screen, s/he can also:
-- View status, validation, empty, pagination, or mock interaction states where applicable.
+- see role-specific access summary and account status.
 
 UI Layout / Prototype:
 http://127.0.0.1:5173/profile
@@ -437,38 +432,38 @@ Field Description
 
 | Field Name | Description |
 | ---------- | ----------- |
-| Edit Profile | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Logout | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Avatar And Basic Profile | File input. User selects an upload file for validation or import. |
-| Email | Email field. User enters email address or triggers email-related processing. |
-| Phone | Visible field. User views or enters this value on the screen. |
-| Account Status | Status field. User views or selects status depending on the screen context. |
-| Joined At | Visible field. User views or enters this value on the screen. |
-| Last Active | Visible field. User views or enters this value on the screen. |
-| Bio | Textarea or long text field. User views or enters multi-line content. |
-| Preferred Language | Visible field. User views or enters this value on the screen. |
-| Notification Preference | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Timezone | Date/time field. User views or enters schedule, duration, period, or time-related value. |
-| Two-factor Auth | Visible field. User views or enters this value on the screen. |
-| Role Access Summary | Visible data group. Shows records or grouped screen data. Counted as one field. |
-| Logout Message | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
+| Edit Profile | Action field. Opens Edit Personal Profile screen. |
+| Reset Password | Action field. Opens profile security Reset Password screen. |
+| Logout | Action field. Signs out current account. |
+| Avatar And Basic Profile | Visible data group. Shows avatar, full name, username, role, and premium badge. |
+| Email | View-only data field. Shows current account email. |
+| Phone | View-only data field. Shows phone number. |
+| Account Status | Status field. Shows active, pending, or locked state. |
+| Joined At | View-only data field. Shows account created date. |
+| Last Active | View-only data field. Shows last activity timestamp. |
+| Bio | View-only data field. Shows profile bio/details. |
+| Preferred Language | View-only data field. Shows language preference. |
+| Notification Preference | View-only data field. Shows notification preference. |
+| Timezone | View-only data field. Shows timezone. |
+| Two-factor Auth | View-only data field. Shows 2FA status. |
+| Role Access Summary | Visible data group. Shows permissions for current role. |
+| Logout Message | Visible message/state field. Shows sign-out confirmation. |
 
-Field count: 15
-Complexity level: Level 6
+Field count: 16
+Complexity level: Level 7
 
 Main Actions:
 - Edit Profile.
+- Reset Password.
 - Logout.
-- Logout Message.
 
 Business Rules:
 - Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
+- Profile route requires authenticated user.
+- Logout changes current role to Guest.
 
 System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
+- You have been signed out.
 
 ### 3.2.6 Edit Personal Profile
 
@@ -477,10 +472,10 @@ Actor: Learner, Teacher, Administrator
 
 This screen allows the user to:
 - update allowed profile fields, notification settings, visibility, and profile details.
-- Use the visible fields and actions listed in the Field Description table.
+- open Reset Password from profile editing area.
 
 On the screen, s/he can also:
-- View status, validation, empty, pagination, or mock interaction states where applicable.
+- save changes, cancel, or view saved confirmation.
 
 UI Layout / Prototype:
 http://127.0.0.1:5173/profile/edit
@@ -489,35 +484,35 @@ Field Description
 
 | Field Name | Description |
 | ---------- | ----------- |
-| Full Name | Visible field. User views or enters this value on the screen. |
-| Phone Number | Numeric field. User views or enters a numeric value. |
-| Avatar Initials | Visible field. User views or enters this value on the screen. |
-| Username | Visible field. User views or enters this value on the screen. |
-| Preferred Language | Visible field. User views or enters this value on the screen. |
-| Timezone | Date/time field. User views or enters schedule, duration, period, or time-related value. |
-| Notification Preference | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Profile Visibility | File input. User selects an upload file for validation or import. |
-| Profile Details | File input. User selects an upload file for validation or import. |
-| Save Changes | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Cancel | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Saved Message | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
+| Reset Password | Action field. Opens profile security Reset Password screen. |
+| Full Name | Text input. User edits display name. |
+| Phone Number | Text input. User edits contact phone number. |
+| Avatar Initials | Text input. Maximum 2 characters for avatar display. |
+| Username | Text input. User edits username. |
+| Preferred Language | Text input. User edits language preference. |
+| Timezone | Text input. User edits timezone. |
+| Notification Preference | Dropdown/select field. User chooses Email, In-app, or Email + in-app. |
+| Profile Visibility | Dropdown/select field. User chooses public or private profile. |
+| Profile Details | Textarea field. User edits profile bio/details. |
+| Save Changes | Action field. Saves profile updates. |
+| Cancel | Action field. Returns to profile screen without saving. |
+| Saved Message | Visible message/state field. Shows save confirmation. |
 
-Field count: 12
+Field count: 13
 Complexity level: Level 5
 
 Main Actions:
+- Reset Password.
 - Save Changes.
 - Cancel.
-- Saved Message.
 
 Business Rules:
 - Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
+- Password reset is handled in the profile security screen, not inside the general profile form.
 - Prototype data and actions use local mock state unless explicitly integrated with backend later.
 
 System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
+- Profile changes saved.
 
 ### 3.2.7 Change Password
 
