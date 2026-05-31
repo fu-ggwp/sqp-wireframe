@@ -45,8 +45,6 @@ Field Description
 | Popular Study Set Cards | Card group field. Displays public study set title, subject, topic, question count, learners, and detail action. Counted as one field. |
 | View All Study Sets | Action field. Opens public study set search. |
 
-Field count: 10
-Complexity level: Level 4
 
 ### 3.1.2 Search Public Study Sets
 
@@ -78,11 +76,8 @@ Field Description
 | Reset Filters | Action field. Clears current search/filter state. |
 | Public Study Set Result Cards | Card group field. Shows matching public study sets. Counted as one field. |
 | View Detail | Action field. Opens selected public study set detail. |
-| Rows Per Page | Pagination field. User selects number of rows/cards per page. |
 | Pagination | Pagination field. User changes page with Previous, page number, or Next. |
 
-Field count: 12
-Complexity level: Level 5
 
 ### 3.1.3 Search Public User Accounts
 
@@ -115,8 +110,6 @@ Field Description
 | Rows Per Page | Pagination field. User selects result size per page. |
 | Pagination | Pagination field. User changes result page. |
 
-Field count: 10
-Complexity level: Level 4
 
 ### 3.1.4 Public Study Set Detail
 
@@ -155,8 +148,6 @@ Field Description
 | Guest Study Mode | Dropdown. User selects preview/study mode option. |
 | Create Account | Action field. Opens Register Account screen. |
 
-Field count: 15
-Complexity level: Level 6
 
 ## 3.2 Authentication & Profile
 
@@ -194,8 +185,6 @@ Field Description
 | Already Have Account | Action field. Opens Login screen. |
 | Validation Message | Message field. Displays email/password/required-field validation. |
 
-Field count: 13
-Complexity level: Level 5
 
 ### 3.2.2 Login With Account
 
@@ -204,7 +193,7 @@ Actor: Guest, Learner, Teacher, Administrator
 
 This screen allows the Guest to:
 Login With Account: enter account credentials and login.
-Login With Social Provider: choose Google, Facebook, Apple, or WhatsApp login.
+Login With Google: choose Google login mock action.
 Recover Password: open Forgot Password screen.
 
 On the screen, s/he can also:
@@ -221,7 +210,7 @@ Field Description
 | ---------- | ----------- |
 | Register Tab | Action field. Opens Register screen. |
 | Login Tab | Current tab indicator/action field. |
-| Social Login Options | Action group field. Includes Google, Facebook, Apple, and WhatsApp login buttons. Counted as one field. |
+| Login With Google | Action field. Starts Google login mock. |
 | Email | Email/text input. User enters email or username. |
 | Password | Password input. User enters password. |
 | Show Password | Action field. Toggles password visibility. |
@@ -232,8 +221,6 @@ Field Description
 | Logout | Action field. Displayed when an account is already signed in. |
 | Status Message | Message field. Displays login or social-provider status. |
 
-Field count: 12
-Complexity level: Level 5
 
 ### 3.2.3 Forgot Password
 
@@ -258,12 +245,10 @@ Field Description
 | Reset Delivery Method | Dropdown. Values include Email link and SMS code. |
 | Account Username | Text input. Optional username for account verification. |
 | Verification Code | Text input. Optional code if already received. |
-| Send Reset Link | Action field. Sends reset request. |
+| Send Verification Code | Action field. Sends reset request. |
 | Back To Login | Action field. Opens Login screen. |
 | Status Message | Message field. Displays reset request result. |
 
-Field count: 7
-Complexity level: Level 2
 
 ### 3.2.4 Reset Password
 
@@ -294,8 +279,6 @@ Field Description
 | Login | Action field. Opens Login screen. |
 | Status Message | Message field. Displays reset success. |
 
-Field count: 8
-Complexity level: Level 3
 
 ### 3.2.5 View Personal Profile
 
@@ -332,8 +315,6 @@ Field Description
 | Two-factor Auth | Display field. Shows 2FA status. |
 | Role Access Summary | Data display field. Shows role-specific permission cards. Counted as one field. |
 
-Field count: 14
-Complexity level: Level 6
 
 ### 3.2.6 Edit Personal Profile
 
@@ -368,8 +349,6 @@ Field Description
 | Cancel | Action field. Returns to profile screen. |
 | Status Message | Message field. Displays saved confirmation. |
 
-Field count: 12
-Complexity level: Level 5
 
 ### 3.2.7 Change Password
 
@@ -399,8 +378,6 @@ Field Description
 | Update Password | Action field. Submits password update. |
 | Validation Messages | Message group field. Shows password validation errors. Counted as one field. |
 
-Field count: 7
-Complexity level: Level 2
 
 ### 3.2.8 Notification Center
 
@@ -434,7 +411,3 @@ Field Description
 | Mark As Read | Action field. Marks selected notification as read. |
 | Rows Per Page | Pagination field. User selects rows per page. |
 | Pagination | Pagination field. User changes notification page. |
-
-Field count: 12
-Complexity level: Level 5
-

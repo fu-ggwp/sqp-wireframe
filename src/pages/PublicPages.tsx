@@ -169,7 +169,7 @@ export function SearchStudySetsPage() {
       ) : (
         <EmptyState icon={<Search size={22} />} title='No public study set found' description='Adjust keyword or subject filter to view matching public resources.' />
       )}
-      {results.length ? <PaginationBar label={`Showing ${results.length} public study sets`} /> : null}
+      {results.length ? <PaginationBar compact /> : null}
     </div>
   );
 }

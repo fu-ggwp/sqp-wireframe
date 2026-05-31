@@ -69,7 +69,6 @@ Field Description
 | Owner | Initial value: public display name of study set creator. |
 | Tags | Initial values: topic labels attached to the study set. |
 | Question Count | Data type: positive integer. Shows number of questions or terms in the set. |
-| Empty State | Displayed when there is no public study set matching the filter. |
 
 ### 3.1.3 Search Public User Accounts
 
@@ -100,7 +99,6 @@ Field Description
 | Premium Badge | Initial values: Premium or Standard. Shows public subscription status if allowed. |
 | Status | Initial values: Active or Inactive. Shows public account availability. |
 | Last Active | Data type: date/time label. Shows latest public activity timestamp when available. |
-| Empty State | Displayed when no account matches keyword or role filter. |
 
 ### 3.1.4 Public Study Set Detail
 
@@ -373,7 +371,6 @@ Field Description
 | Created At | Data type: date/time. Shows notification creation time. |
 | Status | Initial values: Read, Unread. Displayed as status pill. |
 | Mark As Read | Button. Available for unread notifications. Changes local read state. |
-| Empty State | Displayed when current user has no notifications. |
 
 ## 3.3 Class Management
 
@@ -442,7 +439,6 @@ Field Description
 | Status | Initial values: Active, Archived, or Closed. |
 | Open | Button. Opens Learner Class Detail screen. |
 | Join Class | Button. Opens Join Class screen. |
-| Empty State | Displayed when learner has not joined any class or no class matches filter. |
 
 ### 3.3.3 Join Class
 
@@ -567,7 +563,6 @@ Field Description
 | Status | Initial values: Active, Archived, Closed. |
 | Create Class | Button. Opens Create Class screen. |
 | Open | Button. Opens Teacher Class Detail screen. |
-| Empty State | Displayed when teacher has no class or no class matches search. |
 
 ### 3.3.7 Create Class
 
@@ -721,7 +716,6 @@ Field Description
 | Status | Initial values: Pending, Approved, Rejected. |
 | Approve | Button. Available for pending requests. Adds learner to member list in production. |
 | Approval Message | Displays local confirmation after approval. |
-| Empty State | Displayed when there is no pending join request. |
 
 ### 3.3.12 Assign Study Set To Class
 
@@ -784,7 +778,6 @@ Field Description
 | Questions | Data type: non-negative integer. Shows question count in bank. |
 | Create Question Bank | Button. Opens Create Question Bank screen. |
 | Open | Button. Opens Question Bank Detail screen. |
-| Empty State | Displayed when no question bank matches current filter. |
 
 ### 3.4.2 Create Question Bank
 
@@ -1017,7 +1010,6 @@ Field Description
 | Raw Value | Data type: string. Exact value read from import file. |
 | Validation Message | Data type: text. Explains why row is invalid. |
 | Back To Import | Button/Link. Returns to Import Questions From Excel screen. |
-| Empty State | Displayed when there is no validation error. |
 
 ### 3.4.9 Preview Imported Questions
 
@@ -1110,7 +1102,6 @@ Field Description
 | Detail | Button. Opens Study Set Detail screen. |
 | Flashcards | Button. Opens Flashcard Study screen. |
 | Review | Button. Opens Review Wrong Answers screen for selected set. |
-| Empty State | Displayed when learner has no accessible study set or no search result. |
 
 ### 3.5.2 Study Set Detail
 
@@ -1270,7 +1261,6 @@ Field Description
 | Correct Answer | Initial value: correct answer from question bank. |
 | Explanation | Initial value: teacher-provided explanation or generated explanation placeholder. |
 | Request AI Answer Explanation | Button. Shows AI explanation or upgrade-required message. |
-| Empty State | Displayed when selected study set has no wrong answers. |
 | System Message | Displays upgrade-required or AI explanation mock message. |
 
 ### 3.5.7 Teacher Study Set Management
@@ -1371,7 +1361,6 @@ Field Description
 | Start Time | Data type: date/time. Shows scheduled exam start. |
 | Status | Initial values: Upcoming, Open, Submitted, Closed. |
 | Info | Button. Opens View Exam Information screen. |
-| Empty State | Displayed when learner has no exam or no result matches search. |
 
 ### 3.6.2 View Exam Information
 
@@ -1462,7 +1451,6 @@ Field Description
 | Accuracy | Data type: percentage. Shows correct-answer ratio. |
 | Attempt Status | Initial values: Submitted, Passed, Failed, Pending Review. |
 | Result Table | Shows question, learner answer, correct answer, and status if visible. |
-| Hidden Result Empty State | Displayed when result is not released. |
 | Attempt Timestamp | Data type: date/time. Shows submission time. |
 | Status Message | Explains result availability. |
 
@@ -1497,7 +1485,6 @@ Field Description
 | Configure | Button. Opens Configure Exam Settings screen. |
 | Info | Button. Opens View Exam Information As Teacher screen. |
 | Monitor | Button. Opens Monitor Exam Session screen. |
-| Empty State | Displayed when no exam matches filter. |
 
 ### 3.6.6 Create Exam Session
 
@@ -1670,7 +1657,6 @@ Field Description
 | Weak Topics | Data type: non-negative integer or topic list count. |
 | Weak Topic Table | Initial values: topic name, accuracy, mistakes, and recommendation. |
 | Recommended Action | Data type: text or link. Suggests flashcards, quiz, or review action. |
-| Empty State | Displayed when learner has no learning activity. |
 
 ### 3.7.2 View Exam Analytics
 
@@ -1702,7 +1688,6 @@ Field Description
 | Submission Count | Data type: submitted count / total learners. |
 | Weak Topic | Initial values: low-performing topics for selected exam. |
 | Export Exam Report | Button. Opens Export Exam Report screen. |
-| Empty State | Displayed when no exam attempts exist. |
 
 ### 3.7.3 Export Exam Report
 
@@ -1893,7 +1878,6 @@ Field Description
 | Premium | Initial values: Premium, Standard. |
 | Status | Initial values: Active, Inactive, Suspended. |
 | Detail | Button. Opens User Detail And Role Update screen. |
-| Empty State | Displayed when no user matches search. |
 
 ### 3.9.3 User Detail And Role Update
 

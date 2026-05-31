@@ -2,7 +2,6 @@
 
 This file follows the field definition confirmed from Template8_Student Evaluation.xlsx, sheet Params. A field is a visible screen component/action or visible data group on the screen. Hidden backend IDs, route params, session tokens, invisible payloads, and internal state variables are not counted. A table/list/card group is counted as one field unless visible row actions such as Open, Edit, Delete, Approve, Export, or Hide are processed separately.
 
-Complexity levels: Level 1 = 3-5 fields, Level 2 = 6-7 fields, Level 3 = 8-9 fields, Level 4 = 10-11 fields, Level 5 = 12-13 fields, Level 6 = 14-15 fields, Level 7 = more than 15 fields.
 
 Open the Prototype URL and capture screenshot manually for the SRS.
 
@@ -11,9 +10,9 @@ Open the Prototype URL and capture screenshot manually for the SRS.
 ### 3.1.1 Home Page
 
 Related Use Case: UC-01
-Actor: Guest, Learner, Teacher
+Actor: Guest
 
-This screen allows the user to:
+This screen allows the Guest to:
 - view public study entry points, search public sets, preview study modes, and navigate to account entry screens.
 - Use the visible fields and actions listed in the Field Description table.
 
@@ -39,27 +38,6 @@ Field Description
 | View Detail | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | View All Study Sets | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 11
-Complexity level: Level 4
-
-Main Actions:
-- Hero Search Action.
-- Sign Up For Free.
-- Browse Study Sets.
-- Create Free Account.
-- Open Flashcards.
-- Login To Save History.
-- View Detail.
-- View All Study Sets.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.1.2 Search Public Study Sets
 
@@ -91,29 +69,8 @@ Field Description
 | Public Study Set Result Cards | Visible data group. Shows records or grouped screen data. Counted as one field. |
 | Open Sample Set | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | View Detail | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
 | Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Empty State | Visible message/state field. Shows validation, success, warning, empty, or system state. |
 
-Field count: 14
-Complexity level: Level 6
-
-Main Actions:
-- Apply.
-- Advanced.
-- Reset Filters.
-- Open Sample Set.
-- View Detail.
-- Pagination.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.1.3 Search Public User Accounts
 
@@ -144,24 +101,7 @@ Field Description
 | Public User List | Visible data group. Shows records or grouped screen data. Counted as one field. |
 | Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
 | Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Empty State | Visible message/state field. Shows validation, success, warning, empty, or system state. |
 
-Field count: 11
-Complexity level: Level 4
-
-Main Actions:
-- Apply.
-- Reset Filters.
-- Pagination.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.1.4 Public Study Set Detail
 
@@ -198,25 +138,6 @@ Field Description
 | Guest Study Mode | Visible field. User views or enters this value on the screen. |
 | Create Account | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 15
-Complexity level: Level 6
-
-Main Actions:
-- Study Flashcards.
-- Sign Up To Save History.
-- Apply.
-- Reset Filters.
-- Pagination.
-- Create Account.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ## 3.2 Authentication & Profile
 
@@ -253,35 +174,18 @@ Field Description
 | Already Have Account | Action field. Opens Login screen. |
 | Validation Message | Visible message/state field. Shows required-field, email, password, or confirmation error. |
 
-Field count: 13
-Complexity level: Level 5
 
-Main Actions:
-- Create Account.
-- Continue With Google.
-- Already Have Account.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Guest can request Learner or Teacher account only; Admin account is not self-registered.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Email is required and must be unique.
-- Password must contain at least 8 characters.
-- Confirm password must match password.
-
-### 3.2.2 Login With Account And Social Login
+### 3.2.2 Login With Account And Google Login
 
 Related Use Case: UC-08, UC-09, UC-11
 Actor: Guest, Learner, Teacher, Administrator
 
 This screen allows the user to:
-- login using account credentials or social login mock, recover password, create account, or logout current user.
-- Use the visible fields and actions listed in the Field Description table.
+- login using email or username and password.
+- use Google login mock, recover password, create account, or logout current user.
 
 On the screen, s/he can also:
-- View status, validation, empty, pagination, or mock interaction states where applicable.
+- toggle password visibility and choose remember-login preference.
 
 UI Layout / Prototype:
 http://127.0.0.1:5173/auth/login
@@ -290,39 +194,19 @@ Field Description
 
 | Field Name | Description |
 | ---------- | ----------- |
-| Register Tab | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Login Tab | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Social Login Options | Visible field. User views or enters this value on the screen. |
-| Email | Email field. User enters email address or triggers email-related processing. |
-| Password | Password field. User enters or updates protected credential data. |
-| Show Password | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Remember Me | Visible field. User views or enters this value on the screen. |
-| Forgot Password | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Login | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Create Account | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Logout | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Status Message | Visible message/state field. Shows validation, success, warning, empty, or system state. |
+| Register Tab | Action field. Opens Register Account screen. |
+| Login Tab | Visible tab field. Shows current login tab. |
+| Login With Google | Action field. Starts Google login mock. |
+| Email | Email/text input. User enters email or username. |
+| Password | Password field. User enters password. |
+| Show Password | Action field. Toggles password visibility. |
+| Remember Me | Checkbox field. User chooses persistent login preference. |
+| Forgot Password | Action field. Opens Forgot Password screen. |
+| Login | Action field. Submits login form. |
+| Create Account | Action field. Opens Register Account screen. |
+| Logout | Action field. Signs out current signed-in account when visible. |
+| Status Message | Visible message/state field. Shows required-field, logout, or Google mock message. |
 
-Field count: 12
-Complexity level: Level 5
-
-Main Actions:
-- Register Tab.
-- Login Tab.
-- Show Password.
-- Forgot Password.
-- Login.
-- Create Account.
-- Logout.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.2.3 Forgot Password
 
@@ -330,11 +214,11 @@ Related Use Case: UC-10
 Actor: Guest, Learner, Teacher, Administrator
 
 This screen allows the user to:
-- request a password reset by registered email and selected delivery method.
-- enter optional username or existing verification code if already received.
+- enter registered email and choose delivery method before any verification code is entered.
+- send verification code, enter the received code, verify the code, then continue to Reset Password.
 
 On the screen, s/he can also:
-- send reset link/token and return to login.
+- return to login before verification or continue to reset password after code verification succeeds.
 
 UI Layout / Prototype:
 http://127.0.0.1:5173/auth/forgot-password
@@ -343,28 +227,17 @@ Field Description
 
 | Field Name | Description |
 | ---------- | ----------- |
-| Registered Email Address | Email input. User enters account email to receive reset link or token. |
-| Reset Delivery Method | Dropdown/select field. User chooses Email link or SMS code. |
+| Registered Email Address | Email input. User enters account email to receive verification code. |
+| Reset Delivery Method | Dropdown/select field. User chooses Email code or SMS code. |
 | Account Username | Text input. Optional username for account verification. |
-| Verification Code | Text input. Optional code if user already received one. |
-| Send Reset Link | Action field. Sends password reset link/token in production. |
-| Back To Login | Action field. Returns to Login screen. |
-| Sent Message | Visible message/state field. Shows reset-link sent confirmation. |
+| Verification Code | Text input. Disabled until code is sent; user enters received verification code. |
+| Send Verification Code | Action field. Sends verification code in production. |
+| Verify Code | Action field. Checks whether entered verification code is valid. |
+| Back To Login | Action field. Returns to Login screen before code verification. |
+| Continue Reset Password | Action field. Opens Reset Password screen after verification succeeds. |
+| Code Sent Message | Visible message/state field. Shows code delivery status. |
+| Code Verified Message | Visible message/state field. Shows accepted verification code status. |
 
-Field count: 7
-Complexity level: Level 2
-
-Main Actions:
-- Send Reset Link.
-- Back To Login.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Public recovery needs Registered Email Address because user is not signed in.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Reset link sent. Check your email inbox.
 
 ### 3.2.4 Reset Password
 
@@ -396,22 +269,6 @@ Field Description
 | Token Sent Message | Visible message/state field. Shows token request result. |
 | Success Message | Visible message/state field. Shows password reset success. |
 
-Field count: 10
-Complexity level: Level 4
-
-Main Actions:
-- Send Verification Token.
-- Reset Password.
-- Back To Profile Edit.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Route requires authenticated user; account email is taken from current profile and displayed read-only.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Verification token sent locally. Email service is not connected.
-- Password reset successful.
 
 ### 3.2.5 View Personal Profile
 
@@ -449,21 +306,6 @@ Field Description
 | Role Access Summary | Visible data group. Shows permissions for current role. |
 | Logout Message | Visible message/state field. Shows sign-out confirmation. |
 
-Field count: 16
-Complexity level: Level 7
-
-Main Actions:
-- Edit Profile.
-- Reset Password.
-- Logout.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Profile route requires authenticated user.
-- Logout changes current role to Guest.
-
-System Messages:
-- You have been signed out.
 
 ### 3.2.6 Edit Personal Profile
 
@@ -498,21 +340,6 @@ Field Description
 | Cancel | Action field. Returns to profile screen without saving. |
 | Saved Message | Visible message/state field. Shows save confirmation. |
 
-Field count: 13
-Complexity level: Level 5
-
-Main Actions:
-- Reset Password.
-- Save Changes.
-- Cancel.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Password reset is handled in the profile security screen, not inside the general profile form.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Profile changes saved.
 
 ### 3.2.7 Change Password
 
@@ -541,21 +368,6 @@ Field Description
 | Update Password | Password field. User enters or updates protected credential data. |
 | Validation Messages | Visible message/state field. Shows validation, success, warning, empty, or system state. |
 
-Field count: 7
-Complexity level: Level 2
-
-Main Actions:
-- Confirm New Password.
-- Logout Other Devices.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.2.8 Notification Center
 
@@ -589,24 +401,6 @@ Field Description
 | Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
 | Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 12
-Complexity level: Level 5
-
-Main Actions:
-- Apply.
-- Reset Filters.
-- Mark All As Read.
-- Mark As Read.
-- Pagination.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ## 3.3 Class Management
 
@@ -643,23 +437,6 @@ Field Description
 | Learning Metrics | Visible data group. Shows records or grouped screen data. Counted as one field. |
 | Learning Preferences | Visible field. User views or enters this value on the screen. |
 
-Field count: 13
-Complexity level: Level 5
-
-Main Actions:
-- Continue Study.
-- Continue.
-- Details.
-- Open Class.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.3.2 View Joined Classes
 
@@ -692,23 +469,6 @@ Field Description
 | Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
 | Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 11
-Complexity level: Level 4
-
-Main Actions:
-- Apply.
-- Reset Filters.
-- Open.
-- Pagination.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.3.3 Join Class
 
@@ -739,22 +499,6 @@ Field Description
 | Send Join Request | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Pending Request Message | Visible message/state field. Shows validation, success, warning, empty, or system state. |
 
-Field count: 9
-Complexity level: Level 3
-
-Main Actions:
-- Request Type.
-- Request Message.
-- Send Join Request.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.3.4 Learner Class Detail
 
@@ -786,24 +530,6 @@ Field Description
 | Assigned Study Sets | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Open Study Set | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 10
-Complexity level: Level 4
-
-Main Actions:
-- Back To Classes.
-- Apply.
-- Reset Filters.
-- Assigned Study Sets.
-- Open Study Set.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.3.5 Teacher Dashboard
 
@@ -842,27 +568,6 @@ Field Description
 | Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
 | Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 17
-Complexity level: Level 7
-
-Main Actions:
-- Create Class.
-- Create Question Bank.
-- Apply.
-- Reset Filters.
-- Open.
-- Members.
-- Invite.
-- Pagination.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.3.6 View Created Classes
 
@@ -897,29 +602,7 @@ Field Description
 | Invite | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
 | Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Empty State | Visible message/state field. Shows validation, success, warning, empty, or system state. |
 
-Field count: 15
-Complexity level: Level 6
-
-Main Actions:
-- Create Class.
-- Apply.
-- Reset Filters.
-- Created Classes Table.
-- Open.
-- Members.
-- Invite.
-- Pagination.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.3.7 Create Class
 
@@ -956,22 +639,6 @@ Field Description
 | Create Class | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Created Message | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 15
-Complexity level: Level 6
-
-Main Actions:
-- Start Date.
-- Create Class.
-- Created Message.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.3.8 Teacher Class Detail
 
@@ -1006,28 +673,6 @@ Field Description
 | Preview | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Reassign | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 13
-Complexity level: Level 5
-
-Main Actions:
-- Generate Invitation.
-- Members.
-- Assign Study Set.
-- Assignment Status.
-- Apply.
-- Reset Filters.
-- Assigned Study Sets Table.
-- Preview.
-- Reassign.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.3.9 Generate Class Invitation
 
@@ -1059,22 +704,6 @@ Field Description
 | Send Invitation Email | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Action Completed Message | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 10
-Complexity level: Level 4
-
-Main Actions:
-- Copy Link.
-- Send Invitation Email.
-- Action Completed Message.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.3.10 View Class Member List
 
@@ -1106,25 +735,7 @@ Field Description
 | Remove | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
 | Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Empty State | Visible message/state field. Shows validation, success, warning, empty, or system state. |
 
-Field count: 12
-Complexity level: Level 5
-
-Main Actions:
-- Apply.
-- Reset Filters.
-- Remove.
-- Pagination.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.3.11 Approve Class Join Request
 
@@ -1157,26 +768,6 @@ Field Description
 | Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
 | Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 11
-Complexity level: Level 4
-
-Main Actions:
-- Request Status.
-- Requested Date.
-- Apply.
-- Reset Filters.
-- Approve.
-- Reject.
-- Pagination.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.3.12 Assign Study Set To Class
 
@@ -1209,23 +800,6 @@ Field Description
 | Assign Study Set | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Assignment Success Message | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 11
-Complexity level: Level 4
-
-Main Actions:
-- Assign To.
-- Assignment Instructions.
-- Assign Study Set.
-- Assignment Success Message.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ## 3.4 Question Bank Management
 
@@ -1260,26 +834,7 @@ Field Description
 | Open | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
 | Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Empty State | Visible message/state field. Shows validation, success, warning, empty, or system state. |
 
-Field count: 13
-Complexity level: Level 5
-
-Main Actions:
-- Create Question Bank.
-- Apply.
-- Reset Filters.
-- Open.
-- Pagination.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.4.2 Create Question Bank
 
@@ -1315,21 +870,6 @@ Field Description
 | Create Question Bank | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Created Message | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 14
-Complexity level: Level 6
-
-Main Actions:
-- Create Question Bank.
-- Created Message.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.4.3 Question Bank Detail
 
@@ -1368,27 +908,6 @@ Field Description
 | Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Delete Message | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 17
-Complexity level: Level 7
-
-Main Actions:
-- Edit Bank.
-- Create Question.
-- Apply.
-- Reset Filters.
-- Edit Question.
-- Delete Question.
-- Pagination.
-- Delete Message.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.4.4 Update Question Bank Information
 
@@ -1426,23 +945,6 @@ Field Description
 | Saved Message | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Delete Message | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 16
-Complexity level: Level 7
-
-Main Actions:
-- Save Changes.
-- Delete Question Bank.
-- Saved Message.
-- Delete Message.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.4.5 Create Question
 
@@ -1485,22 +987,6 @@ Field Description
 | Create Question | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Saved Message | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 21
-Complexity level: Level 7
-
-Main Actions:
-- Generate From Material.
-- Create Question.
-- Saved Message.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.4.6 Update Question
 
@@ -1542,20 +1028,6 @@ Field Description
 | Update Question | Date/time field. User views or enters schedule, duration, period, or time-related value. |
 | Saved Message | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 20
-Complexity level: Level 7
-
-Main Actions:
-- Saved Message.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.4.7 Import Questions From Excel
 
@@ -1589,22 +1061,6 @@ Field Description
 | Preview Valid Questions | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Validation Result Message | Visible message/state field. Shows validation, success, warning, empty, or system state. |
 
-Field count: 12
-Complexity level: Level 5
-
-Main Actions:
-- Validate File.
-- View Errors.
-- Preview Valid Questions.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.4.8 View Question Import Errors
 
@@ -1635,22 +1091,6 @@ Field Description
 | Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
 | Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 9
-Complexity level: Level 3
-
-Main Actions:
-- Apply.
-- Reset Filters.
-- Pagination.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.4.9 Preview Imported Questions
 
@@ -1683,24 +1123,6 @@ Field Description
 | Save Imported Questions | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Saved Message | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 11
-Complexity level: Level 4
-
-Main Actions:
-- Apply.
-- Reset Filters.
-- Pagination.
-- Save Imported Questions.
-- Saved Message.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.4.10 Generate Questions From Material
 
@@ -1734,21 +1156,6 @@ Field Description
 | Generate Questions | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | AI Generated Question Preview | Visible data group. Shows records or grouped screen data. Counted as one field. |
 
-Field count: 12
-Complexity level: Level 5
-
-Main Actions:
-- Save Drafts After Generation.
-- Generate Questions.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ## 3.5 Study Set Learning
 
@@ -1785,25 +1192,6 @@ Field Description
 | Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
 | Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 13
-Complexity level: Level 5
-
-Main Actions:
-- Apply.
-- Reset Filters.
-- Detail.
-- Flashcards.
-- Review Mistakes.
-- Pagination.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.5.2 Study Set Detail
 
@@ -1832,22 +1220,6 @@ Field Description
 | Learning Progress | Visible data group. Shows records or grouped screen data. Counted as one field. |
 | Study Mode Settings | Visible field. User views or enters this value on the screen. |
 
-Field count: 7
-Complexity level: Level 2
-
-Main Actions:
-- Flashcards.
-- Take Quiz.
-- Review Mistakes.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.5.3 Flashcard Study
 
@@ -1878,20 +1250,6 @@ Field Description
 | Previous | Visible field. User views or enters this value on the screen. |
 | Next | Visible field. User views or enters this value on the screen. |
 
-Field count: 9
-Complexity level: Level 3
-
-Main Actions:
-- Mark Card For Review.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.5.4 Take Study Set Quiz
 
@@ -1924,22 +1282,6 @@ Field Description
 | Score Message | Visible message/state field. Shows validation, success, warning, empty, or system state. |
 | Feedback Message | Visible message/state field. Shows validation, success, warning, empty, or system state. |
 
-Field count: 11
-Complexity level: Level 4
-
-Main Actions:
-- Show Instant Feedback.
-- Submit Quiz.
-- Open Result Screen.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.5.5 Quiz Result
 
@@ -1972,23 +1314,6 @@ Field Description
 | Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
 | Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 11
-Complexity level: Level 4
-
-Main Actions:
-- Review Wrong Answers.
-- Apply.
-- Reset Filters.
-- Pagination.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.5.6 Review Wrong Answers
 
@@ -2022,27 +1347,7 @@ Field Description
 | Mark Reviewed | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Retry Question | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | AI / Upgrade Message | Visible message/state field. Shows validation, success, warning, empty, or system state. |
-| Empty State | Visible message/state field. Shows validation, success, warning, empty, or system state. |
 
-Field count: 14
-Complexity level: Level 6
-
-Main Actions:
-- Back To Study Set.
-- Apply.
-- Reset Filters.
-- Request AI Answer Explanation.
-- Mark Reviewed.
-- Retry Question.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.5.7 Teacher Study Set Management
 
@@ -2076,28 +1381,7 @@ Field Description
 | Assign | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
 | Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Empty State | Visible message/state field. Shows validation, success, warning, empty, or system state. |
 
-Field count: 14
-Complexity level: Level 6
-
-Main Actions:
-- Create Study Set.
-- Assignment Filter.
-- Apply.
-- Reset Filters.
-- Preview.
-- Assign.
-- Pagination.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.5.8 Create Study Set
 
@@ -2136,22 +1420,6 @@ Field Description
 | Create Study Set | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Created Message | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 17
-Complexity level: Level 7
-
-Main Actions:
-- Select Questions.
-- Create Study Set.
-- Created Message.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ## 3.6 Exam Session
 
@@ -2184,25 +1452,7 @@ Field Description
 | Info | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
 | Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Empty State | Visible message/state field. Shows validation, success, warning, empty, or system state. |
 
-Field count: 11
-Complexity level: Level 4
-
-Main Actions:
-- Apply.
-- Reset Filters.
-- Info.
-- Pagination.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.6.2 View Exam Information
 
@@ -2234,21 +1484,6 @@ Field Description
 | Result Visibility | Visible field. User views or enters this value on the screen. |
 | Randomization | Visible field. User views or enters this value on the screen. |
 
-Field count: 10
-Complexity level: Level 4
-
-Main Actions:
-- Start Exam.
-- Start Time.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.6.3 Take Exam
 
@@ -2288,24 +1523,6 @@ Field Description
 | Confirm Submit | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Submitted Message | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 18
-Complexity level: Level 7
-
-Main Actions:
-- Submit Exam.
-- Submit Confirmation Modal.
-- Cancel.
-- Confirm Submit.
-- Submitted Message.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.6.4 View Exam Result
 
@@ -2336,24 +1553,7 @@ Field Description
 | Result Detail Table | Visible data group. Shows records or grouped screen data. Counted as one field. |
 | Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
 | Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Result Hidden Empty State | Visible message/state field. Shows validation, success, warning, empty, or system state. |
 
-Field count: 11
-Complexity level: Level 4
-
-Main Actions:
-- Apply.
-- Reset Filters.
-- Pagination.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.6.5 Teacher Exam Sessions
 
@@ -2389,28 +1589,7 @@ Field Description
 | Monitor | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
 | Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Empty State | Visible message/state field. Shows validation, success, warning, empty, or system state. |
 
-Field count: 16
-Complexity level: Level 7
-
-Main Actions:
-- Create Exam Session.
-- Apply.
-- Reset Filters.
-- Info.
-- Configure.
-- Monitor.
-- Pagination.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.6.6 Create Exam Session
 
@@ -2456,22 +1635,6 @@ Field Description
 | Create Exam Session | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Created Message | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 24
-Complexity level: Level 7
-
-Main Actions:
-- Start Time.
-- Create Exam Session.
-- Created Message.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.6.7 Configure Exam Settings
 
@@ -2517,22 +1680,6 @@ Field Description
 | Save Exam Settings | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Saved Message | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 24
-Complexity level: Level 7
-
-Main Actions:
-- Start Time.
-- Save Exam Settings.
-- Saved Message.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.6.8 View Exam Information As Teacher
 
@@ -2567,23 +1714,6 @@ Field Description
 | Result Visibility | Visible field. User views or enters this value on the screen. |
 | Status | Status field. User views or selects status depending on the screen context. |
 
-Field count: 13
-Complexity level: Level 5
-
-Main Actions:
-- Configure.
-- Export Report.
-- Monitor.
-- Start Time.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.6.9 Monitor Exam Session
 
@@ -2617,25 +1747,6 @@ Field Description
 | Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
 | Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 12
-Complexity level: Level 5
-
-Main Actions:
-- Monitor Metrics.
-- Apply.
-- Reset Filters.
-- View Attempt.
-- Send Reminder.
-- Pagination.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ## 3.7 Analytics & Reporting
 
@@ -2667,21 +1778,6 @@ Field Description
 | Progress Metrics | Visible data group. Shows records or grouped screen data. Counted as one field. |
 | Weak Topic Breakdown Table | Visible data group. Shows records or grouped screen data. Counted as one field. |
 
-Field count: 8
-Complexity level: Level 3
-
-Main Actions:
-- Apply.
-- Reset Filters.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.7.2 View Exam Analytics
 
@@ -2716,24 +1812,6 @@ Field Description
 | Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
 | Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 13
-Complexity level: Level 5
-
-Main Actions:
-- Export Exam Report.
-- Apply.
-- Reset Filters.
-- Export.
-- Pagination.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.7.3 Export Exam Report
 
@@ -2776,26 +1854,6 @@ Field Description
 | Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
 | Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 21
-Complexity level: Level 7
-
-Main Actions:
-- Generated From.
-- Generated At.
-- Export Exam Report.
-- Exported Message.
-- Apply.
-- Reset Filters.
-- Pagination.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ## 3.8 Payment & Subscription
 
@@ -2828,23 +1886,6 @@ Field Description
 | Premium Plan Cards | Visible data group. Shows records or grouped screen data. Counted as one field. |
 | Select Plan / Login To Select | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 9
-Complexity level: Level 3
-
-Main Actions:
-- Upgrade / Login To Upgrade.
-- Apply.
-- Reset Filters.
-- Select Plan / Login To Select.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.8.2 Upgrade To Premium
 
@@ -2877,21 +1918,6 @@ Field Description
 | Proceed To Payment | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Payment Summary | Visible data group. Shows records or grouped screen data. Counted as one field. |
 
-Field count: 11
-Complexity level: Level 4
-
-Main Actions:
-- Selected Plan.
-- Proceed To Payment.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.8.3 Payment Result
 
@@ -2923,21 +1949,6 @@ Field Description
 | Download Invoice | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Return To Dashboard | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 10
-Complexity level: Level 4
-
-Main Actions:
-- Download Invoice.
-- Return To Dashboard.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ## 3.9 System Admin
 
@@ -2969,21 +1980,6 @@ Field Description
 | Reset Filters | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Service Status Table | Visible data group. Shows records or grouped screen data. Counted as one field. |
 
-Field count: 8
-Complexity level: Level 3
-
-Main Actions:
-- Apply.
-- Reset Filters.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.9.2 View User List
 
@@ -3016,23 +2012,6 @@ Field Description
 | Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
 | Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 11
-Complexity level: Level 4
-
-Main Actions:
-- Apply.
-- Reset Filters.
-- Detail.
-- Pagination.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.9.3 User Detail And Role Update
 
@@ -3064,20 +2043,6 @@ Field Description
 | Update User Role | Date/time field. User views or enters schedule, duration, period, or time-related value. |
 | Role Change Message | Visible message/state field. Shows validation, success, warning, empty, or system state. |
 
-Field count: 10
-Complexity level: Level 4
-
-Main Actions:
-- View screen data.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.9.4 Resource Management
 
@@ -3109,21 +2074,6 @@ Field Description
 | Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
 | Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 10
-Complexity level: Level 4
-
-Main Actions:
-- Hide Public Learning Resource.
-- Pagination.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.9.5 View System Status
 
@@ -3155,22 +2105,6 @@ Field Description
 | Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | System Message | Visible message/state field. Shows validation, success, warning, empty, or system state. |
 
-Field count: 10
-Complexity level: Level 4
-
-Main Actions:
-- Apply.
-- Reset Filters.
-- Pagination.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.9.6 Access Denied
 
@@ -3196,21 +2130,6 @@ Field Description
 | Return To My Dashboard | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Login With Different Account | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
-Field count: 4
-Complexity level: Level 1
-
-Main Actions:
-- Return To My Dashboard.
-- Login With Different Account.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
 
 ### 3.9.7 Not Found
 
@@ -3235,19 +2154,3 @@ Field Description
 | Not Found Message | Visible message/state field. Shows validation, success, warning, empty, or system state. |
 | Go Home | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 | Search Study Sets | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-
-Field count: 4
-Complexity level: Level 1
-
-Main Actions:
-- Go Home.
-
-Business Rules:
-- Only fields visible on this screen are counted. Hidden IDs, route params, session tokens, and internal state are excluded.
-- Role-based routes must be accessible only by the stated actor in production.
-- Prototype data and actions use local mock state unless explicitly integrated with backend later.
-
-System Messages:
-- Show validation, success, empty-state, authorization, or mock-service messages near the related field/action.
-- If backend integration is added later, replace local mock messages with real API result messages.
-

@@ -482,7 +482,7 @@ export const notifications: AppNotification[] = [
 ];
 
 export const screenRoutes: RouteMeta[] = [
-  { section: '3.1.1', screen: 'Home Page', route: '/', actor: 'Guest, Learner, Teacher, Admin', relatedUc: 'UC-01', group: 'Public Access & Discovery' },
+  { section: '3.1.1', screen: 'Home Page', route: '/', actor: 'Guest', relatedUc: 'UC-01', group: 'Public Access & Discovery' },
   { section: '3.1.2', screen: 'Search Public Study Sets', route: '/search/study-sets', actor: 'Guest, Learner', relatedUc: 'UC-02', group: 'Public Access & Discovery' },
   { section: '3.1.3', screen: 'Search Public User Accounts', route: '/search/users', actor: 'Guest, Learner, Teacher', relatedUc: 'UC-03', group: 'Public Access & Discovery' },
   { section: '3.1.4', screen: 'Public Study Set Detail', route: '/sets/set-bio-cell/public', actor: 'Guest, Learner', relatedUc: 'UC-04, UC-05', group: 'Public Access & Discovery' },

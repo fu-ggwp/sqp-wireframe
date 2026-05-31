@@ -1,5 +1,6 @@
 import { Navigate, createBrowserRouter } from 'react-router-dom';
 import type { ReactNode } from 'react';
+import { useAuth } from './auth/AuthContext';
 import { AllowGuestOrRole, RequireRole } from './auth/RequireRole';
 import { AppShell } from './components/layout/AppShell';
 import { HomePage, PublicStudySetDetailPage, SearchStudySetsPage, SearchUsersPage } from './pages/PublicPages';
@@ -75,12 +76,22 @@ const authenticatedOnly = (element: ReactNode) => <RequireRole allowed={['Learne
 const premiumActorOnly = (element: ReactNode) => <RequireRole allowed={['Learner', 'Teacher']}>{element}</RequireRole>;
 const publicOrPremiumActor = (element: ReactNode) => <AllowGuestOrRole allowed={['Learner', 'Teacher']}>{element}</AllowGuestOrRole>;
 
+function GuestHomeRoute() {
+  const { role } = useAuth();
+
+  if (role === 'Learner') return <Navigate replace to='/learner/dashboard' />;
+  if (role === 'Teacher') return <Navigate replace to='/teacher/dashboard' />;
+  if (role === 'Admin') return <Navigate replace to='/admin/dashboard' />;
+
+  return <HomePage />;
+}
+
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <AppShell />,
     children: [
-      { index: true, element: <HomePage /> },
+      { index: true, element: <GuestHomeRoute /> },
       { path: 'search/study-sets', element: <SearchStudySetsPage /> },
       { path: 'search/users', element: <SearchUsersPage /> },
       { path: 'sets/:id/public', element: <PublicStudySetDetailPage /> },

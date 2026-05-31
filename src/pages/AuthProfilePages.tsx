@@ -95,12 +95,10 @@ export function LoginPage() {
           </div>
 
           <div className='space-y-4'>
-            {['Google', 'Facebook', 'Apple', 'WhatsApp'].map((provider) => (
-              <button className='focus-ring flex h-14 w-full items-center justify-center gap-3 rounded-full bg-slate-100 text-sm font-bold text-slate-600 transition hover:bg-slate-200' key={provider} onClick={() => setMessage(`${provider} login is not connected yet.`)}>
-                <span className='flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs font-black text-indigo-600'>{provider[0]}</span>
-                Login with {provider}
-              </button>
-            ))}
+            <button className='focus-ring flex h-14 w-full items-center justify-center gap-3 rounded-full bg-slate-100 text-sm font-bold text-slate-600 transition hover:bg-slate-200' onClick={() => setMessage('Google login is not connected yet.')}>
+              <span className='flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs font-black text-indigo-600'>G</span>
+              Login with Google
+            </button>
           </div>
 
           <div className='my-8 grid grid-cols-[1fr_auto_1fr] items-center gap-4 text-sm font-semibold text-slate-500'>
@@ -138,15 +136,23 @@ export function LoginPage() {
 
 export function ForgotPasswordPage() {
   const [sent, setSent] = useState(false);
+  const [verified, setVerified] = useState(false);
 
   return (
-    <AuthFrame title='Forgot Password' description='Enter your account email to receive a password reset link.' eyebrow='Account recovery'>
-      <div className='grid gap-4 md:grid-cols-2'><Input label='Registered Email Address' placeholder='user@example.com' type='email' /><Select label='Reset Delivery Method' options={[{ value: 'email', label: 'Email link' }, { value: 'sms', label: 'SMS code' }]} /><Input label='Account Username' placeholder='Optional username' /><Input label='Verification Code' placeholder='If already received' /></div>
-      <div className='mt-5 flex gap-3'>
-        <Button icon={<Mail size={17} />} onClick={() => setSent(true)}>Send Reset Link</Button>
-        <Link to='/auth/login'><Button variant='ghost'>Back to login</Button></Link>
+    <AuthFrame title='Forgot Password' description='Enter your account email, choose delivery method, then verify the received code.' eyebrow='Account recovery'>
+      <div className='grid gap-4 md:grid-cols-2'>
+        <Input label='Registered Email Address' placeholder='user@example.com' type='email' />
+        <Select label='Reset Delivery Method' options={[{ value: 'email', label: 'Email code' }, { value: 'sms', label: 'SMS code' }]} />
+        <Input label='Account Username' placeholder='Optional username' />
+        <Input disabled={!sent} label='Verification Code' placeholder={sent ? 'Enter received code' : 'Send code first'} />
       </div>
-      {sent ? <p className='mt-4 rounded-lg bg-blue-50 p-3 text-sm font-semibold text-blue-700'>Reset link sent. Check your email inbox.</p> : null}
+      <div className='mt-5 flex flex-wrap gap-3'>
+        <Button icon={<Mail size={17} />} onClick={() => { setSent(true); setVerified(false); }}>Send Verification Code</Button>
+        <Button disabled={!sent} icon={<CheckCircle2 size={17} />} onClick={() => setVerified(true)} variant='secondary'>Verify Code</Button>
+        <Link to={verified ? '/auth/reset-password' : '/auth/login'}><Button variant={verified ? 'primary' : 'ghost'}>{verified ? 'Continue Reset Password' : 'Back to login'}</Button></Link>
+      </div>
+      {sent ? <p className='mt-4 rounded-lg bg-blue-50 p-3 text-sm font-semibold text-blue-700'>Verification code sent locally. Delivery service is not connected.</p> : null}
+      {verified ? <p className='mt-3 rounded-lg bg-emerald-50 p-3 text-sm font-semibold text-emerald-700'>Verification code accepted. You can continue to reset password.</p> : null}
     </AuthFrame>
   );
 }
