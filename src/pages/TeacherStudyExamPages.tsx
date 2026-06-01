@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { Download, Eye, Plus, Settings, TimerReset } from 'lucide-react';
+import { Download, Eye, FileSpreadsheet, Plus, Settings, Sparkles, TimerReset } from 'lucide-react';
+import { useAuth } from '../auth/AuthContext';
 import { classes, examAttempts, exams, getExamById, questionBanks, questions, studySets } from '../data/mockData';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
@@ -24,9 +25,9 @@ export function TeacherStudySetsPage() {
 
   return (
     <div className='space-y-6'>
-      <PageHeader actions={<Link to='/teacher/study-sets/create'><Button icon={<Plus size={17} />}>Create Study Set</Button></Link>} description='Manage study sets created from question banks, check visibility, assigned classes, and learner activity.' eyebrow='Study sets' title='Study Sets' />
-      <ListFieldBar filters={[{ label: 'Visibility', options: [{ value: 'all', label: 'All visibility' }, { value: 'public', label: 'Public' }, { value: 'private', label: 'Private' }, { value: 'class-only', label: 'Class Only' }], value: visibility }, { label: 'Subject Filter', options: [{ value: 'all', label: 'All subjects' }, { value: 'Biology', label: 'Biology' }, { value: 'Chemistry', label: 'Chemistry' }, { value: 'Mathematics', label: 'Mathematics' }] }, { label: 'Assignment Filter', options: [{ value: 'all', label: 'All assignments' }, { value: 'assigned', label: 'Assigned to class' }, { value: 'unassigned', label: 'Not assigned' }] }]} onSearchChange={setQuery} searchLabel='Search Study Sets' searchPlaceholder='Title, subject, topic, owner' searchValue={query} />
-      {filtered.length ? <><TeacherStudySetTable source={filtered} /><PaginationBar label={`Showing ${filtered.length} study sets`} /></> : <EmptyState title='No study sets found' description='Create a study set from a question bank or change the current filters.' />}
+      <PageHeader actions={<Link to='/study-sets/create'><Button icon={<Plus size={17} />}>Create Study Set</Button></Link>} description='Manage Study Sets as the primary learning content, check visibility, assigned classes, and learner activity.' eyebrow='Study sets' title='Study Sets' />
+      <ListFieldBar filters={[{ label: 'Visibility', onChange: setVisibility, options: [{ value: 'all', label: 'All visibility' }, { value: 'public', label: 'Public' }, { value: 'private', label: 'Private' }, { value: 'class-only', label: 'Class Only' }], value: visibility }, { label: 'Subject Filter', options: [{ value: 'all', label: 'All subjects' }, { value: 'Biology', label: 'Biology' }, { value: 'Chemistry', label: 'Chemistry' }, { value: 'Mathematics', label: 'Mathematics' }] }, { label: 'Assignment Filter', options: [{ value: 'all', label: 'All assignments' }, { value: 'assigned', label: 'Assigned to class' }, { value: 'unassigned', label: 'Not assigned' }] }]} onSearchChange={setQuery} searchLabel='Search Study Sets' searchPlaceholder='Title, subject, topic, owner' searchValue={query} />
+      {filtered.length ? <><TeacherStudySetTable source={filtered} /><PaginationBar label={`Showing ${filtered.length} study sets`} /></> : <EmptyState title='No study sets found' description='Create a Study Set directly or change the current filters.' />}
     </div>
   );
 }
@@ -34,20 +35,25 @@ export function TeacherStudySetsPage() {
 export function CreateStudySetPage() {
   const [created, setCreated] = useState(false);
   const [bankId, setBankId] = useState(questionBanks[0].id);
+  const [title, setTitle] = useState('Cell Biology Essentials');
+  const { currentUser, role } = useAuth();
   const selectedBank = questionBanks.find((bank) => bank.id === bankId) ?? questionBanks[0];
   const bankQuestions = questions.filter((question) => selectedBank.questionIds.includes(question.id));
+  const writableSet = studySets.find((set) => set.ownerId === currentUser?.id)
+    ?? studySets.find((set) => role === 'Teacher' && classes.some((room) => room.teacherId === currentUser?.id && set.assignedClassIds.includes(room.id)))
+    ?? studySets[0];
+  const draftSetId = writableSet.id;
 
   return (
     <div className='space-y-6'>
-      <PageHeader description='Create a study set from questions in one selected question bank.' eyebrow='Study sets' title='Create Study Set' />
+      <PageHeader description='Create a Study Set for flashcards, practice quizzes, and class assignments. Questions can be added after the set is created.' eyebrow='Study set creation' title='Create Study Set' />
       <Card>
         <CardBody className='space-y-4'>
           <div className='grid gap-4 md:grid-cols-2'>
-            <Input label='Study Set Title' placeholder='Cell Biology Essentials' />
-            <Select label='Source Question Bank' onChange={(event) => setBankId(event.target.value)} options={questionBanks.map((bank) => ({ value: bank.id, label: bank.title }))} value={bankId} />
-            <Input label='Subject' readOnly value={selectedBank.subject} />
-            <Input label='Topic' readOnly value={selectedBank.topic} />
-            <Select label='Visibility' options={[{ value: 'public', label: 'Public' }, { value: 'private', label: 'Private' }, { value: 'class-only', label: 'Class Only' }]} />
+            <Input label='Study Set Title' onChange={(event) => setTitle(event.target.value)} placeholder='Cell Biology Essentials' value={title} />
+            <Input label='Subject' placeholder='Biology' />
+            <Input label='Topic' placeholder='Cell Structure' />
+            <Select defaultValue='public' helper='New Study Sets are Public by default.' label='Visibility' options={[{ value: 'public', label: 'Public' }, { value: 'private', label: 'Private' }, { value: 'class-only', label: 'Class Only' }]} />
             <Input label='Estimated Study Time' placeholder='20 minutes' />
             <Input label='Target Accuracy' placeholder='80%' />
             <Select label='Card Order' options={[{ value: 'default', label: 'Default order' }, { value: 'shuffle', label: 'Shuffle cards' }, { value: 'weak-first', label: 'Weak questions first' }]} />
@@ -55,18 +61,18 @@ export function CreateStudySetPage() {
             <Input label='Tags' placeholder='biology, exam-prep' />
           </div>
           <label className='block space-y-1.5'><span className='text-sm font-semibold text-slate-700'>Description</span><textarea className='focus-ring min-h-24 w-full rounded-lg border border-slate-200 p-3 text-sm' placeholder='What learners should practice in this set.' /></label>
-          <div className='rounded-lg border border-slate-200 bg-slate-50 p-4'>
+          {role === 'Teacher' ? <div className='rounded-lg border border-slate-200 bg-slate-50 p-4'>
             <div className='flex flex-wrap items-center justify-between gap-3'>
-              <div><p className='font-bold text-slate-950'>Select Questions</p><p className='mt-1 text-sm text-slate-500'>{bankQuestions.length} questions from {selectedBank.title}</p></div>
+              <div className='min-w-72 flex-1'><Select label='Optional Question Bank To Copy From' onChange={(event) => setBankId(event.target.value)} options={questionBanks.map((bank) => ({ value: bank.id, label: bank.title }))} value={bankId} /><p className='mt-1 text-sm text-slate-500'>{bankQuestions.length} reusable questions available in {selectedBank.title}. Selected questions are copied into the Study Set; Learners cannot access the Question Bank.</p></div>
               <Badge tone='teal'>{selectedBank.visibility}</Badge>
             </div>
-            <div className='mt-3 grid gap-2'>
+            <p className='mt-4 text-sm font-bold text-slate-700'>Selected Questions To Copy</p><div className='mt-3 grid gap-2'>
               {bankQuestions.map((question) => <label className='flex items-start gap-3 rounded-lg bg-white p-3 text-sm' key={question.id}><input className='mt-1' defaultChecked type='checkbox' /><span><span className='font-semibold text-slate-800'>{question.content}</span><span className='mt-1 block text-xs text-slate-500'>{question.type} - {question.difficulty} - {question.score} point</span></span></label>)}
             </div>
-          </div>
-          <div className='grid gap-3 md:grid-cols-3'><label className='flex items-center gap-3 rounded-lg border border-slate-200 p-3 text-sm font-semibold'><input defaultChecked type='checkbox' /> Include explanations</label><label className='flex items-center gap-3 rounded-lg border border-slate-200 p-3 text-sm font-semibold'><input type='checkbox' /> Allow copy by other teachers</label><label className='flex items-center gap-3 rounded-lg border border-slate-200 p-3 text-sm font-semibold'><input defaultChecked type='checkbox' /> Track learner progress</label></div>
+          </div> : null}
+          <div className='grid gap-3 md:grid-cols-4'><label className='flex items-center gap-3 rounded-lg border border-slate-200 p-3 text-sm font-semibold'><input defaultChecked type='checkbox' /> Include explanations</label><label className='flex items-center gap-3 rounded-lg border border-slate-200 p-3 text-sm font-semibold'><input type='checkbox' /> Allow copy by other teachers</label><label className='flex items-center gap-3 rounded-lg border border-slate-200 p-3 text-sm font-semibold'><input defaultChecked type='checkbox' /> Track learner progress</label><label className='flex items-center gap-3 rounded-lg border border-slate-200 p-3 text-sm font-semibold'><input type='checkbox' /> Create empty Study Set</label></div>
           <Button icon={<Plus size={17} />} onClick={() => setCreated(true)}>Create Study Set</Button>
-          {created ? <p className='rounded-lg bg-emerald-50 p-3 text-sm font-semibold text-emerald-700'>Study set created from {selectedBank.title}.</p> : null}
+          {created ? <div className='rounded-lg bg-emerald-50 p-4 text-sm font-semibold text-emerald-700'><p>Study set "{title}" created successfully and published with Public visibility.</p><div className='mt-3 flex flex-wrap gap-2'><Link to={`/study-sets/${draftSetId}/questions/create`}><Button icon={<Plus size={16} />} size='sm'>Add Question</Button></Link><Link to={`/study-sets/${draftSetId}/import`}><Button icon={<FileSpreadsheet size={16} />} size='sm' variant='secondary'>Import Excel</Button></Link><Link to={`/study-sets/${draftSetId}/ai-generate`}><Button icon={<Sparkles size={16} />} size='sm' variant='secondary'>AI Generate</Button></Link><Link to={`/study-sets/${draftSetId}`}><Button size='sm' variant='ghost'>Open Study Set</Button></Link></div></div> : null}
         </CardBody>
       </Card>
     </div>
@@ -181,11 +187,10 @@ function TeacherExamTable({ source }: { source: typeof exams }) {
 }
 
 function TeacherStudySetTable({ source }: { source: typeof studySets }) {
-  return <Table headers={['Study Set', 'Source', 'Visibility', 'Questions', 'Assigned Classes', 'Learners', 'Actions']} rows={source.map((set) => {
-    const bank = questionBanks.find((item) => item.subject === set.subject && set.topic.toLowerCase().includes(item.topic.split(' ')[0].toLowerCase())) ?? questionBanks.find((item) => item.subject === set.subject) ?? questionBanks[0];
+  return <Table headers={['Study Set', 'Owner', 'Visibility', 'Questions', 'Assigned Classes', 'Learners', 'Actions']} rows={source.map((set) => {
     return [
       <div><p className='font-bold text-slate-950'>{set.title}</p><p className='text-xs text-slate-500'>{set.subject} - {set.topic}</p></div>,
-      bank.title,
+      set.ownerName,
       <Badge tone={set.visibility === 'public' ? 'emerald' : set.visibility === 'class-only' ? 'amber' : 'slate'}>{set.visibility}</Badge>,
       `${set.questionCount}`,
       set.assignedClassIds.length ? set.assignedClassIds.join(', ') : 'Not assigned',

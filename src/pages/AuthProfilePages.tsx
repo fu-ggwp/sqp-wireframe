@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
-import { CheckCircle2, Eye, LogOut, Mail, Save, ShieldCheck, UserPlus, X } from 'lucide-react';
+import { CheckCircle2, Eye, LogOut, Mail, Repeat2, Save, ShieldCheck, UserPlus, X } from 'lucide-react';
 import { users } from '../data/mockData';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
@@ -202,7 +202,7 @@ export function ResetPasswordPage() {
 
 export function ProfilePage() {
   const [loggedOut, setLoggedOut] = useState(false);
-  const { currentUser, logout } = useAuth();
+  const { currentUser, logout, role } = useAuth();
   const navigate = useNavigate();
 
   if (!currentUser) return null;
@@ -228,7 +228,7 @@ export function ProfilePage() {
             <div className='mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-teal-100 text-3xl font-bold text-teal-700'>{currentUser.avatar}</div>
             <h2 className='mt-4 text-xl font-bold text-slate-950'>{currentUser.fullName}</h2>
             <p className='text-sm text-slate-500'>@{currentUser.username}</p>
-            <div className='mt-3 flex justify-center gap-2'><Badge tone='teal'>{currentUser.role}</Badge>{currentUser.premium ? <Badge tone='amber'>Premium</Badge> : <Badge>Free</Badge>}</div>
+            <div className='mt-3 flex justify-center gap-2'><Badge tone='teal'>{role ?? currentUser.role}</Badge>{currentUser.premium ? <Badge tone='amber'>Premium</Badge> : <Badge>Free</Badge>}</div>
           </div>
           <div className='grid gap-4 md:grid-cols-2'>
             <ProfileField label='Email' value={currentUser.email} />
@@ -246,9 +246,9 @@ export function ProfilePage() {
       </Card>
       <Card>
         <CardBody>
-          <h2 className='mb-4 text-lg font-bold text-slate-950'>{currentUser.role} access summary</h2>
+          <h2 className='mb-4 text-lg font-bold text-slate-950'>{role ?? currentUser.role} access summary</h2>
           <div className='grid gap-3 md:grid-cols-4'>
-            {roleProfileFields(currentUser.role).map((field) => <ProfileField key={field.label} label={field.label} value={field.value} />)}
+            {roleProfileFields(role ?? currentUser.role).map((field) => <ProfileField key={field.label} label={field.label} value={field.value} />)}
           </div>
         </CardBody>
       </Card>
@@ -258,9 +258,26 @@ export function ProfilePage() {
 
 export function EditProfilePage() {
   const [saved, setSaved] = useState(false);
-  const { currentUser } = useAuth();
+  const [selectedRole, setSelectedRole] = useState('');
+  const [roleMessage, setRoleMessage] = useState('');
+  const { currentUser, role, availableRoles, switchRole } = useAuth();
+  const navigate = useNavigate();
 
   if (!currentUser) return null;
+
+  const canSwitchRole = currentUser.role !== 'Admin' && availableRoles.includes('Learner') && availableRoles.includes('Teacher');
+  const activeRole = role ?? currentUser.role;
+  const switchRoleOptions = availableRoles.filter((item) => item !== 'Admin' && item !== activeRole);
+
+  const handleSwitchRole = () => {
+    const nextRole = selectedRole || switchRoleOptions[0];
+    if (nextRole !== 'Learner' && nextRole !== 'Teacher') return;
+    const changed = switchRole(nextRole);
+    if (!changed) return;
+    setSelectedRole('');
+    setRoleMessage('Role switched successfully.');
+    window.setTimeout(() => navigate(nextRole === 'Teacher' ? '/teacher/dashboard' : '/learner/dashboard'), 500);
+  };
 
   return (
     <div className='space-y-6'>
@@ -276,6 +293,23 @@ export function EditProfilePage() {
             <Input label='Timezone' placeholder='Asia/Bangkok' />
           </div>
           <div className='grid gap-4 md:grid-cols-2'><Select label='Notification Preference' options={[{ value: 'email', label: 'Email' }, { value: 'in-app', label: 'In-app' }, { value: 'both', label: 'Email + in-app' }]} /><Select label='Profile Visibility' options={[{ value: 'public', label: 'Public profile' }, { value: 'private', label: 'Private profile' }]} /></div>
+          {canSwitchRole ? (
+            <div className='rounded-lg border border-slate-200 bg-slate-50 p-4'>
+              <div className='flex flex-wrap items-end gap-3'>
+                <div className='min-w-64 flex-1'>
+                  <Select
+                    helper='Switch only changes the active workspace for this account.'
+                    label={`Switch Role - current active role: ${activeRole}`}
+                    onChange={(event) => setSelectedRole(event.target.value)}
+                    options={switchRoleOptions.map((item) => ({ value: item, label: item }))}
+                    value={selectedRole || switchRoleOptions[0] || ''}
+                  />
+                </div>
+                <Button icon={<Repeat2 size={17} />} onClick={handleSwitchRole} variant='secondary'>Switch Role</Button>
+              </div>
+              {roleMessage ? <p className='mt-3 rounded-lg bg-emerald-50 p-3 text-sm font-semibold text-emerald-700'>{roleMessage}</p> : null}
+            </div>
+          ) : null}
           <label className='block space-y-1.5'>
             <span className='text-sm font-semibold text-slate-700'>Profile Details</span>
             <textarea className='focus-ring min-h-28 w-full rounded-lg border border-slate-200 p-3 text-sm' defaultValue={currentUser.bio} />

@@ -14,6 +14,7 @@ export interface User {
   email: string;
   phone: string;
   role: Exclude<Role, 'Guest'>;
+  availableRoles: Exclude<Role, 'Guest'>[];
   status: AccountStatus;
   premium: boolean;
   avatar: string;
@@ -37,6 +38,7 @@ export interface StudySet {
   tags: string[];
   coverImage: string;
   assignedClassIds: string[];
+  questionIds: string[];
   progress?: number;
 }
 

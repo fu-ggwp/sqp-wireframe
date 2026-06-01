@@ -1,4 +1,4 @@
-﻿import type { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { Search, SlidersHorizontal } from 'lucide-react';
 import { Button } from './Button';
 import { Card, CardBody } from './Card';
@@ -9,6 +9,7 @@ interface FilterOption {
   label: string;
   options: { value: string; label: string }[];
   value?: string;
+  onChange?: (value: string) => void;
 }
 
 interface ListFieldBarProps {
@@ -18,6 +19,8 @@ interface ListFieldBarProps {
   onSearchChange?: (value: string) => void;
   filters?: FilterOption[];
   sortOptions?: { value: string; label: string }[];
+  sortValue?: string;
+  onSortChange?: (value: string) => void;
   children?: ReactNode;
 }
 
@@ -32,6 +35,8 @@ export function ListFieldBar({
     { value: 'name-asc', label: 'Name A-Z' },
     { value: 'name-desc', label: 'Name Z-A' },
   ],
+  sortValue,
+  onSortChange,
   children,
 }: ListFieldBarProps) {
   return (
@@ -45,17 +50,17 @@ export function ListFieldBar({
             value={searchValue}
           />
           {filters.slice(0, 2).map((filter) => (
-            <Select key={filter.label} label={filter.label} options={filter.options} value={filter.value} />
+            <Select key={filter.label} label={filter.label} onChange={(event) => filter.onChange?.(event.target.value)} options={filter.options} value={filter.value} />
           ))}
           <div className='flex items-end'>
             <Button icon={<Search size={16} />} variant='secondary'>Apply</Button>
           </div>
         </div>
-        <div className='grid gap-4 md:grid-cols-[220px_220px_1fr_auto]'>
-          {filters.slice(2, 4).map((filter) => (
-            <Select key={filter.label} label={filter.label} options={filter.options} value={filter.value} />
+        <div className='grid gap-4 md:grid-cols-3 xl:grid-cols-4'>
+          {filters.slice(2).map((filter) => (
+            <Select key={filter.label} label={filter.label} onChange={(event) => filter.onChange?.(event.target.value)} options={filter.options} value={filter.value} />
           ))}
-          <Select label='Sort By' options={sortOptions} />
+          <Select label='Sort By' onChange={(event) => onSortChange?.(event.target.value)} options={sortOptions} value={sortValue} />
           <div className='flex items-end justify-end gap-2'>
             {children}
             <Button icon={<SlidersHorizontal size={16} />} variant='ghost'>Reset Filters</Button>

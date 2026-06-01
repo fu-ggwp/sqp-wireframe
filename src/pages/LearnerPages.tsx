@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, Clock, FileQuestion, GraduationCap, Send, Sparkles } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, Clock, FileQuestion, GraduationCap, Plus, Send, Sparkles, Trash2 } from 'lucide-react';
+import { useAuth } from '../auth/AuthContext';
 import { classes, examAttempts, exams, getClassById, getExamById, getStudySetById, progressMetrics, questions, studySets, users } from '../data/mockData';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
@@ -16,16 +17,11 @@ import { Table } from '../components/ui/Table';
 import { FieldNote, ListFieldBar, PaginationBar } from '../components/ui/FieldControls';
 
 const learner = users[0];
-const learnerStudySets = studySets.filter((set) => set.visibility === 'public' || set.assignedClassIds.length > 0);
-const studySetQuestionBanks: Record<string, string[]> = {
-  'set-bio-cell': ['bank-bio-core'],
-  'set-chem-bonding': ['bank-chem-bonding'],
-  'set-math-functions': ['bank-math-functions'],
-};
+const learnerStudySets = studySets.filter((set) => set.visibility === 'public' || set.assignedClassIds.length > 0 || set.ownerId === learner.id);
 
 function getQuestionsForStudySet(setId?: string) {
-  const bankIds = studySetQuestionBanks[setId ?? ''] ?? [];
-  const scopedQuestions = questions.filter((question) => bankIds.includes(question.bankId));
+  const studySet = getStudySetById(setId);
+  const scopedQuestions = questions.filter((question) => studySet.questionIds.includes(question.id));
   return scopedQuestions.length ? scopedQuestions : questions;
 }
 
@@ -40,7 +36,7 @@ export function LearnerDashboardPage() {
   return (
     <div className='space-y-6'>
       <PageHeader
-        actions={<><Link to='/learner/classes/join'><Button>Join Class</Button></Link><Link to='/learner/study-sets'><Button variant='secondary'>Continue Study</Button></Link></>}
+        actions={<><Link to='/learner/classes/join'><Button>Join Class</Button></Link><Link to='/study-sets/create'><Button icon={<Plus size={17} />}>Create Study Set</Button></Link><Link to='/study-sets'><Button variant='secondary'>Continue Study</Button></Link></>}
         description='Pick up active study sets, review recent material, and prepare for upcoming exams.'
         eyebrow='Learner workspace'
         title={`Welcome back, ${learner.fullName.split(' ')[0]}`}
@@ -49,7 +45,7 @@ export function LearnerDashboardPage() {
       <section className='space-y-4'>
         <div className='flex items-center justify-between gap-3'>
           <h2 className='text-2xl font-bold text-slate-950'>Jump back in</h2>
-          <Link className='inline-flex items-center gap-1 text-sm font-bold text-teal-700' to='/learner/study-sets'>View all <ArrowRight size={16} /></Link>
+          <Link className='inline-flex items-center gap-1 text-sm font-bold text-teal-700' to='/study-sets'>View all <ArrowRight size={16} /></Link>
         </div>
         <div className='grid gap-4 xl:grid-cols-3'>
           {activeSets.map((set) => <ContinueStudySetCard key={set.id} set={set} />)}
@@ -61,11 +57,11 @@ export function LearnerDashboardPage() {
           <CardBody>
             <div className='mb-4 flex items-center justify-between'>
               <h2 className='text-lg font-bold text-slate-950'>Recents</h2>
-              <Link className='text-sm font-bold text-teal-700' to='/learner/study-sets'>Study sets</Link>
+              <Link className='text-sm font-bold text-teal-700' to='/study-sets'>Study sets</Link>
             </div>
             <div className='grid gap-3 md:grid-cols-2'>
               {recentSets.map((set) => (
-                <Link className='rounded-lg border border-slate-200 p-4 transition hover:border-teal-300 hover:bg-teal-50' key={set.id} to={`/learner/study-sets/${set.id}`}>
+                <Link className='rounded-lg border border-slate-200 p-4 transition hover:border-teal-300 hover:bg-teal-50' key={set.id} to={`/study-sets/${set.id}`}>
                   <div className='flex items-start gap-3'>
                     <span className='flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700'><BookOpen size={18} /></span>
                     <div className='min-w-0'>
@@ -188,51 +184,110 @@ export function LearnerClassDetailPage() {
   );
 }
 
-export function LearnerStudySetsPage() {
+export function StudySetsPage() {
   const [query, setQuery] = useState('');
-  const filtered = learnerStudySets.filter((set) => [set.title, set.subject, set.topic].join(' ').toLowerCase().includes(query.toLowerCase()));
+  const [subjectFilter, setSubjectFilter] = useState('all');
+  const [topicFilter, setTopicFilter] = useState('all');
+  const [ownershipFilter, setOwnershipFilter] = useState('all');
+  const [assignmentFilter, setAssignmentFilter] = useState('all');
+  const [visibilityFilter, setVisibilityFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('latest');
+  const { currentUser, role } = useAuth();
+
+  const isLearnerAssigned = (set: (typeof studySets)[number]) => Boolean(currentUser && classes.some((room) => room.memberIds.includes(currentUser.id) && set.assignedClassIds.includes(room.id)));
+  const isTeacherManaged = (set: (typeof studySets)[number]) => Boolean(currentUser && classes.some((room) => room.teacherId === currentUser.id && set.assignedClassIds.includes(room.id)));
+  const isOwned = (set: (typeof studySets)[number]) => set.ownerId === currentUser?.id;
+  const learningStatus = (set: (typeof studySets)[number]) => {
+    const progress = set.progress ?? 0;
+    if (progress >= 100) return 'completed';
+    if (progress > 0) return 'in-progress';
+    return 'not-started';
+  };
+
+  const accessibleSets = studySets.filter((set) => {
+    if (!currentUser || !role) return false;
+    if (role === 'Learner') return isOwned(set) || isLearnerAssigned(set) || (set.visibility === 'public' && (set.progress ?? 0) > 0);
+    if (role === 'Teacher') return isOwned(set) || isTeacherManaged(set);
+    return false;
+  });
+
+  const filtered = accessibleSets
+    .filter((set) => [set.title, set.description, set.subject, set.topic, set.ownerName, set.tags.join(' ')].join(' ').toLowerCase().includes(query.toLowerCase()))
+    .filter((set) => subjectFilter === 'all' || set.subject === subjectFilter)
+    .filter((set) => topicFilter === 'all' || set.topic === topicFilter)
+    .filter((set) => visibilityFilter === 'all' || set.visibility === visibilityFilter)
+    .filter((set) => statusFilter === 'all' || learningStatus(set) === statusFilter)
+    .filter((set) => assignmentFilter === 'all' || (assignmentFilter === 'assigned' ? set.assignedClassIds.length > 0 : set.assignedClassIds.length === 0))
+    .filter((set) => {
+      if (ownershipFilter === 'owned') return isOwned(set);
+      if (ownershipFilter === 'assigned') return role === 'Learner' ? isLearnerAssigned(set) : isTeacherManaged(set);
+      if (ownershipFilter === 'public-started') return role === 'Learner' && set.visibility === 'public' && !isOwned(set);
+      if (ownershipFilter === 'managed-class') return role === 'Teacher' && isTeacherManaged(set);
+      return true;
+    })
+    .sort((a, b) => {
+      if (sortBy === 'name-asc') return a.title.localeCompare(b.title);
+      if (sortBy === 'name-desc') return b.title.localeCompare(a.title);
+      if (sortBy === 'progress-desc') return (b.progress ?? 0) - (a.progress ?? 0);
+      return b.questionCount - a.questionCount;
+    });
 
   return (
     <div className='space-y-6'>
-      <PageHeader description='Continue assigned sets, public sets, flashcards, quizzes, and mistake review.' eyebrow='Study library' title='Study Sets' />
+      <PageHeader actions={<Link to='/study-sets/create'><Button icon={<Plus size={17} />}>Create Study Set</Button></Link>} description='Find sets you own, sets assigned through classes, and public sets you are studying.' eyebrow={role === 'Teacher' ? 'Teaching content' : 'Study library'} title='Study Sets' />
       <ListFieldBar
         filters={[
-          { label: 'Subject Filter', options: [{ value: 'all', label: 'All subjects' }, { value: 'Biology', label: 'Biology' }, { value: 'Chemistry', label: 'Chemistry' }, { value: 'Mathematics', label: 'Mathematics' }] },
-          { label: 'Progress Filter', options: [{ value: 'all', label: 'All progress' }, { value: 'not-started', label: 'Not started' }, { value: 'in-progress', label: 'In progress' }, { value: 'completed', label: 'Completed' }] },
-          { label: 'Visibility Filter', options: [{ value: 'all', label: 'All visibility' }, { value: 'public', label: 'Public' }, { value: 'class-only', label: 'Class only' }] },
+          { label: 'Subject Filter', onChange: setSubjectFilter, options: [{ value: 'all', label: 'All subjects' }, { value: 'Biology', label: 'Biology' }, { value: 'Chemistry', label: 'Chemistry' }, { value: 'Mathematics', label: 'Mathematics' }], value: subjectFilter },
+          { label: 'Topic Filter', onChange: setTopicFilter, options: [{ value: 'all', label: 'All topics' }, { value: 'Cell Structure', label: 'Cell Structure' }, { value: 'Chemical Bonding', label: 'Chemical Bonding' }, { value: 'Functions', label: 'Functions' }, { value: 'Exam Review', label: 'Exam Review' }], value: topicFilter },
+          { label: 'Ownership Filter', onChange: setOwnershipFilter, options: role === 'Teacher' ? [{ value: 'all', label: 'All ownership' }, { value: 'owned', label: 'Owned by me' }, { value: 'managed-class', label: 'Managed class sets' }] : [{ value: 'all', label: 'All ownership' }, { value: 'owned', label: 'Owned by me' }, { value: 'assigned', label: 'Assigned to me' }, { value: 'public-started', label: 'Public sets started' }], value: ownershipFilter },
+          { label: 'Assignment Filter', onChange: setAssignmentFilter, options: [{ value: 'all', label: 'All assignments' }, { value: 'assigned', label: 'Assigned to class' }, { value: 'unassigned', label: 'Not assigned' }], value: assignmentFilter },
+          { label: 'Visibility Filter', onChange: setVisibilityFilter, options: [{ value: 'all', label: 'All visibility' }, { value: 'public', label: 'Public' }, { value: 'private', label: 'Private' }, { value: 'class-only', label: 'Class only' }], value: visibilityFilter },
+          { label: 'Learning Status', onChange: setStatusFilter, options: [{ value: 'all', label: 'All status' }, { value: 'not-started', label: 'Not started' }, { value: 'in-progress', label: 'In progress' }, { value: 'completed', label: 'Completed' }], value: statusFilter },
         ]}
         onSearchChange={setQuery}
+        onSortChange={setSortBy}
         searchLabel='Search Study Sets'
-        searchPlaceholder='Search by title, subject, topic'
+        searchPlaceholder='Title, owner, subject, topic, tag'
         searchValue={query}
+        sortOptions={[{ value: 'latest', label: 'Most questions' }, { value: 'name-asc', label: 'Title A-Z' }, { value: 'name-desc', label: 'Title Z-A' }, { value: 'progress-desc', label: 'Progress high to low' }]}
+        sortValue={sortBy}
       />
       <div className='grid gap-4 md:grid-cols-2 xl:grid-cols-3'>
-        {filtered.map((set) => <StudySetLearnerCard key={set.id} set={set} />)}
+        {filtered.map((set) => <StudySetLearnerCard key={set.id} learningStatus={learningStatus(set)} set={set} />)}
       </div>
       <PaginationBar label={`Showing ${filtered.length} study sets`} />
     </div>
   );
 }
 
+export const LearnerStudySetsPage = StudySetsPage;
+
 export function LearnerStudySetDetailPage() {
   const { id } = useParams();
+  const { currentUser, role } = useAuth();
   const set = getStudySetById(id);
   const setQuestions = getQuestionsForStudySet(set.id);
   const wrongAnswers = getWrongAnswersForStudySet(set.id);
+  const [deletedQuestion, setDeletedQuestion] = useState('');
+  const ownsSet = currentUser?.id === set.ownerId;
+  const teachesAssignedClass = Boolean(currentUser && role === 'Teacher' && classes.some((room) => room.teacherId === currentUser.id && set.assignedClassIds.includes(room.id)));
+  const canManage = Boolean(currentUser && (ownsSet || teachesAssignedClass));
 
   return (
     <div className='space-y-6'>
       <PageHeader
-        actions={<><Link to={`/learner/study-sets/${set.id}/flashcards`}><Button>Flashcards</Button></Link><Link to={`/learner/study-sets/${set.id}/quiz`}><Button variant='secondary'>Take Quiz</Button></Link>{wrongAnswers.length ? <Link to={`/learner/study-sets/${set.id}/review`}><Button variant='ghost'>Review mistakes</Button></Link> : null}</>}
-        description='Review set details, continue flashcards, take a quiz, or revisit missed questions.'
+        actions={<><Link to={`/study-sets/${set.id}/flashcards`}><Button>Flashcards</Button></Link>{role === 'Learner' ? <Link to={`/study-sets/${set.id}/quiz`}><Button variant='secondary'>Take Quiz</Button></Link> : null}{wrongAnswers.length ? <Link to={`/study-sets/${set.id}/review`}><Button variant='ghost'>Review mistakes</Button></Link> : null}{canManage ? <Link to={`/study-sets/${set.id}/questions/create`}><Button icon={<Plus size={17} />} variant='secondary'>Add Question</Button></Link> : null}{canManage ? <Link to={`/study-sets/${set.id}/import`}><Button variant='secondary'>Import Excel</Button></Link> : null}{canManage ? <Link to={`/study-sets/${set.id}/ai-generate`}><Button icon={<Sparkles size={17} />} variant='secondary'>AI Generate</Button></Link> : null}{role === 'Teacher' ? <Link to='/teacher/classes/class-bio-12a/assign-study-set'><Button variant='ghost'>Assign to Class</Button></Link> : null}</>}
+        description='Review Study Set details, manage contained questions, continue flashcards, take quizzes, or revisit missed questions.'
         eyebrow='Study set'
         title={set.title}
       />
       <div className='grid gap-6 lg:grid-cols-[1.3fr_0.7fr]'>
-        <Card><CardBody><p className='mb-4 text-slate-600'>{set.description}</p><Table headers={['Question', 'Type', 'Score']} rows={setQuestions.slice(0, 3).map((question) => [question.content, question.type, `${question.score}`])} /></CardBody></Card>
+        <Card><CardBody><p className='mb-4 text-slate-600'>{set.description}</p><Table headers={canManage ? ['Question', 'Type', 'Score', 'Actions'] : ['Question', 'Type', 'Score']} rows={setQuestions.map((question) => canManage ? [question.content, question.type, `${question.score}`, <div className='flex flex-wrap gap-2'><Link to={`/study-sets/${set.id}/questions/${question.id}/edit`}><Button size='sm' variant='secondary'>Edit</Button></Link><Button icon={<Trash2 size={14} />} onClick={() => setDeletedQuestion(question.id)} size='sm' variant='danger'>Delete</Button></div>] : [question.content, question.type, `${question.score}`])} /></CardBody></Card>
         <Card><CardBody className='space-y-4'><Info label='Subject' value={set.subject} /><Info label='Topic' value={set.topic} /><Info label='Question Count' value={`${set.questionCount}`} /><Info label='Missed Questions' value={`${wrongAnswers.length}`} /><Info label='Assigned By' value={set.ownerName} /><Info label='Due Date' value='2026-06-04' /><Info label='Required Accuracy' value='80%' /><Progress label='Learning progress' value={set.progress ?? 0} /></CardBody></Card>
       </div>
       <Card><CardBody><h2 className='mb-4 text-lg font-bold text-slate-950'>Study mode settings</h2><div className='grid gap-3 md:grid-cols-4'><Info label='Flashcard Order' value='Weak first' /><Info label='Quiz Mode' value='Multiple choice + written' /><Info label='Retry Rule' value='Wrong answers only' /><Info label='Completion Rule' value='Finish all cards' /></div></CardBody></Card>
+      {deletedQuestion ? <p className='rounded-lg bg-rose-50 p-3 text-sm font-semibold text-rose-700'>Question {deletedQuestion} is scheduled for removal from this Study Set.</p> : null}
     </div>
   );
 }
@@ -293,7 +348,7 @@ export function StudySetQuizPage() {
           </Card>
         ))}
       </div>
-      <div className='flex flex-wrap gap-3'><Button onClick={() => setSubmitted(true)}>Submit Quiz</Button><Link to={`/learner/study-sets/${set.id}/result`}><Button variant='secondary'>Open Result Screen</Button></Link></div>
+      <div className='flex flex-wrap gap-3'><Button onClick={() => setSubmitted(true)}>Submit Quiz</Button><Link to={`/study-sets/${set.id}/result`}><Button variant='secondary'>Open Result Screen</Button></Link></div>
       {submitted ? <div className='rounded-lg bg-blue-50 p-4 text-sm font-bold text-blue-700'>Score: {score}/{quizQuestions.length}. Review feedback above before continuing.</div> : null}
     </div>
   );
@@ -308,7 +363,7 @@ export function QuizResultPage() {
 
   return (
     <div className='space-y-6'>
-      <PageHeader actions={<Link to={`/learner/study-sets/${set.id}/review`}><Button>Review Wrong Answers</Button></Link>} description={`Result for ${set.title}. Check missed questions and continue practice.`} eyebrow='Quiz result' title='Quiz Result' />
+      <PageHeader actions={<Link to={`/study-sets/${set.id}/review`}><Button>Review Wrong Answers</Button></Link>} description={`Result for ${set.title}. Check missed questions and continue practice.`} eyebrow='Quiz result' title='Quiz Result' />
       <div className='grid gap-4 md:grid-cols-3'><MetricCard label='Score' value={`${correctCount}/${resultQuestions.length}`} helper='Practice attempt' /><MetricCard label='Correct answers' value={`${correctCount}`} helper='Based on current answers' /><MetricCard label='Wrong answers' value={`${wrongCount}`} helper={wrongCount ? 'Review recommended' : 'No missed questions'} /></div>
       <ListFieldBar filters={[{ label: 'Answer Status', options: [{ value: 'all', label: 'All answers' }, { value: 'correct', label: 'Correct only' }, { value: 'wrong', label: 'Wrong only' }] }, { label: 'Question Type', options: [{ value: 'all', label: 'All types' }, { value: 'multiple-choice', label: 'Multiple choice' }, { value: 'written-answer', label: 'Written answer' }] }]} searchLabel='Search Answer Review' searchPlaceholder='Question or answer keyword' />
       <Table headers={['Question', 'Your Answer', 'Correct Answer', 'Status']} rows={resultQuestions.map((question) => [question.content, question.learnerAnswer ?? question.correctAnswer, question.correctAnswer, (question.learnerAnswer ?? question.correctAnswer) === question.correctAnswer ? <StatusPill label='Correct' tone='success' /> : <StatusPill label='Wrong' tone='danger' />])} />
@@ -325,7 +380,7 @@ export function ReviewWrongAnswersPage() {
 
   return (
     <div className='space-y-6'>
-      <PageHeader actions={<Link to={`/learner/study-sets/${set.id}`}><Button variant='secondary'>Back to Study Set</Button></Link>} description={`Missed questions grouped under ${set.title}.`} eyebrow='Mistake review' title='Review Wrong Answers' />
+      <PageHeader actions={<Link to={`/study-sets/${set.id}`}><Button variant='secondary'>Back to Study Set</Button></Link>} description={`Missed questions grouped under ${set.title}.`} eyebrow='Mistake review' title='Review Wrong Answers' />
       <Card>
         <CardBody className='grid gap-3 md:grid-cols-4'>
           <Info label='Study Set' value={set.title} />
@@ -437,7 +492,7 @@ function ExamTable({ examsOverride }: { examsOverride?: typeof exams }) {
 }
 
 function StudySetMini({ id, title, progress }: { id: string; title: string; progress: number }) {
-  return <Link className='rounded-lg border border-slate-200 p-4 transition hover:border-teal-300 hover:bg-teal-50' to={`/learner/study-sets/${id}`}><p className='font-bold text-slate-950'>{title}</p><div className='mt-3'><Progress label='Progress' value={progress} /></div></Link>;
+  return <Link className='rounded-lg border border-slate-200 p-4 transition hover:border-teal-300 hover:bg-teal-50' to={`/study-sets/${id}`}><p className='font-bold text-slate-950'>{title}</p><div className='mt-3'><Progress label='Progress' value={progress} /></div></Link>;
 }
 
 function ContinueStudySetCard({ set }: { set: (typeof studySets)[number] }) {
@@ -461,8 +516,8 @@ function ContinueStudySetCard({ set }: { set: (typeof studySets)[number] }) {
             <span>Last studied today</span>
           </div>
           <div className='flex flex-wrap gap-2'>
-            <Link to={`/learner/study-sets/${set.id}/flashcards`}><Button icon={<BookOpen size={16} />} size='sm'>Continue</Button></Link>
-            <Link to={`/learner/study-sets/${set.id}`}><Button size='sm' variant='secondary'>Details</Button></Link>
+            <Link to={`/study-sets/${set.id}/flashcards`}><Button icon={<BookOpen size={16} />} size='sm'>Continue</Button></Link>
+            <Link to={`/study-sets/${set.id}`}><Button size='sm' variant='secondary'>Details</Button></Link>
           </div>
         </CardBody>
       </div>
@@ -470,23 +525,35 @@ function ContinueStudySetCard({ set }: { set: (typeof studySets)[number] }) {
   );
 }
 
-function StudySetLearnerCard({ set }: { set: (typeof studySets)[number] }) {
+function StudySetLearnerCard({ learningStatus, set }: { learningStatus: string; set: (typeof studySets)[number] }) {
   const wrongCount = getWrongAnswersForStudySet(set.id).length;
+  const assignedLabel = set.assignedClassIds.length ? `${set.assignedClassIds.length} assigned class` : 'Not assigned';
 
   return (
     <Card>
-      <CardBody className='space-y-3'>
+      <CardBody className='space-y-4'>
         <div className='flex items-center justify-between gap-3'>
-          <Badge tone={set.visibility === 'public' ? 'emerald' : 'amber'}>{set.visibility}</Badge>
-          {wrongCount ? <Badge tone='rose'>{wrongCount} mistakes</Badge> : null}
+          <Badge tone={set.visibility === 'public' ? 'emerald' : set.visibility === 'class-only' ? 'amber' : 'slate'}>{set.visibility}</Badge>
+          <Badge tone={learningStatus === 'completed' ? 'emerald' : learningStatus === 'in-progress' ? 'teal' : 'slate'}>{learningStatus}</Badge>
         </div>
-        <h2 className='font-bold text-slate-950'>{set.title}</h2>
-        <p className='text-sm text-slate-500'>{set.description}</p>
-        <Progress label='Progress' value={set.progress ?? 0} />
+        <div>
+          <h2 className='font-bold text-slate-950'>{set.title}</h2>
+          <p className='mt-1 text-sm text-slate-500'>{set.description}</p>
+        </div>
+        <div className='grid gap-2 text-xs font-semibold text-slate-500 sm:grid-cols-2'>
+          <span>Subject: {set.subject}</span>
+          <span>Topic: {set.topic}</span>
+          <span>Owner: {set.ownerName}</span>
+          <span>Questions: {set.questionCount}</span>
+          <span>{assignedLabel}</span>
+          <span>{set.learners} learners</span>
+        </div>
+        <Progress label='Learning progress' value={set.progress ?? 0} />
+        {wrongCount ? <Badge tone='rose'>{wrongCount} mistakes to review</Badge> : null}
         <div className='flex flex-wrap gap-2'>
-          <Link to={`/learner/study-sets/${set.id}`}><Button size='sm'>Detail</Button></Link>
-          <Link to={`/learner/study-sets/${set.id}/flashcards`}><Button size='sm' variant='secondary'>Flashcards</Button></Link>
-          {wrongCount ? <Link to={`/learner/study-sets/${set.id}/review`}><Button size='sm' variant='ghost'>Review mistakes</Button></Link> : null}
+          <Link to={`/study-sets/${set.id}`}><Button size='sm'>Open</Button></Link>
+          <Link to={`/study-sets/${set.id}/flashcards`}><Button size='sm' variant='secondary'>Flashcards</Button></Link>
+          {wrongCount ? <Link to={`/study-sets/${set.id}/review`}><Button size='sm' variant='ghost'>Review mistakes</Button></Link> : null}
         </div>
       </CardBody>
     </Card>

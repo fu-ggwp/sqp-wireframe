@@ -161,7 +161,7 @@ export function SearchStudySetsPage() {
         eyebrow='Public discovery'
         title='Search Study Sets'
       />
-      <ListFieldBar filters={[{ label: 'Subject', options: [{ value: 'all', label: 'All subjects' }, { value: 'Biology', label: 'Biology' }, { value: 'Chemistry', label: 'Chemistry' }, { value: 'Mathematics', label: 'Mathematics' }], value: subject }, { label: 'Study Mode', options: [{ value: 'all', label: 'All modes' }, { value: 'flashcards', label: 'Flashcards' }, { value: 'quiz', label: 'Quiz practice' }] }, { label: 'Rating Filter', options: [{ value: 'all', label: 'All ratings' }, { value: '4plus', label: '4+ stars' }, { value: 'popular', label: 'Most popular' }] }]} onSearchChange={setQuery} searchLabel='Keyword' searchPlaceholder='Cell biology, bonding, flashcards' searchValue={query}><Button icon={<Filter size={17} />} variant='secondary'>Advanced</Button></ListFieldBar>
+      <ListFieldBar filters={[{ label: 'Subject', onChange: setSubject, options: [{ value: 'all', label: 'All subjects' }, { value: 'Biology', label: 'Biology' }, { value: 'Chemistry', label: 'Chemistry' }, { value: 'Mathematics', label: 'Mathematics' }], value: subject }, { label: 'Study Mode', options: [{ value: 'all', label: 'All modes' }, { value: 'flashcards', label: 'Flashcards' }, { value: 'quiz', label: 'Quiz practice' }] }, { label: 'Rating Filter', options: [{ value: 'all', label: 'All ratings' }, { value: '4plus', label: '4+ stars' }, { value: 'popular', label: 'Most popular' }] }]} onSearchChange={setQuery} searchLabel='Keyword' searchPlaceholder='Cell biology, bonding, flashcards' searchValue={query}><Button icon={<Filter size={17} />} variant='secondary'>Advanced</Button></ListFieldBar>
       {results.length ? (
         <div className='grid gap-4 md:grid-cols-2 xl:grid-cols-3'>
           {results.map((set) => <StudySetCard key={set.id} set={set} />)}
@@ -186,7 +186,7 @@ export function SearchUsersPage() {
   return (
     <div className='space-y-6'>
       <PageHeader description='Find public learner and teacher profiles.' eyebrow='People search' title='Find People' />
-      <ListFieldBar filters={[{ label: 'Role', options: [{ value: 'all', label: 'All roles' }, { value: 'Learner', label: 'Learner' }, { value: 'Teacher', label: 'Teacher' }, { value: 'Admin', label: 'Admin' }], value: role }, { label: 'Premium Status', options: [{ value: 'all', label: 'All accounts' }, { value: 'premium', label: 'Premium' }, { value: 'free', label: 'Free' }] }, { label: 'Account Status', options: [{ value: 'all', label: 'All statuses' }, { value: 'active', label: 'Active' }, { value: 'pending', label: 'Pending' }] }]} onSearchChange={setQuery} searchLabel='Keyword' searchPlaceholder='Name, username, email, profile detail' searchValue={query} />
+      <ListFieldBar filters={[{ label: 'Role', onChange: setRole, options: [{ value: 'all', label: 'All roles' }, { value: 'Learner', label: 'Learner' }, { value: 'Teacher', label: 'Teacher' }, { value: 'Admin', label: 'Admin' }], value: role }, { label: 'Premium Status', options: [{ value: 'all', label: 'All accounts' }, { value: 'premium', label: 'Premium' }, { value: 'free', label: 'Free' }] }, { label: 'Account Status', options: [{ value: 'all', label: 'All statuses' }, { value: 'active', label: 'Active' }, { value: 'pending', label: 'Pending' }] }]} onSearchChange={setQuery} searchLabel='Keyword' searchPlaceholder='Name, username, email, profile detail' searchValue={query} />
       <Table
         emptyMessage='No public account matches current filter.'
         headers={['Account', 'Role', 'Premium', 'Status', 'Last Active']}
@@ -206,7 +206,7 @@ export function SearchUsersPage() {
 export function PublicStudySetDetailPage() {
   const { id } = useParams();
   const set = getStudySetById(id);
-  const sampleQuestions = questions.slice(0, 3);
+  const sampleQuestions = questions.filter((question) => set.questionIds.includes(question.id)).slice(0, 3);
 
   return (
     <div className='space-y-6'>

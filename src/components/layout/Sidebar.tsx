@@ -27,7 +27,7 @@ const roleNav: Record<AuthRole, NavGroup[]> = {
       items: [
         { label: 'Dashboard', to: '/learner/dashboard', icon: Gauge },
         { label: 'My classes', to: '/learner/classes', icon: Building2, badge: String(classes.length) },
-        { label: 'Study sets', to: '/learner/study-sets', icon: BookOpen, badge: String(studySets.length) },
+        { label: 'Study sets', to: '/study-sets', icon: BookOpen, badge: String(studySets.length) },
         { label: 'Progress', to: '/learner/progress', icon: BarChart3 },
       ],
     },
@@ -53,8 +53,8 @@ const roleNav: Record<AuthRole, NavGroup[]> = {
       items: [
         { label: 'Dashboard', to: '/teacher/dashboard', icon: Gauge },
         { label: 'Classes', to: '/teacher/classes', icon: Building2, badge: String(classes.length) },
-        { label: 'Question banks', to: '/teacher/question-banks', icon: Layers3, badge: String(questionBanks.length) },
-        { label: 'Study sets', to: '/teacher/study-sets', icon: BookOpen, badge: String(studySets.length) },
+        { label: 'Question repositories', to: '/teacher/question-banks', icon: Layers3, badge: String(questionBanks.length) },
+        { label: 'Study sets', to: '/study-sets', icon: BookOpen, badge: String(studySets.length) },
       ],
     },
     {
@@ -104,7 +104,7 @@ const roleStats: Record<AuthRole, { label: string; value: string }[]> = {
   ],
   Teacher: [
     { label: 'Classes', value: String(classes.length) },
-    { label: 'Banks', value: String(questionBanks.length) },
+    { label: 'Repositories', value: String(questionBanks.length) },
     { label: 'Open exams', value: String(exams.filter((exam) => exam.status === 'open').length) },
   ],
   Admin: [
@@ -116,7 +116,7 @@ const roleStats: Record<AuthRole, { label: string; value: string }[]> = {
 
 const roleDescription: Record<AuthRole, string> = {
   Learner: 'Study assigned sets, take exams, and review progress.',
-  Teacher: 'Manage classes, content, exams, and reports.',
+  Teacher: 'Manage classes, Study Sets, question repositories, exams, and reports.',
   Admin: 'Manage users, resources, and platform health.',
 };
 

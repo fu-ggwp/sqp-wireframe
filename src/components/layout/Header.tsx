@@ -18,7 +18,7 @@ const workspaceCopy = {
   Teacher: {
     label: 'Teacher workspace',
     home: '/teacher/dashboard',
-    searchPlaceholder: 'Search classes, question banks, exams, reports',
+    searchPlaceholder: 'Search classes, Study Sets, repositories, exams',
   },
   Admin: {
     label: 'Admin workspace',

@@ -801,19 +801,19 @@ Field Description
 | Assignment Success Message | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
 
 
-## 3.4 Question Bank Management
+## 3.4 Question Management & Question Bank Repository
 
 ### 3.4.1 View Question Banks
 
 Related Use Case: UC-33
 Actor: Teacher
 
-This screen allows the user to:
-- view teacher question banks, search and filter them, open detail, or create a new bank.
-- Use the visible fields and actions listed in the Field Description table.
-
-On the screen, s/he can also:
-- View status, validation, empty, pagination, or mock interaction states where applicable.
+This screen allows the Teacher to:
+- View Question Banks that s/he owns or is authorized to access.
+- Search Question Banks by keyword.
+- Filter Question Banks by subject, visibility, and review status.
+- Sort the Question Bank list.
+- Choose to create a new Question Bank or open an existing Question Bank detail page.
 
 UI Layout / Prototype:
 http://127.0.0.1:5173/teacher/question-banks
@@ -822,31 +822,27 @@ Field Description
 
 | Field Name | Description |
 | ---------- | ----------- |
-| Create Question Bank | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Keyword | Text search field. User enters keyword(s) to filter visible records. |
-| Subject | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Visibility | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Review Status | Status field. User views or selects status depending on the screen context. |
-| Sort By | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Apply | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Reset Filters | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Question Bank Table | Visible data group. Shows records or grouped screen data. Counted as one field. |
-| Open | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
-| Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-
+| Create Question Bank | Button to open the Create Question Bank screen. |
+| Keyword | Text field for searching by bank title, description, subject, or topic. |
+| Subject | Dropdown. Initial values: All subjects, Biology, Chemistry, Mathematics. Default value: All subjects. |
+| Visibility | Dropdown. Initial values: All visibility, Private, Public, Class only. Default value: All visibility. |
+| Review Status | Dropdown. Initial values: All review status, Draft, Reviewed, Archived. Default value: All review status. |
+| Sort By | Dropdown for changing the visible Question Bank order. |
+| Apply | Button to apply the selected search, filter, and sort criteria. |
+| Reset Filters | Button to clear current filter criteria. |
+| Question Bank Table | Table showing Question Bank title, description, subject, topic, visibility, question count, and action. |
+| Open | Link/button to open the selected Question Bank detail page. |
+| Pagination | Control to move between pages of Question Bank records. |
 
 ### 3.4.2 Create Question Bank
 
 Related Use Case: UC-34
 Actor: Teacher
 
-This screen allows the user to:
-- create question bank metadata with subject, topic, chapter, lesson, tags, score, visibility, and workflow.
-- Use the visible fields and actions listed in the Field Description table.
-
-On the screen, s/he can also:
-- View status, validation, empty, pagination, or mock interaction states where applicable.
+This screen allows the Teacher to:
+- Add a new Teacher-only reusable Question Bank repository.
+- Enter Question Bank metadata and repository configuration.
+- Save the Question Bank so questions can be added later.
 
 UI Layout / Prototype:
 http://127.0.0.1:5173/teacher/question-banks/create
@@ -855,33 +851,30 @@ Field Description
 
 | Field Name | Description |
 | ---------- | ----------- |
-| Question Bank Title | Visible field. User views or enters this value on the screen. |
-| Subject | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Topic | Visible field. User views or enters this value on the screen. |
-| Chapter | Visible field. User views or enters this value on the screen. |
-| Lesson | Visible field. User views or enters this value on the screen. |
-| Tags | Visible field. User views or enters this value on the screen. |
-| Grade / Level | Visible field. User views or enters this value on the screen. |
-| Default Score Per Question | Numeric field. User views or enters a numeric value. |
-| Estimated Completion Time | Date/time field. User views or enters schedule, duration, period, or time-related value. |
-| Visibility | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Question Review Workflow | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Description | Textarea or long text field. User views or enters multi-line content. |
-| Create Question Bank | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Created Message | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-
+| Question Bank Title | Text field. Required. Maximum length should follow system metadata rule. |
+| Subject | Text field for repository subject. |
+| Topic | Text field for repository topic. |
+| Chapter | Text field for default chapter metadata. |
+| Lesson | Text field for default lesson metadata. |
+| Tags | Text field for comma-separated repository tags. |
+| Grade / Level | Text field for target learner level. |
+| Default Score Per Question | Numeric field for default score value. |
+| Estimated Completion Time | Text/time field for estimated practice duration. |
+| Visibility | Dropdown. Initial values: Private, Public, Class Only. Default value: Private. |
+| Question Review Workflow | Dropdown. Initial values: No review required, Teacher review required, Admin review for shared repository. |
+| Description | Textarea for repository description. |
+| Create Question Bank | Button to validate and create the Question Bank. |
+| Created Message | Visible success message after local create mock completes. |
 
 ### 3.4.3 Question Bank Detail
 
-Related Use Case: UC-33, UC-40, UC-41, UC-42
+Related Use Case: UC-33, UC-37, UC-38, UC-41, UC-42, UC-43
 Actor: Teacher
 
-This screen allows the user to:
-- view bank metadata and question list, filter questions, and create, edit, delete, or import questions.
-- Use the visible fields and actions listed in the Field Description table.
-
-On the screen, s/he can also:
-- View status, validation, empty, pagination, or mock interaction states where applicable.
+This screen allows the Teacher to:
+- View Question Bank metadata and contained questions.
+- Search, filter, edit, delete, import, or generate questions for the selected Question Bank.
+- Open the Question Bank update screen.
 
 UI Layout / Prototype:
 http://127.0.0.1:5173/teacher/question-banks/bank-bio-core
@@ -890,36 +883,32 @@ Field Description
 
 | Field Name | Description |
 | ---------- | ----------- |
-| Edit Bank | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Create Question | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Import Excel | Visible field. User views or enters this value on the screen. |
-| Search Questions | Text search field. User enters keyword(s) to filter visible records. |
-| Question Type | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Difficulty | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Score Range | Numeric field. User views or enters a numeric value. |
-| Sort By | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Apply | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Reset Filters | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Question Bank Metadata | Visible data group. Shows records or grouped screen data. Counted as one field. |
-| Question Table | Visible data group. Shows records or grouped screen data. Counted as one field. |
-| Edit Question | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Delete Question | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
-| Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Delete Message | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-
+| Edit Bank | Button to open Update Question Bank Information screen. |
+| Create Question | Button to open Add Question Manually screen for this Question Bank. |
+| Import Excel | Button to open Import Questions from Excel for this Question Bank. |
+| Generate from Material | Button to open AI generation form for this Question Bank. |
+| Search Questions | Text field for searching question content, tag, or answer. |
+| Question Type | Dropdown. Initial values: All types, Multiple choice, True/False, Written answer. |
+| Difficulty | Dropdown. Initial values: All difficulties, Easy, Medium, Hard. |
+| Score Range | Dropdown. Initial values: All scores, 1 point, 2+ points. |
+| Sort By | Dropdown for changing question list order. |
+| Apply | Button to apply search and filters. |
+| Reset Filters | Button to clear current search and filter criteria. |
+| Question Bank Metadata | Data group showing subject, topic, visibility, owner, and updated date. |
+| Question Table | Table showing question content, type, difficulty, score, and actions. |
+| Edit Question | Button to open Update Question screen for the selected question. |
+| Delete Question | Button to remove, hide, or archive the selected question in mock state. |
+| Pagination | Control to move between pages of question records. |
+| Delete Message | Visible message after Delete Question action is clicked. |
 
 ### 3.4.4 Update Question Bank Information
 
 Related Use Case: UC-35, UC-36
 Actor: Teacher
 
-This screen allows the user to:
-- update bank metadata, visibility, review status, description, or delete question bank mock.
-- Use the visible fields and actions listed in the Field Description table.
-
-On the screen, s/he can also:
-- View status, validation, empty, pagination, or mock interaction states where applicable.
+This screen allows the Teacher to:
+- Update Question Bank title, description, subject, topic, visibility, and repository configuration.
+- Delete or mark a Question Bank for removal in the prototype.
 
 UI Layout / Prototype:
 http://127.0.0.1:5173/teacher/question-banks/bank-bio-core/edit
@@ -928,35 +917,75 @@ Field Description
 
 | Field Name | Description |
 | ---------- | ----------- |
-| Question Bank Title | Visible field. User views or enters this value on the screen. |
-| Subject | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Topic | Visible field. User views or enters this value on the screen. |
-| Chapter | Visible field. User views or enters this value on the screen. |
-| Lesson | Visible field. User views or enters this value on the screen. |
-| Tags | Visible field. User views or enters this value on the screen. |
-| Grade / Level | Visible field. User views or enters this value on the screen. |
-| Default Score Per Question | Numeric field. User views or enters a numeric value. |
-| Estimated Completion Time | Date/time field. User views or enters schedule, duration, period, or time-related value. |
-| Visibility | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Review Status | Status field. User views or selects status depending on the screen context. |
-| Description | Textarea or long text field. User views or enters multi-line content. |
-| Save Changes | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Delete Question Bank | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Saved Message | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Delete Message | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
+| Question Bank Title | Text field prefilled with current Question Bank title. |
+| Subject | Text field prefilled with current subject. |
+| Topic | Text field prefilled with current topic. |
+| Chapter | Text field for default chapter metadata. |
+| Lesson | Text field for default lesson metadata. |
+| Tags | Text field for comma-separated tags. |
+| Grade / Level | Text field for target learner level. |
+| Default Score Per Question | Numeric field for default score value. |
+| Estimated Completion Time | Text/time field for estimated duration. |
+| Visibility | Dropdown. Initial values: Public, Private, Class Only. |
+| Review Status | Dropdown. Initial values: Draft, Reviewed, Archived. |
+| Description | Textarea prefilled with current description. |
+| Save Changes | Button to validate and save updated metadata. |
+| Delete Question Bank | Button to mark the Question Bank for deletion/archive in mock state. |
+| Saved Message | Visible message after Save Changes action is clicked. |
+| Delete Message | Visible message after Delete Question Bank action is clicked. |
 
+### 3.4.5 Add Question Manually To Study Set
 
-### 3.4.5 Create Question
+Related Use Case: UC-37, UC-40
+Actor: Learner, Teacher
 
-Related Use Case: UC-40, UC-43
+This screen allows the Learner or Teacher to:
+- Add a new question to an owned or editable Study Set.
+- Enter question content, answer options, correct answer, metadata, score, and explanation.
+- Open AI generation when Premium access is available.
+
+UI Layout / Prototype:
+http://127.0.0.1:5173/study-sets/set-learner-vocab/questions/create
+
+Field Description
+
+| Field Name | Description |
+| ---------- | ----------- |
+| Study Set | Read-only data field showing the destination Study Set. |
+| Subject | Visible subject value inherited from the Study Set and editable in the question metadata area. |
+| Topic | Visible topic value inherited from the Study Set and editable in the question metadata area. |
+| Generate from Material | Button to open AI generation for this Study Set. |
+| Question Status | Dropdown. Initial values: Draft, Ready for use, Reviewed. |
+| Answer Shuffle | Dropdown. Initial values: Shuffle answers, Keep answer order. |
+| Time Estimate | Text/time field for expected answer time. |
+| Question Type | Dropdown. Initial values: Multiple Choice, True/False, Written Answer. |
+| Question Content | Textarea for the question prompt. Required. |
+| Option A | Text field for answer option A. |
+| Option B | Text field for answer option B. |
+| Option C | Text field for answer option C. |
+| Option D | Text field for answer option D. |
+| Correct Answer | Text field for correct answer value. Required. |
+| Score | Numeric field for point value. |
+| Negative Score | Numeric field for penalty score. |
+| Difficulty | Dropdown. Initial values: Easy, Medium, Hard. |
+| Chapter | Text field for question chapter metadata. |
+| Lesson | Text field for question lesson metadata. |
+| Tags | Text field for comma-separated question tags. |
+| Question Visibility | Dropdown. Initial values: Same as Study Set, Draft only. |
+| Author Notes | Textarea for internal author note. |
+| Explanation | Textarea for answer explanation shown during review. |
+| Create Question | Button to submit the question draft. |
+| Saved Message | Visible success message after the question is saved locally. |
+
+### 3.4.6 Add Question Manually To Question Bank
+
+Related Use Case: UC-37, UC-40
 Actor: Teacher
 
-This screen allows the user to:
-- create a question under selected bank while inheriting bank metadata and optionally opening AI material generation.
-- Use the visible fields and actions listed in the Field Description table.
-
-On the screen, s/he can also:
-- View status, validation, empty, pagination, or mock interaction states where applicable.
+This screen allows the Teacher to:
+- Add a reusable question to a Teacher-only Question Bank.
+- Fill the same question fields used for Study Set question authoring.
+- Save the question so it can be reused for future Study Sets or Exams.
 
 UI Layout / Prototype:
 http://127.0.0.1:5173/teacher/question-banks/bank-bio-core/questions/create
@@ -965,462 +994,460 @@ Field Description
 
 | Field Name | Description |
 | ---------- | ----------- |
-| Question Bank | Visible field. User views or enters this value on the screen. |
-| Subject | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Topic | Visible field. User views or enters this value on the screen. |
-| Generate From Material | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Question Status | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Answer Shuffle | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Time Estimate | Date/time field. User views or enters schedule, duration, period, or time-related value. |
-| Question Type | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Question Content | Textarea or long text field. User views or enters multi-line content. |
-| Option A | Visible field. User views or enters this value on the screen. |
-| Option B | Visible field. User views or enters this value on the screen. |
-| Option C | Visible field. User views or enters this value on the screen. |
-| Option D | Visible field. User views or enters this value on the screen. |
-| Correct Answer | Visible field. User views or enters this value on the screen. |
-| Score | Numeric field. User views or enters a numeric value. |
-| Negative Score | Numeric field. User views or enters a numeric value. |
-| Difficulty | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Teacher Notes | Textarea or long text field. User views or enters multi-line content. |
-| Explanation | Plan field. User views or selects subscription/study plan information depending on the screen context. |
-| Create Question | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Saved Message | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
+| Question Bank | Read-only data field showing the destination Question Bank. |
+| Subject | Visible subject value inherited from the Question Bank and editable in the question metadata area. |
+| Topic | Visible topic value inherited from the Question Bank and editable in the question metadata area. |
+| Generate from Material | Button to open AI generation for this Question Bank. |
+| Question Status | Dropdown. Initial values: Draft, Ready for use, Reviewed. |
+| Answer Shuffle | Dropdown. Initial values: Shuffle answers, Keep answer order. |
+| Time Estimate | Text/time field for expected answer time. |
+| Question Type | Dropdown. Initial values: Multiple Choice, True/False, Written Answer. |
+| Question Content | Textarea for question prompt. Required. |
+| Option A | Text field for answer option A. |
+| Option B | Text field for answer option B. |
+| Option C | Text field for answer option C. |
+| Option D | Text field for answer option D. |
+| Correct Answer | Text field for correct answer value. Required. |
+| Score | Numeric field for point value. |
+| Negative Score | Numeric field for penalty score. |
+| Difficulty | Dropdown. Initial values: Easy, Medium, Hard. |
+| Chapter | Text field for question chapter metadata. |
+| Lesson | Text field for question lesson metadata. |
+| Tags | Text field for comma-separated question tags. |
+| Question Visibility | Dropdown. Initial values: Same as Question Bank, Draft only. |
+| Author Notes | Textarea for internal note. |
+| Explanation | Textarea for answer explanation. |
+| Create Question | Button to submit the question draft. |
+| Saved Message | Visible success message after the question is saved locally. |
 
+### 3.4.7 Update Question
 
-### 3.4.6 Update Question
-
-Related Use Case: UC-41
-Actor: Teacher
+Related Use Case: UC-41, UC-40
+Actor: Learner, Teacher
 
 This screen allows the user to:
-- update question content, options, answer, score, difficulty, notes, and explanation.
-- Use the visible fields and actions listed in the Field Description table.
-
-On the screen, s/he can also:
-- View status, validation, empty, pagination, or mock interaction states where applicable.
+- Update an existing question in an editable Study Set or Teacher Question Bank.
+- Change question content, answer options, correct answer, metadata, score, difficulty, and explanation.
 
 UI Layout / Prototype:
-http://127.0.0.1:5173/teacher/question-banks/bank-bio-core/questions/q-1/edit
+http://127.0.0.1:5173/study-sets/set-learner-vocab/questions/q-1/edit
 
 Field Description
 
 | Field Name | Description |
 | ---------- | ----------- |
-| Question Bank | Visible field. User views or enters this value on the screen. |
-| Subject | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Topic | Visible field. User views or enters this value on the screen. |
-| Question Status | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Answer Shuffle | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Time Estimate | Date/time field. User views or enters schedule, duration, period, or time-related value. |
-| Question Type | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Question Content | Textarea or long text field. User views or enters multi-line content. |
-| Option A | Visible field. User views or enters this value on the screen. |
-| Option B | Visible field. User views or enters this value on the screen. |
-| Option C | Visible field. User views or enters this value on the screen. |
-| Option D | Visible field. User views or enters this value on the screen. |
-| Correct Answer | Visible field. User views or enters this value on the screen. |
-| Score | Numeric field. User views or enters a numeric value. |
-| Negative Score | Numeric field. User views or enters a numeric value. |
-| Difficulty | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Teacher Notes | Textarea or long text field. User views or enters multi-line content. |
-| Explanation | Plan field. User views or selects subscription/study plan information depending on the screen context. |
-| Update Question | Date/time field. User views or enters schedule, duration, period, or time-related value. |
-| Saved Message | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
+| Study Set / Question Bank | Read-only data field showing the destination container. |
+| Subject | Text field for question subject metadata. |
+| Topic | Text field for question topic metadata. |
+| Question Status | Dropdown. Initial values: Draft, Ready for use, Reviewed. |
+| Answer Shuffle | Dropdown. Initial values: Shuffle answers, Keep answer order. |
+| Time Estimate | Text/time field for expected answer time. |
+| Question Type | Dropdown. Initial values: Multiple Choice, True/False, Written Answer. |
+| Question Content | Textarea prefilled with current question prompt. |
+| Option A | Text field prefilled with answer option A. |
+| Option B | Text field prefilled with answer option B. |
+| Option C | Text field prefilled with answer option C. |
+| Option D | Text field prefilled with answer option D. |
+| Correct Answer | Text field prefilled with current correct answer. |
+| Score | Numeric field prefilled with current score. |
+| Negative Score | Numeric field for penalty score. |
+| Difficulty | Dropdown prefilled with current difficulty. |
+| Chapter | Text field for question chapter metadata. |
+| Lesson | Text field for question lesson metadata. |
+| Tags | Text field for comma-separated tags. |
+| Question Visibility | Dropdown. Initial values: Same as destination, Draft only. |
+| Author Notes | Textarea for internal author note. |
+| Explanation | Textarea prefilled with answer explanation. |
+| Update Question | Button to submit question changes. |
+| Saved Message | Visible success message after local save completes. |
 
-
-### 3.4.7 Import Questions From Excel
-
-Related Use Case: UC-37
-Actor: Teacher
-
-This screen allows the user to:
-- upload and validate Excel questions with worksheet, header, import mode, duplicate handling, defaults, and preview actions.
-- Use the visible fields and actions listed in the Field Description table.
-
-On the screen, s/he can also:
-- View status, validation, empty, pagination, or mock interaction states where applicable.
-
-UI Layout / Prototype:
-http://127.0.0.1:5173/teacher/question-banks/bank-bio-core/import
-
-Field Description
-
-| Field Name | Description |
-| ---------- | ----------- |
-| Excel File | File input. User selects an upload file for validation or import. |
-| Worksheet Name | Visible field. User views or enters this value on the screen. |
-| Header Row | Numeric field. User views or enters a numeric value. |
-| Import Mode | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Duplicate Handling | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Default Difficulty | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Default Tags | Visible field. User views or enters this value on the screen. |
-| Uploaded File Preview | File input. User selects an upload file for validation or import. |
-| Validate File | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| View Errors | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Preview Valid Questions | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Validation Result Message | Visible message/state field. Shows validation, success, warning, empty, or system state. |
-
-
-### 3.4.8 View Question Import Errors
+### 3.4.8 Import Questions From Excel
 
 Related Use Case: UC-38
-Actor: Teacher
+Actor: Learner, Teacher
 
 This screen allows the user to:
-- view row-level import errors, search and filter errors, and navigate error pages.
-- Use the visible fields and actions listed in the Field Description table.
-
-On the screen, s/he can also:
-- View status, validation, empty, pagination, or mock interaction states where applicable.
+- Upload an Excel file containing questions.
+- Validate template columns and question data.
+- Open import errors or preview valid questions before saving.
 
 UI Layout / Prototype:
-http://127.0.0.1:5173/teacher/question-banks/bank-bio-core/import/errors
+http://127.0.0.1:5173/study-sets/set-learner-vocab/import
 
 Field Description
 
 | Field Name | Description |
 | ---------- | ----------- |
-| Search Import Errors | Text search field. User enters keyword(s) to filter visible records. |
-| Error Field | Visible field. User views or enters this value on the screen. |
-| Severity | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Sort By | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Apply | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Reset Filters | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Import Error Table | Visible data group. Shows records or grouped screen data. Counted as one field. |
-| Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
-| Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
+| Excel File | File input for selecting the Excel import file. |
+| Worksheet Name | Text field for worksheet name. Default example: Questions. |
+| Header Row | Numeric field for header row index. Default example: 1. |
+| Import Mode | Dropdown. Initial values: Validate only, Validate and save valid rows. |
+| Duplicate Handling | Dropdown. Initial values: Skip duplicate questions, Replace existing questions, Allow duplicates. |
+| Default Difficulty | Dropdown. Initial values: Easy, Medium, Hard. |
+| Default Tags | Text field for tags applied to imported rows. |
+| Uploaded File Preview | Data group showing detected file name, row count, and destination. |
+| Validate File | Button to validate the selected Excel file. |
+| View Errors | Button to open row-level import errors. |
+| Preview Valid Questions | Button to open the question preview step. |
+| Validation Message | Visible validation result showing valid and invalid row counts. |
 
-
-### 3.4.9 Preview Imported Questions
+### 3.4.9 View Question Import Errors
 
 Related Use Case: UC-39
-Actor: Teacher
+Actor: Learner, Teacher
 
 This screen allows the user to:
-- preview valid imported questions, filter preview rows, and save imported questions.
-- Use the visible fields and actions listed in the Field Description table.
-
-On the screen, s/he can also:
-- View status, validation, empty, pagination, or mock interaction states where applicable.
+- View row-level validation errors detected during Excel import.
+- Search or filter errors before fixing the Excel file.
 
 UI Layout / Prototype:
-http://127.0.0.1:5173/teacher/question-banks/bank-bio-core/import/preview
+http://127.0.0.1:5173/study-sets/set-learner-vocab/import/errors
 
 Field Description
 
 | Field Name | Description |
 | ---------- | ----------- |
-| Search Preview Rows | Text search field. User enters keyword(s) to filter visible records. |
-| Question Type | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Import Status | Status field. User views or selects status depending on the screen context. |
-| Sort By | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Apply | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Reset Filters | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Imported Question Preview Table | Visible data group. Shows records or grouped screen data. Counted as one field. |
-| Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
-| Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Save Imported Questions | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Saved Message | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
+| Search Import Errors | Text field for row, field, or raw value keyword. |
+| Error Field | Dropdown. Initial values: All fields, Correct Answer, Question Type, Score. |
+| Severity | Dropdown. Initial values: All severities, Error, Warning. |
+| Sort By | Dropdown for error list order. |
+| Apply | Button to apply search and filters. |
+| Reset Filters | Button to clear search and filters. |
+| Error Table | Table showing row number, field, raw value, and validation message. |
+| Pagination | Control to move between import error records. |
 
+### 3.4.10 Preview Questions Before Saving
 
-### 3.4.10 Generate Questions From Material
-
-Related Use Case: UC-43
-Actor: Teacher
+Related Use Case: UC-40
+Actor: Learner, Teacher
 
 This screen allows the user to:
-- generate draft questions from uploaded or pasted material with AI generation settings and preview result.
-- Use the visible fields and actions listed in the Field Description table.
-
-On the screen, s/he can also:
-- View status, validation, empty, pagination, or mock interaction states where applicable.
+- Preview valid imported, manually entered, copied, or AI-generated question drafts.
+- Review question content, type, correct answer, score, and status before saving.
+- Save approved questions into the selected Study Set or Question Bank.
 
 UI Layout / Prototype:
-http://127.0.0.1:5173/teacher/question-banks/bank-bio-core/ai-generate
+http://127.0.0.1:5173/study-sets/set-learner-vocab/import/preview
 
 Field Description
 
 | Field Name | Description |
 | ---------- | ----------- |
-| Learning Material File | File input. User selects an upload file for validation or import. |
-| Material Text | Textarea or long text field. User views or enters multi-line content. |
-| Question Type | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Number Of Questions | Numeric field. User views or enters a numeric value. |
-| Bloom Level | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Difficulty | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Topic Focus | Visible field. User views or enters this value on the screen. |
-| Include Answer Key | Checkbox field. User toggles the visible option on or off. |
-| Include Explanations | Checkbox field. User toggles the visible option on or off. |
-| Save Drafts After Generation | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Generate Questions | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| AI Generated Question Preview | Visible data group. Shows records or grouped screen data. Counted as one field. |
+| Search Preview Rows | Text field for question or answer keyword. |
+| Question Type | Dropdown. Initial values: All types, Multiple choice, True/False. |
+| Import Status | Dropdown. Initial values: All rows, Valid, Duplicate warning. |
+| Sort By | Dropdown for preview row order. |
+| Apply | Button to apply search and filters. |
+| Reset Filters | Button to clear search and filters. |
+| Preview Question Table | Table showing question, type, correct answer, score, and status. |
+| Pagination | Control to move between preview records. |
+| Save Imported Questions | Button to save approved valid questions. |
+| Saved Message | Visible success message after saving locally. |
 
+### 3.4.11 Generate Questions From Material
 
-## 3.5 Study Set Learning
+Related Use Case: UC-43, UC-40
+Actor: Premium Learner, Premium Teacher
 
-### 3.5.1 View Joined Study Sets
+This screen allows the Premium user to:
+- Upload or paste learning material.
+- Choose AI question generation settings.
+- Generate draft questions and open the preview step before saving.
+- View upgrade-required message when the account is not Premium.
+
+UI Layout / Prototype:
+http://127.0.0.1:5173/study-sets/set-learner-vocab/ai-generate
+
+Field Description
+
+| Field Name | Description |
+| ---------- | ----------- |
+| Learning Material File | File input for source material. |
+| Material Text | Textarea for pasted learning material. |
+| Question Type | Dropdown. Initial values: Mixed types, Multiple Choice, True/False, Written Answer. |
+| Number of Questions | Numeric field for generated question count. |
+| Bloom Level | Dropdown. Initial values: Remember, Understand, Apply, Analyze. |
+| Difficulty | Dropdown. Initial values: Easy, Medium, Hard. |
+| Topic Focus | Text field for topic focus. |
+| Include Answer Key | Checkbox to include correct answers in generated drafts. |
+| Include Explanations | Checkbox to include explanations in generated drafts. |
+| Save Drafts After Generation | Checkbox to save drafts after generation. |
+| Generate Questions | Button to run AI generation mock. |
+| AI Generated Question Preview | Visible result panel after successful generation mock. |
+| Preview Before Saving | Button to open Preview Questions Before Saving. |
+| Upgrade Required Message | Visible warning when a non-premium account attempts generation. |
+
+## 3.5 Study Set Creation and Learning
+
+### 3.5.1 View Accessible Study Sets
 
 Related Use Case: UC-18
-Actor: Learner
+Actor: Learner, Teacher
 
-This screen allows the user to:
-- view available learner study sets, filter them, and open detail, flashcards, or mistake review.
-- Use the visible fields and actions listed in the Field Description table.
-
-On the screen, s/he can also:
-- View status, validation, empty, pagination, or mock interaction states where applicable.
+This screen allows the Learner or Teacher to:
+- View Study Sets s/he can access.
+- Search Study Sets by title, owner, subject, topic, or tag.
+- Filter Study Sets by subject, topic, ownership, assignment, visibility, and learning status.
+- Open Study Set detail, continue flashcards, or review mistakes.
 
 UI Layout / Prototype:
-http://127.0.0.1:5173/learner/study-sets
+http://127.0.0.1:5173/study-sets
 
 Field Description
 
 | Field Name | Description |
 | ---------- | ----------- |
-| Search Study Sets | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Subject Filter | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Progress Filter | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Visibility Filter | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Sort By | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Apply | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Reset Filters | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Study Set Cards | Visible data group. Shows records or grouped screen data. Counted as one field. |
-| Detail | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Flashcards | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Review Mistakes | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
-| Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
+| Create Study Set | Button to open the Create Study Set screen. |
+| Search Study Sets | Text field for searching title, owner, subject, topic, or tag. |
+| Subject Filter | Dropdown. Initial values: All subjects, Biology, Chemistry, Mathematics. |
+| Topic Filter | Dropdown. Initial values: All topics, Cell Structure, Chemical Bonding, Functions, Exam Review. |
+| Ownership Filter | Dropdown. Learner values include Owned by me, Assigned to me, Public sets started. Teacher values include Owned by me and Managed class sets. |
+| Assignment Filter | Dropdown. Initial values: All assignments, Assigned to class, Not assigned. |
+| Visibility Filter | Dropdown. Initial values: All visibility, Public, Private, Class only. |
+| Learning Status | Dropdown. Initial values: All status, Not started, In progress, Completed. |
+| Sort By | Dropdown. Initial values: Most questions, Title A-Z, Title Z-A, Progress high to low. |
+| Apply | Button to apply filters and sorting. |
+| Reset Filters | Button to clear current filters. |
+| Study Set Cards | Card list showing title, description, subject, topic, owner, visibility, assigned class count, question count, learner count, progress, and learning status. |
+| Open | Button to open selected Study Set detail. |
+| Flashcards | Button to open flashcard study mode. |
+| Review Mistakes | Button to open wrong answer review when mistakes exist. |
+| Pagination | Control to move between Study Set records. |
 
+### 3.5.2 Create Study Set
 
-### 3.5.2 Study Set Detail
+Related Use Case: UC-44, UC-37, UC-38, UC-43
+Actor: Learner, Teacher
 
-Related Use Case: UC-18, UC-19, UC-20
-Actor: Learner
-
-This screen allows the user to:
-- view selected study set details, question preview, metadata, progress, and study mode actions.
-- Use the visible fields and actions listed in the Field Description table.
-
-On the screen, s/he can also:
-- View status, validation, empty, pagination, or mock interaction states where applicable.
+This screen allows the Learner or Teacher to:
+- Create a Study Set as the primary learning object.
+- Enter Study Set title, description, subject, topic, visibility, and learning settings.
+- Create an empty Study Set or add questions afterward.
+- For Teacher only, optionally copy selected questions from a Question Bank without exposing the source Question Bank to Learners.
 
 UI Layout / Prototype:
-http://127.0.0.1:5173/learner/study-sets/set-bio-cell
+http://127.0.0.1:5173/study-sets/create
 
 Field Description
 
 | Field Name | Description |
 | ---------- | ----------- |
-| Flashcards | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Take Quiz | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Review Mistakes | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Question Preview Table | Visible data group. Shows records or grouped screen data. Counted as one field. |
-| Study Set Metadata | Visible data group. Shows records or grouped screen data. Counted as one field. |
-| Learning Progress | Visible data group. Shows records or grouped screen data. Counted as one field. |
-| Study Mode Settings | Visible field. User views or enters this value on the screen. |
+| Study Set Title | Text field. Required. Default example: Cell Biology Essentials. |
+| Subject | Text field for Study Set subject. |
+| Topic | Text field for Study Set topic. |
+| Visibility | Dropdown. Initial values: Public, Private, Class Only. Default value: Public. |
+| Estimated Study Time | Text/time field for expected study duration. |
+| Target Accuracy | Numeric/percentage field for target performance. |
+| Card Order | Dropdown. Initial values: Default order, Shuffle cards, Weak questions first. |
+| Practice Mode | Dropdown. Initial values: Flashcards only, Quiz only, Flashcards and quiz. |
+| Tags | Text field for comma-separated Study Set tags. |
+| Description | Textarea for Study Set description. |
+| Optional Question Bank To Copy From | Teacher-only dropdown listing available Question Banks. |
+| Selected Questions To Copy | Teacher-only checklist showing reusable questions selected for copying. |
+| Include Explanations | Checkbox to include explanations in the Study Set. |
+| Allow Copy By Other Teachers | Checkbox to allow teacher reuse. |
+| Track Learner Progress | Checkbox to enable progress tracking. |
+| Create Empty Study Set | Checkbox to create the Study Set without questions. |
+| Create Study Set | Button to validate and create the Study Set locally. |
+| Created Message | Visible success message after local create completes. |
+| Add Question | Button shown after create to open Add Question Manually. |
+| Import Excel | Button shown after create to open Import Questions From Excel. |
+| AI Generate | Button shown after create to open Generate Questions From Material. |
+| Open Study Set | Button shown after create to open the Study Set detail page. |
 
+### 3.5.3 Study Set Detail
 
-### 3.5.3 Flashcard Study
+Related Use Case: UC-18, UC-37, UC-41, UC-42, UC-45
+Actor: Learner, Teacher
 
-Related Use Case: UC-05, UC-19
-Actor: Learner, Guest for public preview
-
-This screen allows the user to:
-- study flashcards, configure card behavior, flip current card, and move through cards.
-- Use the visible fields and actions listed in the Field Description table.
-
-On the screen, s/he can also:
-- View status, validation, empty, pagination, or mock interaction states where applicable.
+This screen allows the Learner or Teacher to:
+- View Study Set description, metadata, progress, and question list.
+- Start flashcards or quiz where role permits.
+- Manage questions when the user owns or is authorized to edit the Study Set.
+- Assign the Study Set to a class when the active role is Teacher.
 
 UI Layout / Prototype:
-http://127.0.0.1:5173/learner/study-sets/set-bio-cell/flashcards
+http://127.0.0.1:5173/study-sets/set-bio-cell
 
 Field Description
 
 | Field Name | Description |
 | ---------- | ----------- |
-| Card Order | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Answer Mode | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Confidence | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Mark Card For Review | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Card Progress Badge | Visible data group. Shows records or grouped screen data. Counted as one field. |
-| Progress Bar | Visible data group. Shows records or grouped screen data. Counted as one field. |
-| Flashcard | Visible data group. Shows records or grouped screen data. Counted as one field. |
-| Previous | Visible field. User views or enters this value on the screen. |
-| Next | Visible field. User views or enters this value on the screen. |
+| Flashcards | Button to open Flashcard Study mode. |
+| Take Quiz | Learner-only button to open Study Set quiz mode. |
+| Review Mistakes | Button to open wrong answer review when missed questions exist. |
+| Add Question | Button to add a question into the Study Set when editable. |
+| Import Excel | Button to import questions into the Study Set when editable. |
+| AI Generate | Button to generate questions into the Study Set when editable. |
+| Assign To Class | Teacher-only button to open assignment screen. |
+| Study Set Description | Visible data field showing Study Set description. |
+| Question Table | Table showing question content, question type, score, and actions when editable. |
+| Edit Question | Button to open Update Question screen. |
+| Delete Question | Button to remove question from the Study Set in mock state. |
+| Subject | Visible Study Set subject. |
+| Topic | Visible Study Set topic. |
+| Question Count | Visible number of questions in the Study Set. |
+| Missed Questions | Visible number of wrong answers for the Study Set. |
+| Owner | Visible Study Set owner. |
+| Due Date | Visible assigned due date value when applicable. |
+| Required Accuracy | Visible target accuracy value. |
+| Learning Progress | Progress indicator for Study Set completion. |
+| Flashcard Order | Visible study mode setting. |
+| Quiz Mode | Visible study mode setting. |
+| Retry Rule | Visible study mode setting. |
+| Completion Rule | Visible study mode setting. |
+| Delete Message | Visible message after Delete Question action is clicked. |
 
+### 3.5.4 Flashcard Study
 
-### 3.5.4 Take Study Set Quiz
+Related Use Case: UC-05, UC-18
+Actor: Guest, Learner, Teacher
+
+This screen allows the user to:
+- Study visible Study Set questions as flashcards.
+- Flip cards, move to previous or next card, and mark cards for review.
+- Configure card order and answer mode for the current session.
+
+UI Layout / Prototype:
+http://127.0.0.1:5173/study-sets/set-bio-cell/flashcards
+
+Field Description
+
+| Field Name | Description |
+| ---------- | ----------- |
+| Card Order | Dropdown. Initial values: Default order, Shuffle cards, Weak answers first. |
+| Answer Mode | Dropdown. Initial values: Tap to reveal, Type before reveal. |
+| Confidence | Dropdown. Initial values: Not sure, Learning, Known. |
+| Mark Card For Review | Checkbox to mark current card for later review. |
+| Card Counter | Visible current card index and total card count. |
+| Progress Indicator | Progress bar showing current position in the card set. |
+| Flashcard | Clickable card showing question side or answer side. |
+| Previous | Button to move to previous card. |
+| Next | Button to move to next card. |
+
+### 3.5.5 Take Study Set Quiz
 
 Related Use Case: UC-19
 Actor: Learner
 
-This screen allows the user to:
-- configure and take a practice quiz, select answers, submit, and open result screen.
-- Use the visible fields and actions listed in the Field Description table.
-
-On the screen, s/he can also:
-- View status, validation, empty, pagination, or mock interaction states where applicable.
+This screen allows the Learner to:
+- Take a practice quiz generated from an accessible Study Set.
+- Choose answer options or enter written answers.
+- Submit answers and view immediate feedback in the prototype.
 
 UI Layout / Prototype:
-http://127.0.0.1:5173/learner/study-sets/set-bio-cell/quiz
+http://127.0.0.1:5173/study-sets/set-bio-cell/quiz
 
 Field Description
 
 | Field Name | Description |
 | ---------- | ----------- |
-| Question Count | Numeric field. User views or enters a numeric value. |
-| Question Type Filter | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Time Limit | Date/time field. User views or enters schedule, duration, period, or time-related value. |
-| Show Instant Feedback | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Question Cards | Visible data group. Shows records or grouped screen data. Counted as one field. |
-| Answer Options | Visible field. User views or enters this value on the screen. |
-| Written Answer | Visible field. User views or enters this value on the screen. |
-| Submit Quiz | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Open Result Screen | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Score Message | Visible message/state field. Shows validation, success, warning, empty, or system state. |
-| Feedback Message | Visible message/state field. Shows validation, success, warning, empty, or system state. |
+| Question Count | Dropdown for quiz length. |
+| Question Type Filter | Dropdown for filtering quiz question types. |
+| Answer Feedback Mode | Dropdown for feedback timing. |
+| Show Explanation After Submit | Checkbox to display explanations after submission. |
+| Question Card | Data group showing question number, content, and answer controls. |
+| Answer Option | Clickable option button for multiple-choice or true/false questions. |
+| Written Answer | Text field for written-answer questions. |
+| Submit Quiz | Button to submit current quiz answers. |
+| Open Result Screen | Button to open Quiz Result page. |
+| Feedback Message | Visible correct/incorrect feedback after submission. |
+| Score Message | Visible score after quiz submission. |
 
-
-### 3.5.5 Quiz Result
+### 3.5.6 Quiz Result
 
 Related Use Case: UC-19, UC-20
 Actor: Learner
 
-This screen allows the user to:
-- view quiz score and answer details, filter answer review, and open wrong answer review.
-- Use the visible fields and actions listed in the Field Description table.
-
-On the screen, s/he can also:
-- View status, validation, empty, pagination, or mock interaction states where applicable.
+This screen allows the Learner to:
+- View quiz score, correct answer count, and wrong answer count.
+- Search or filter answer review records.
+- Open wrong answer review for the Study Set.
 
 UI Layout / Prototype:
-http://127.0.0.1:5173/learner/study-sets/set-bio-cell/result
+http://127.0.0.1:5173/study-sets/set-bio-cell/result
 
 Field Description
 
 | Field Name | Description |
 | ---------- | ----------- |
-| Review Wrong Answers | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Result Metrics | Visible data group. Shows records or grouped screen data. Counted as one field. |
-| Search Answer Review | Text search field. User enters keyword(s) to filter visible records. |
-| Answer Status | Status field. User views or selects status depending on the screen context. |
-| Question Type | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Sort By | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Apply | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Reset Filters | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Answer Review Table | Visible data group. Shows records or grouped screen data. Counted as one field. |
-| Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
-| Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
+| Review Wrong Answers | Button to open wrong answer review. |
+| Score | Visible score metric. |
+| Correct Answers | Visible correct answer count. |
+| Wrong Answers | Visible wrong answer count. |
+| Search Answer Review | Text field for filtering result rows. |
+| Answer Status | Dropdown. Initial values: All answers, Correct only, Wrong only. |
+| Question Type | Dropdown. Initial values: All types, Multiple choice, Written answer. |
+| Sort By | Dropdown for result row order. |
+| Apply | Button to apply search and filters. |
+| Reset Filters | Button to clear filters. |
+| Answer Review Table | Table showing question, learner answer, correct answer, and status. |
+| Pagination | Control to move between answer review rows. |
 
-
-### 3.5.6 Review Wrong Answers
+### 3.5.7 Review Wrong Answers
 
 Related Use Case: UC-20, UC-21
 Actor: Learner
 
-This screen allows the user to:
-- review wrong answers by study set, filter them, request AI explanation, mark reviewed, or retry question.
-- Use the visible fields and actions listed in the Field Description table.
-
-On the screen, s/he can also:
-- View status, validation, empty, pagination, or mock interaction states where applicable.
+This screen allows the Learner to:
+- Review wrong answers grouped under the selected Study Set.
+- Compare learner answer and correct answer.
+- Request AI answer explanation when Premium access is available.
+- See upgrade-required message for non-premium accounts.
 
 UI Layout / Prototype:
-http://127.0.0.1:5173/learner/study-sets/set-bio-cell/review
+http://127.0.0.1:5173/study-sets/set-bio-cell/review
 
 Field Description
 
 | Field Name | Description |
 | ---------- | ----------- |
-| Back To Study Set | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Study Set Summary | Visible data group. Shows records or grouped screen data. Counted as one field. |
-| Search Wrong Answers | Text search field. User enters keyword(s) to filter visible records. |
-| Difficulty Filter | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Review Status | Status field. User views or selects status depending on the screen context. |
-| Sort By | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Apply | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Reset Filters | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Wrong Answer Cards | Visible data group. Shows records or grouped screen data. Counted as one field. |
-| Request AI Answer Explanation | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Mark Reviewed | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Retry Question | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| AI / Upgrade Message | Visible message/state field. Shows validation, success, warning, empty, or system state. |
+| Back To Study Set | Button to return to Study Set Detail. |
+| Study Set | Visible Study Set title. |
+| Subject | Visible Study Set subject. |
+| Missed Questions | Visible number of missed questions. |
+| Review Mode | Visible review mode value. |
+| Search Wrong Answers | Text field for question, topic, or explanation keyword. |
+| Difficulty Filter | Dropdown. Initial values: All difficulties, Easy, Medium, Hard. |
+| Review Status | Dropdown. Initial values: All review status, New mistakes, Reviewed. |
+| Sort By | Dropdown for wrong answer order. |
+| Apply | Button to apply filters. |
+| Reset Filters | Button to clear filters. |
+| Wrong Answer Card | Data group showing question, topic, learner answer, correct answer, and explanation. |
+| Request AI Answer Explanation | Button to request AI explanation mock. |
+| Mark Reviewed | Button to mark the wrong answer as reviewed. |
+| Retry Question | Button to retry the selected question. |
+| AI Explanation Message | Visible AI explanation or upgrade-required message. |
 
+### 3.5.8 Assign Study Set To Class
 
-### 3.5.7 Teacher Study Set Management
-
-Related Use Case: UC-44
+Related Use Case: UC-45
 Actor: Teacher
 
-This screen allows the user to:
-- manage teacher-created study sets, filter them, preview or assign sets, and create new study set.
-- Use the visible fields and actions listed in the Field Description table.
-
-On the screen, s/he can also:
-- View status, validation, empty, pagination, or mock interaction states where applicable.
+This screen allows the Teacher to:
+- Assign an owned or authorized Study Set to a class.
+- Assign to all class members or selected learners.
+- Configure release date, due date, completion rule, target accuracy, instructions, and notification.
 
 UI Layout / Prototype:
-http://127.0.0.1:5173/teacher/study-sets
+http://127.0.0.1:5173/teacher/classes/class-bio-12a/assign-study-set
 
 Field Description
 
 | Field Name | Description |
 | ---------- | ----------- |
-| Create Study Set | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Search Study Sets | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Visibility | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Subject Filter | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Assignment Filter | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Sort By | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Apply | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Reset Filters | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Teacher Study Set Table | Visible data group. Shows records or grouped screen data. Counted as one field. |
-| Preview | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Assign | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Rows Per Page | Pagination field. User selects page size or navigates visible pages. |
-| Pagination | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-
-
-### 3.5.8 Create Study Set
-
-Related Use Case: UC-44
-Actor: Teacher
-
-This screen allows the user to:
-- create a study set from one source question bank and selected questions.
-- Use the visible fields and actions listed in the Field Description table.
-
-On the screen, s/he can also:
-- View status, validation, empty, pagination, or mock interaction states where applicable.
-
-UI Layout / Prototype:
-http://127.0.0.1:5173/teacher/study-sets/create
-
-Field Description
-
-| Field Name | Description |
-| ---------- | ----------- |
-| Study Set Title | Visible field. User views or enters this value on the screen. |
-| Source Question Bank | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Subject | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Topic | Visible field. User views or enters this value on the screen. |
-| Visibility | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Estimated Study Time | Date/time field. User views or enters schedule, duration, period, or time-related value. |
-| Target Accuracy | Numeric field. User views or enters a numeric value. |
-| Card Order | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Practice Mode | Dropdown/select field. User chooses one visible option to configure or filter the screen. |
-| Tags | Visible field. User views or enters this value on the screen. |
-| Description | Textarea or long text field. User views or enters multi-line content. |
-| Select Questions | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Include Explanations | Checkbox field. User toggles the visible option on or off. |
-| Allow Copy By Other Teachers | Checkbox field. User toggles the visible option on or off. |
-| Track Learner Progress | Visible data group. Shows records or grouped screen data. Counted as one field. |
-| Create Study Set | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-| Created Message | Action field. User clicks to navigate, submit, update, or process the selected visible item. |
-
-
+| Class | Read-only field showing selected class. |
+| Study Set | Dropdown listing Study Sets available for assignment. |
+| Assign To | Dropdown. Initial values: All class members, Selected learners. |
+| Selected Learners | Dropdown listing learners in the selected class. |
+| Due Date | Date field for assignment due date. |
+| Release Date | Date field for content release date. |
+| Completion Rule | Dropdown. Initial values: View all cards, Pass practice quiz, Reach target accuracy. |
+| Target Accuracy | Numeric/percentage field for required accuracy. |
+| Assignment Instructions | Textarea for learner-facing instructions. |
+| Notify Learners After Assignment | Checkbox to notify eligible learners. |
+| Assign Study Set | Button to confirm assignment. |
+| Assignment Success Message | Visible success message after assignment mock completes. |
 ## 3.6 Exam Session
 
 ### 3.6.1 View Available Exams

@@ -1,4 +1,4 @@
-import { Navigate, createBrowserRouter } from 'react-router-dom';
+import { Navigate, createBrowserRouter, useParams } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { useAuth } from './auth/AuthContext';
 import { AllowGuestOrRole, RequireRole } from './auth/RequireRole';
@@ -19,6 +19,7 @@ import {
   LearnerStudySetsPage,
   QuizResultPage,
   ReviewWrongAnswersPage,
+  StudySetsPage,
   StudySetQuizPage,
   TakeExamPage,
 } from './pages/LearnerPages';
@@ -51,7 +52,6 @@ import {
   MonitorExamSessionPage,
   TeacherExamInfoPage,
   TeacherExamsPage,
-  TeacherStudySetsPage,
 } from './pages/TeacherStudyExamPages';
 import {
   AccessDeniedPage,
@@ -73,6 +73,7 @@ const learnerOnly = (element: ReactNode) => <RequireRole allowed={['Learner']}>{
 const teacherOnly = (element: ReactNode) => <RequireRole allowed={['Teacher']}>{element}</RequireRole>;
 const adminOnly = (element: ReactNode) => <RequireRole allowed={['Admin']}>{element}</RequireRole>;
 const authenticatedOnly = (element: ReactNode) => <RequireRole allowed={['Learner', 'Teacher', 'Admin']}>{element}</RequireRole>;
+const learnerTeacherOnly = (element: ReactNode) => <RequireRole allowed={['Learner', 'Teacher']}>{element}</RequireRole>;
 const premiumActorOnly = (element: ReactNode) => <RequireRole allowed={['Learner', 'Teacher']}>{element}</RequireRole>;
 const publicOrPremiumActor = (element: ReactNode) => <AllowGuestOrRole allowed={['Learner', 'Teacher']}>{element}</AllowGuestOrRole>;
 
@@ -84,6 +85,13 @@ function GuestHomeRoute() {
   if (role === 'Admin') return <Navigate replace to='/admin/dashboard' />;
 
   return <HomePage />;
+}
+
+function LegacyStudySetRedirect({ section }: { section?: 'flashcards' | 'quiz' | 'result' | 'review' }) {
+  const { id } = useParams();
+  const target = id ? `/study-sets/${id}${section ? `/${section}` : ''}` : '/study-sets';
+
+  return <Navigate replace to={target} />;
 }
 
 export const router = createBrowserRouter([
@@ -104,16 +112,29 @@ export const router = createBrowserRouter([
       { path: 'profile/edit', element: authenticatedOnly(<EditProfilePage />) },
       { path: 'profile/change-password', element: authenticatedOnly(<ChangePasswordPage />) },
       { path: 'profile/reset-password', element: authenticatedOnly(<ResetPasswordPage />) },
+      { path: 'study-sets', element: learnerTeacherOnly(<StudySetsPage />) },
+      { path: 'study-sets/create', element: learnerTeacherOnly(<CreateStudySetPage />) },
+      { path: 'study-sets/:id', element: learnerTeacherOnly(<LearnerStudySetDetailPage />) },
+      { path: 'study-sets/:id/flashcards', element: learnerTeacherOnly(<FlashcardStudyPage />) },
+      { path: 'study-sets/:id/quiz', element: learnerOnly(<StudySetQuizPage />) },
+      { path: 'study-sets/:id/result', element: learnerOnly(<QuizResultPage />) },
+      { path: 'study-sets/:id/review', element: learnerOnly(<ReviewWrongAnswersPage />) },
+      { path: 'study-sets/:id/questions/create', element: learnerTeacherOnly(<CreateQuestionPage />) },
+      { path: 'study-sets/:id/questions/:questionId/edit', element: learnerTeacherOnly(<EditQuestionPage />) },
+      { path: 'study-sets/:id/import', element: learnerTeacherOnly(<ImportQuestionsPage />) },
+      { path: 'study-sets/:id/import/errors', element: learnerTeacherOnly(<ImportErrorsPage />) },
+      { path: 'study-sets/:id/import/preview', element: learnerTeacherOnly(<ImportPreviewPage />) },
+      { path: 'study-sets/:id/ai-generate', element: learnerTeacherOnly(<AiGenerateQuestionsPage />) },
       { path: 'learner/dashboard', element: learnerOnly(<LearnerDashboardPage />) },
       { path: 'learner/classes', element: learnerOnly(<LearnerClassesPage />) },
       { path: 'learner/classes/join', element: learnerOnly(<JoinClassPage />) },
       { path: 'learner/classes/:id', element: learnerOnly(<LearnerClassDetailPage />) },
-      { path: 'learner/study-sets', element: learnerOnly(<LearnerStudySetsPage />) },
-      { path: 'learner/study-sets/:id', element: learnerOnly(<LearnerStudySetDetailPage />) },
-      { path: 'learner/study-sets/:id/flashcards', element: learnerOnly(<FlashcardStudyPage />) },
-      { path: 'learner/study-sets/:id/quiz', element: learnerOnly(<StudySetQuizPage />) },
-      { path: 'learner/study-sets/:id/result', element: learnerOnly(<QuizResultPage />) },
-      { path: 'learner/study-sets/:id/review', element: learnerOnly(<ReviewWrongAnswersPage />) },
+      { path: 'learner/study-sets', element: <Navigate replace to='/study-sets' /> },
+      { path: 'learner/study-sets/:id', element: <LegacyStudySetRedirect /> },
+      { path: 'learner/study-sets/:id/flashcards', element: <LegacyStudySetRedirect section='flashcards' /> },
+      { path: 'learner/study-sets/:id/quiz', element: <LegacyStudySetRedirect section='quiz' /> },
+      { path: 'learner/study-sets/:id/result', element: <LegacyStudySetRedirect section='result' /> },
+      { path: 'learner/study-sets/:id/review', element: <LegacyStudySetRedirect section='review' /> },
       { path: 'learner/progress', element: learnerOnly(<LearnerProgressPage />) },
       { path: 'learner/exams', element: learnerOnly(<AvailableExamsPage />) },
       { path: 'learner/exams/:id/info', element: learnerOnly(<ExamInfoPage />) },
@@ -137,8 +158,13 @@ export const router = createBrowserRouter([
       { path: 'teacher/question-banks/:id/import/errors', element: teacherOnly(<ImportErrorsPage />) },
       { path: 'teacher/question-banks/:id/import/preview', element: teacherOnly(<ImportPreviewPage />) },
       { path: 'teacher/question-banks/:id/ai-generate', element: teacherOnly(<AiGenerateQuestionsPage />) },
-      { path: 'teacher/study-sets', element: teacherOnly(<TeacherStudySetsPage />) },
-      { path: 'teacher/study-sets/create', element: teacherOnly(<CreateStudySetPage />) },
+      { path: 'teacher/study-sets', element: <Navigate replace to='/study-sets' /> },
+      { path: 'teacher/study-sets/create', element: <Navigate replace to='/study-sets/create' /> },
+      { path: 'teacher/study-sets/:id', element: <LegacyStudySetRedirect /> },
+      { path: 'teacher/study-sets/:id/flashcards', element: <LegacyStudySetRedirect section='flashcards' /> },
+      { path: 'teacher/study-sets/:id/quiz', element: <LegacyStudySetRedirect section='quiz' /> },
+      { path: 'teacher/study-sets/:id/result', element: <LegacyStudySetRedirect section='result' /> },
+      { path: 'teacher/study-sets/:id/review', element: <LegacyStudySetRedirect section='review' /> },
       { path: 'teacher/exams', element: teacherOnly(<TeacherExamsPage />) },
       { path: 'teacher/exams/create', element: teacherOnly(<CreateExamSessionPage />) },
       { path: 'teacher/exams/:id/configure', element: teacherOnly(<ConfigureExamPage />) },
