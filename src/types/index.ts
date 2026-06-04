@@ -1,10 +1,10 @@
 export type Role = 'Guest' | 'Learner' | 'Teacher' | 'Admin';
-export type AccountStatus = 'active' | 'locked' | 'pending';
+export type AccountStatus = 'active' | 'pending' | 'locked' | 'suspended' | 'banned' | 'deleted' | 'inactive';
 export type Visibility = 'public' | 'private' | 'class-only';
 export type Difficulty = 'easy' | 'medium' | 'hard';
 export type QuestionType = 'multiple-choice' | 'true-false' | 'written-answer';
-export type ExamStatus = 'draft' | 'scheduled' | 'open' | 'closed';
-export type PaymentStatus = 'success' | 'failed' | 'pending';
+export type ExamStatus = 'draft' | 'scheduled' | 'open' | 'closed' | 'published';
+export type PaymentStatus = 'success' | 'failed' | 'pending' | 'cancelled' | 'expired' | 'unverified';
 export type NotificationStatus = 'read' | 'unread';
 
 export interface User {
@@ -50,7 +50,7 @@ export interface ClassRoom {
   teacherId: string;
   teacherName: string;
   code: string;
-  status: 'active' | 'archived';
+  status: 'active' | 'archived' | 'closed' | 'inactive';
   memberIds: string[];
   studySetIds: string[];
   createdAt: string;
@@ -95,6 +95,7 @@ export interface QuestionBank {
   ownerId: string;
   ownerName: string;
   questionIds: string[];
+  reviewStatus?: 'draft' | 'reviewed' | 'archived';
   createdAt: string;
   updatedAt: string;
 }
@@ -121,6 +122,8 @@ export interface Exam {
   showResult: boolean;
   randomizeQuestions: boolean;
   randomizeAnswers: boolean;
+  resultVisibility?: 'immediate' | 'hidden' | 'after-review';
+  reviewPermission?: 'none' | 'score-only' | 'full';
   questionIds: string[];
 }
 
