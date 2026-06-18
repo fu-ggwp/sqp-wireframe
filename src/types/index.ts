@@ -36,7 +36,6 @@ export interface StudySet {
   learners: number;
   rating: number;
   tags: string[];
-  coverImage: string;
   assignedClassIds: string[];
   questionIds: string[];
   progress?: number;
