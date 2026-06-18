@@ -203,7 +203,7 @@ export function SearchUsersPage() {
           user.lastActive,
         ])}
       />
-      <PaginationBar label={`Showing ${filteredUsers.length} public accounts`} />
+      <PaginationBar />
     </div>
   );
 }
@@ -228,7 +228,7 @@ export function PublicStudySetDetailPage() {
             <div className='flex flex-wrap gap-2'>{set.tags.map((tag) => <Badge key={tag} tone='slate'>{tag}</Badge>)}</div>
             <ListFieldBar filters={[{ label: 'Question Type', options: [{ value: 'all', label: 'All types' }, { value: 'multiple-choice', label: 'Multiple choice' }, { value: 'true-false', label: 'True/False' }, { value: 'written-answer', label: 'Written answer' }] }, { label: 'Difficulty', options: [{ value: 'all', label: 'All difficulties' }, { value: 'easy', label: 'Easy' }, { value: 'medium', label: 'Medium' }, { value: 'hard', label: 'Hard' }] }]} searchLabel='Search Preview Questions' searchPlaceholder='Question keyword' />
             <Table headers={['Question Preview', 'Type', 'Difficulty']} rows={sampleQuestions.map((question) => [question.content, question.type, question.difficulty])} />
-            <PaginationBar label='Showing 1-3 of 3 preview questions' />
+            <PaginationBar />
           </CardBody>
         </Card>
         <div className='space-y-4'>

@@ -66,7 +66,7 @@ export function QuestionBanksPage() {
     <div className='space-y-6'>
       <PageHeader actions={<Link to='/teacher/question-banks/create'><Button icon={<Plus size={17} />}>Create Question Bank</Button></Link>} description='Teacher views reusable question repositories they created or can access. Local search and subject filter are supported.' eyebrow='Question repositories' title='View Question Bank Repositories' />
       <ListFieldBar filters={[{ label: 'Subject', onChange: setSubject, options: [{ value: 'all', label: 'All subjects' }, { value: 'Biology', label: 'Biology' }, { value: 'Chemistry', label: 'Chemistry' }, { value: 'Mathematics', label: 'Mathematics' }], value: subject }, { label: 'Visibility', options: [{ value: 'all', label: 'All visibility' }, { value: 'private', label: 'Private' }, { value: 'public', label: 'Public' }, { value: 'class-only', label: 'Class only' }] }, { label: 'Review Status', options: [{ value: 'all', label: 'All review status' }, { value: 'draft', label: 'Draft' }, { value: 'reviewed', label: 'Reviewed' }, { value: 'archived', label: 'Archived' }] }]} onSearchChange={setQuery} searchLabel='Keyword' searchPlaceholder='Bank title, description, topic' searchValue={query} />
-      {filtered.length ? <><QuestionBankTable banks={filtered} /><PaginationBar label={`Showing ${filtered.length} question banks`} /></> : <EmptyState title='No question bank found' description='Try changing keyword or subject filter.' />}
+      {filtered.length ? <><QuestionBankTable banks={filtered} /><PaginationBar /></> : <EmptyState title='No question bank found' description='Try changing keyword or subject filter.' />}
     </div>
   );
 }
@@ -109,7 +109,7 @@ export function QuestionBankDetailPage() {
         <Card><CardBody className='space-y-4'><Info label='Subject' value={bank.subject} /><Info label='Topic' value={bank.topic} /><Info label='Visibility' value={<Badge>{bank.visibility}</Badge>} /><Info label='Owner' value={bank.ownerName} /><Info label='Updated At' value={bank.updatedAt} /></CardBody></Card>
         <Card><CardBody><Table headers={['Question', 'Type', 'Difficulty', 'Score', 'Actions']} rows={bankQuestions.map((question) => [<p className='max-w-xl font-semibold text-slate-800'>{question.content}</p>, question.type, <Badge tone={question.difficulty === 'hard' ? 'rose' : question.difficulty === 'medium' ? 'amber' : 'emerald'}>{question.difficulty}</Badge>, `${question.score}`, <div className='flex gap-2'><Link to={`/teacher/question-banks/${bank.id}/questions/${question.id}/edit`}><Button size='sm' variant='secondary'>Edit</Button></Link><Button icon={<Trash2 size={14} />} onClick={() => setDeletedQuestion(question.id)} size='sm' variant='danger'>Delete</Button></div>])} /></CardBody></Card>
       </div>
-      <PaginationBar label={`Showing ${bankQuestions.length} questions`} />
+      <PaginationBar />
       {deletedQuestion ? <p className='rounded-lg bg-rose-50 p-3 text-sm font-semibold text-rose-700'>Question {deletedQuestion} is scheduled for deletion.</p> : null}
     </div>
   );
@@ -155,7 +155,7 @@ export function ImportErrorsPage() {
       <PageHeader description={`View row-level validation errors before saving questions into this ${target.typeLabel}.`} eyebrow='Import validation' title='View Question Import Errors' />
       <ListFieldBar filters={[{ label: 'Error Field', options: [{ value: 'all', label: 'All fields' }, { value: 'answer', label: 'Correct Answer' }, { value: 'type', label: 'Question Type' }, { value: 'score', label: 'Score' }] }, { label: 'Severity', options: [{ value: 'all', label: 'All severities' }, { value: 'error', label: 'Error' }, { value: 'warning', label: 'Warning' }] }]} searchLabel='Search Import Errors' searchPlaceholder='Row, field, raw value' />
       <Table headers={['Row', 'Field', 'Raw Value', 'Validation Message']} rows={importErrors.map((error) => [error.row, error.field, error.rawValue, <span className='font-semibold text-rose-700'>{error.message}</span>])} />
-      <PaginationBar label={`Showing ${importErrors.length} import errors`} />
+      <PaginationBar />
     </div>
   );
 }
@@ -170,7 +170,7 @@ export function ImportPreviewPage() {
       <PageHeader description={`Preview valid questions before saving them into this ${target.typeLabel}.`} eyebrow='Import preview' title='Preview Questions Before Saving' />
       <ListFieldBar filters={[{ label: 'Question Type', options: [{ value: 'all', label: 'All types' }, { value: 'multiple-choice', label: 'Multiple choice' }, { value: 'true-false', label: 'True/False' }] }, { label: 'Import Status', options: [{ value: 'all', label: 'All rows' }, { value: 'valid', label: 'Valid' }, { value: 'duplicate', label: 'Duplicate warning' }] }]} searchLabel='Search Preview Rows' searchPlaceholder='Question or answer keyword' />
       <Table headers={['Question', 'Type', 'Correct Answer', 'Score', 'Status']} rows={questions.slice(0, 3).map((question) => [question.content, question.type, question.correctAnswer, question.score, <StatusPill label='valid' tone='success' />])} />
-      <PaginationBar label='Showing 1-3 of 15 valid rows' />
+      <PaginationBar />
       <Button icon={<CheckIcon />} onClick={() => setSaved(true)}>Save Imported Questions</Button>
       {saved ? <p className='rounded-lg bg-emerald-50 p-3 text-sm font-semibold text-emerald-700'>Imported questions saved locally into {target.title} for preview only.</p> : null}
     </div>

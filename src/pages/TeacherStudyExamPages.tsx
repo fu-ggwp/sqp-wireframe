@@ -27,7 +27,7 @@ export function TeacherStudySetsPage() {
     <div className='space-y-6'>
       <PageHeader actions={<Link to='/study-sets/create'><Button icon={<Plus size={17} />}>Create Study Set</Button></Link>} description='Manage Study Sets as the primary learning content, check visibility, assigned classes, and learner activity.' eyebrow='Study sets' title='Study Sets' />
       <ListFieldBar filters={[{ label: 'Visibility', onChange: setVisibility, options: [{ value: 'all', label: 'All visibility' }, { value: 'public', label: 'Public' }, { value: 'private', label: 'Private' }, { value: 'class-only', label: 'Class Only' }], value: visibility }, { label: 'Subject Filter', options: [{ value: 'all', label: 'All subjects' }, { value: 'Biology', label: 'Biology' }, { value: 'Chemistry', label: 'Chemistry' }, { value: 'Mathematics', label: 'Mathematics' }] }, { label: 'Assignment Filter', options: [{ value: 'all', label: 'All assignments' }, { value: 'assigned', label: 'Assigned to class' }, { value: 'unassigned', label: 'Not assigned' }] }]} onSearchChange={setQuery} searchLabel='Search Study Sets' searchPlaceholder='Title, subject, topic, owner' searchValue={query} />
-      {filtered.length ? <><TeacherStudySetTable source={filtered} /><PaginationBar label={`Showing ${filtered.length} study sets`} /></> : <EmptyState title='No study sets found' description='Create a Study Set directly or change the current filters.' />}
+      {filtered.length ? <><TeacherStudySetTable source={filtered} /><PaginationBar /></> : <EmptyState title='No study sets found' description='Create a Study Set directly or change the current filters.' />}
     </div>
   );
 }
@@ -87,7 +87,7 @@ export function TeacherExamsPage() {
     <div className='space-y-6'>
       <PageHeader actions={<Link to='/teacher/exams/create'><Button icon={<Plus size={17} />}>Create Exam Session</Button></Link>} description='Teacher views official exam sessions and manages configuration or monitoring.' eyebrow='Exam sessions' title='Exam Sessions' />
       <ListFieldBar filters={[{ label: 'Status Filter', options: [{ value: 'all', label: 'All statuses' }, { value: 'draft', label: 'Draft' }, { value: 'scheduled', label: 'Scheduled' }, { value: 'open', label: 'Open' }, { value: 'closed', label: 'Closed' }] }, { label: 'Class Filter', options: [{ value: 'all', label: 'All classes' }, ...classes.map((room) => ({ value: room.id, label: room.name }))] }, { label: 'Result Visibility', options: [{ value: 'all', label: 'All visibility' }, { value: 'visible', label: 'Visible' }, { value: 'hidden', label: 'Hidden' }] }]} onSearchChange={setQuery} searchLabel='Search Exam Sessions' searchPlaceholder='Exam title, class, status' searchValue={query} />
-      {filtered.length ? <><TeacherExamTable source={filtered} /><PaginationBar label={`Showing ${filtered.length} exam sessions`} /></> : <EmptyState title='No exam sessions found' description='Create a new exam session or change search keyword.' />}
+      {filtered.length ? <><TeacherExamTable source={filtered} /><PaginationBar /></> : <EmptyState title='No exam sessions found' description='Create a new exam session or change search keyword.' />}
     </div>
   );
 }
@@ -141,7 +141,7 @@ export function MonitorExamSessionPage() {
       <div className='grid gap-4 md:grid-cols-4'><Metric label='Status' value={exam.status} helper='Current exam state' /><Metric label='Submitted' value={`${relatedAttempts.filter((item) => item.status === 'submitted').length}`} helper='Completed attempts' /><Metric label='In Progress' value={`${relatedAttempts.filter((item) => item.status === 'in-progress').length}`} helper='Active attempts' /><Metric label='Duration' value={`${exam.durationMinutes}m`} helper='Configured time limit' /></div>
       <ListFieldBar filters={[{ label: 'Attempt Status', options: [{ value: 'all', label: 'All attempts' }, { value: 'submitted', label: 'Submitted' }, { value: 'in-progress', label: 'In progress' }, { value: 'not-started', label: 'Not started' }] }, { label: 'Risk Filter', options: [{ value: 'all', label: 'All learners' }, { value: 'late', label: 'Late activity' }, { value: 'low-score', label: 'Low score' }] }]} searchLabel='Search Learners' searchPlaceholder='Learner name or status' />
       <Table headers={['Learner', 'Attempt Status', 'Score', 'Accuracy', 'Last Activity', 'Actions']} rows={relatedAttempts.map((attempt) => [attempt.learnerName, <StatusPill label={attempt.status} tone={attempt.status === 'submitted' ? 'success' : 'warning'} />, attempt.score, `${attempt.accuracy}%`, attempt.submittedAt ?? 'Auto-saved recently', <div className='flex flex-wrap gap-2'><Button size='sm' variant='secondary'>View Attempt</Button><Button size='sm' variant='ghost'>Send Reminder</Button></div>])} />
-      <PaginationBar label={`Showing ${relatedAttempts.length} learner attempts`} />
+      <PaginationBar />
     </div>
   );
 }

@@ -127,7 +127,7 @@ export function LearnerClassesPage() {
         searchPlaceholder='Class name, subject, teacher, code'
       />
       <ClassTable />
-      <PaginationBar label='Showing 1-2 of 2 joined classes' />
+      <PaginationBar />
     </div>
   );
 }
@@ -256,7 +256,7 @@ export function StudySetsPage() {
       <div className='grid gap-4 md:grid-cols-2 xl:grid-cols-3'>
         {filtered.map((set) => <StudySetLearnerCard key={set.id} learningStatus={learningStatus(set)} set={set} />)}
       </div>
-      <PaginationBar label={`Showing ${filtered.length} study sets`} />
+      <PaginationBar />
     </div>
   );
 }
@@ -367,7 +367,7 @@ export function QuizResultPage() {
       <div className='grid gap-4 md:grid-cols-3'><MetricCard label='Score' value={`${correctCount}/${resultQuestions.length}`} helper='Practice attempt' /><MetricCard label='Correct answers' value={`${correctCount}`} helper='Based on current answers' /><MetricCard label='Wrong answers' value={`${wrongCount}`} helper={wrongCount ? 'Review recommended' : 'No missed questions'} /></div>
       <ListFieldBar filters={[{ label: 'Answer Status', options: [{ value: 'all', label: 'All answers' }, { value: 'correct', label: 'Correct only' }, { value: 'wrong', label: 'Wrong only' }] }, { label: 'Question Type', options: [{ value: 'all', label: 'All types' }, { value: 'multiple-choice', label: 'Multiple choice' }, { value: 'written-answer', label: 'Written answer' }] }]} searchLabel='Search Answer Review' searchPlaceholder='Question or answer keyword' />
       <Table headers={['Question', 'Your Answer', 'Correct Answer', 'Status']} rows={resultQuestions.map((question) => [question.content, question.learnerAnswer ?? question.correctAnswer, question.correctAnswer, (question.learnerAnswer ?? question.correctAnswer) === question.correctAnswer ? <StatusPill label='Correct' tone='success' /> : <StatusPill label='Wrong' tone='danger' />])} />
-      <PaginationBar label={`Showing ${resultQuestions.length} answer rows`} />
+      <PaginationBar />
     </div>
   );
 }
@@ -425,7 +425,7 @@ export function AvailableExamsPage() {
     <div className='space-y-6'>
       <PageHeader description='Upcoming and open exams assigned to your classes.' eyebrow='Exam list' title='Available Exams' />
       <ListFieldBar filters={[{ label: 'Status Filter', options: [{ value: 'all', label: 'All statuses' }, { value: 'open', label: 'Open' }, { value: 'scheduled', label: 'Scheduled' }, { value: 'submitted', label: 'Submitted' }] }, { label: 'Class Filter', options: [{ value: 'all', label: 'All classes' }, { value: 'bio', label: 'Biology 12A' }, { value: 'math', label: 'Mathematics 11B' }] }]} onSearchChange={setQuery} searchLabel='Search Exams' searchPlaceholder='Search by title, class, status' searchValue={query} />
-      {filtered.length ? <><ExamTable examsOverride={filtered} /><PaginationBar label={`Showing ${filtered.length} available exams`} /></> : <EmptyState icon={<GraduationCap size={22} />} title='No exams found' description='Change search keyword to view available exam sessions.' />}
+      {filtered.length ? <><ExamTable examsOverride={filtered} /><PaginationBar /></> : <EmptyState icon={<GraduationCap size={22} />} title='No exams found' description='Change search keyword to view available exam sessions.' />}
     </div>
   );
 }
@@ -477,7 +477,7 @@ export function ExamResultPage() {
       <PageHeader description='Exam score and answer details appear when the teacher makes results visible.' eyebrow='Exam result' title='Exam Result' />
       <div className='grid gap-4 md:grid-cols-3'><MetricCard label='Score' value={`${attempt.score}`} helper='Out of 100' /><MetricCard label='Accuracy' value={`${attempt.accuracy}%`} helper='Based on submitted answers' /><MetricCard label='Status' value={attempt.status} helper={attempt.submittedAt ?? 'Not submitted'} /></div>
       <ListFieldBar filters={[{ label: 'Result Status', options: [{ value: 'all', label: 'All results' }, { value: 'correct', label: 'Correct only' }, { value: 'wrong', label: 'Wrong only' }] }, { label: 'Question Type', options: [{ value: 'all', label: 'All types' }, { value: 'multiple-choice', label: 'Multiple choice' }, { value: 'written', label: 'Written answer' }] }]} searchLabel='Search Result Detail' searchPlaceholder='Question or answer keyword' />
-      {exam.showResult ? <><Table headers={['Question', 'Your Answer', 'Correct Answer']} rows={questions.slice(0, 3).map((question) => [question.content, attempt.answers[question.id] ?? '-', question.correctAnswer])} /><PaginationBar label='Showing 1-3 of 3 result rows' /></> : <EmptyState icon={<FileQuestion size={22} />} title='Result hidden' description='Teacher configured this exam to hide detailed results.' />}
+      {exam.showResult ? <><Table headers={['Question', 'Your Answer', 'Correct Answer']} rows={questions.slice(0, 3).map((question) => [question.content, attempt.answers[question.id] ?? '-', question.correctAnswer])} /><PaginationBar /></> : <EmptyState icon={<FileQuestion size={22} />} title='Result hidden' description='Teacher configured this exam to hide detailed results.' />}
     </div>
   );
 }

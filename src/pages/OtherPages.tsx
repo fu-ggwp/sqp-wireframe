@@ -67,7 +67,7 @@ export function AnalyticsPage() {
       </div>
       <ListFieldBar filters={[{ label: 'Class Filter', options: [{ value: 'all', label: 'All classes' }, ...exams.map((exam) => ({ value: exam.classId, label: exam.className }))] }, { label: 'Exam Status', options: [{ value: 'all', label: 'All statuses' }, { value: 'open', label: 'Open' }, { value: 'scheduled', label: 'Scheduled' }, { value: 'closed', label: 'Closed' }] }, { label: 'Performance Band', options: [{ value: 'all', label: 'All performance' }, { value: 'low', label: 'Below 60%' }, { value: 'mid', label: '60-80%' }, { value: 'high', label: 'Above 80%' }] }]} searchLabel='Search Exam Analytics' searchPlaceholder='Exam, class, weak topic' />
       <Table headers={['Exam', 'Class', 'Status', 'Submissions', 'Average Score', 'Accuracy', 'Weak Topic', 'Action']} rows={examReports.map((report) => [<div><p className='font-bold text-slate-950'>{report.exam.title}</p><p className='text-xs text-slate-500'>{report.exam.startTime}</p></div>, report.exam.className, <StatusPill label={report.exam.status} tone={report.exam.status === 'open' ? 'success' : 'warning'} />, `${report.submitted}/${report.totalAttempts}`, `${report.averageScore}%`, `${report.accuracy}%`, report.weakTopic, <Link to='/teacher/reports/export'><Button size='sm' variant='secondary'>Export</Button></Link>])} />
-      <PaginationBar label={`Showing ${examReports.length} exam analytics records`} />
+      <PaginationBar />
     </div>
   );
 }
@@ -113,7 +113,7 @@ export function ExportReportPage() {
       </div>
       <ListFieldBar filters={[{ label: 'Attempt Status', options: [{ value: 'all', label: 'All attempts' }, { value: 'submitted', label: 'Submitted' }, { value: 'in-progress', label: 'In progress' }] }, { label: 'Score Band', options: [{ value: 'all', label: 'All scores' }, { value: 'pass', label: 'Passing' }, { value: 'fail', label: 'Below passing' }] }]} searchLabel='Search Learner Attempts' searchPlaceholder='Learner name or score' />
       <Table emptyMessage='No attempts recorded for this exam yet.' headers={['Learner', 'Status', 'Score', 'Accuracy', 'Submitted At']} rows={attempts.map((attempt) => [attempt.learnerName, <StatusPill label={attempt.status} tone={attempt.status === 'submitted' ? 'success' : 'warning'} />, attempt.score, `${attempt.accuracy}%`, attempt.submittedAt ?? 'Not submitted'])} />
-      <PaginationBar label={`Showing ${attempts.length} learner attempts`} />
+      <PaginationBar />
     </div>
   );
 }
@@ -179,7 +179,7 @@ export function AdminUsersPage() {
       <PageHeader description='Admin views the list of users in the system.' eyebrow='User management' title='View User List' />
       <ListFieldBar filters={[{ label: 'Role Filter', options: [{ value: 'all', label: 'All roles' }, { value: 'Learner', label: 'Learner' }, { value: 'Teacher', label: 'Teacher' }, { value: 'Admin', label: 'Admin' }] }, { label: 'Account Status', options: [{ value: 'all', label: 'All statuses' }, { value: 'active', label: 'Active' }, { value: 'pending', label: 'Pending' }, { value: 'locked', label: 'Locked' }] }, { label: 'Premium Status', options: [{ value: 'all', label: 'All plans' }, { value: 'premium', label: 'Premium' }, { value: 'free', label: 'Free' }] }]} onSearchChange={setQuery} searchLabel='Search Users' searchPlaceholder='Name, email, role, status' searchValue={query} />
       <Table headers={['User', 'Role', 'Premium', 'Status', 'Action']} rows={filtered.map((user) => [<div><p className='font-bold text-slate-950'>{user.fullName}</p><p className='text-xs text-slate-500'>{user.email}</p></div>, <Badge>{user.role}</Badge>, user.premium ? <Badge tone='amber'>Premium</Badge> : <Badge>Free</Badge>, <StatusPill label={user.status} tone={user.status === 'active' ? 'success' : 'warning'} />, <Link to={`/admin/users/${user.id}`}><Button size='sm' variant='secondary'>Detail</Button></Link>])} />
-      <PaginationBar label={`Showing ${filtered.length} users`} />
+      <PaginationBar />
     </div>
   );
 }
@@ -206,7 +206,7 @@ export function ResourceManagementPage() {
       <PageHeader description='Admin manages public learning resources and hides inappropriate or invalid resources.' eyebrow='Resource moderation' title='Resource Management' />
       <Card><CardBody className='grid gap-4 md:grid-cols-3'><Select label='Resource Type' options={[{ value: 'study-set', label: 'Public study set' }, { value: 'learning-resource', label: 'Public learning resource' }]} /><Select label='Review Status' options={[{ value: 'all', label: 'All statuses' }, { value: 'flagged', label: 'Flagged' }, { value: 'approved', label: 'Approved' }]} /><Input label='Keyword' placeholder='Title, owner, subject' /><Select label='Severity' options={[{ value: 'all', label: 'All severities' }, { value: 'low', label: 'Low' }, { value: 'medium', label: 'Medium' }, { value: 'high', label: 'High' }]} /><Input label='Reviewer Note' placeholder='Reason for moderation' /><Select label='Owner Role' options={[{ value: 'all', label: 'All owners' }, { value: 'Teacher', label: 'Teacher' }, { value: 'Learner', label: 'Learner' }]} /></CardBody></Card>
       <Table headers={['Resource', 'Owner', 'Subject', 'Visibility', 'Review Note', 'Action']} rows={resources.map((set) => [<div><p className='font-bold text-slate-950'>{set.title}</p><p className='text-xs text-slate-500'>{set.description}</p></div>, set.ownerName, set.subject, hiddenIds.includes(set.id) ? <StatusPill label='hidden' tone='danger' /> : <StatusPill label='public' tone='success' />, 'No policy violation found', <Button disabled={hiddenIds.includes(set.id)} icon={<EyeOff size={15} />} onClick={() => setHiddenIds((current) => [...current, set.id])} size='sm' variant='danger'>Hide Public Learning Resource</Button>])} />
-      <PaginationBar label={`Showing ${resources.length} public resources`} />
+      <PaginationBar />
     </div>
   );
 }
@@ -217,7 +217,7 @@ export function SystemStatusPage() {
       <PageHeader description='Admin views operational status of authentication, email, payment, AI, and web services.' eyebrow='System health' title='View System Status' />
       <ListFieldBar filters={[{ label: 'Service Status', options: [{ value: 'all', label: 'All statuses' }, { value: 'operational', label: 'Operational' }, { value: 'degraded', label: 'Degraded' }, { value: 'down', label: 'Down' }] }, { label: 'Integration Type', options: [{ value: 'all', label: 'All integrations' }, { value: 'auth', label: 'Authentication' }, { value: 'payment', label: 'Payment' }, { value: 'ai', label: 'AI' }] }]} searchLabel='Search Services' searchPlaceholder='Service name' />
       <Table headers={['Service', 'Status', 'Uptime', 'Response Time', 'Last Checked']} rows={systemServices.map((service) => [service.name, <StatusPill label={service.status} tone={service.status === 'operational' ? 'success' : service.status === 'degraded' ? 'warning' : 'danger'} />, service.uptime, service.responseTime, service.lastChecked])} />
-      <PaginationBar label={`Showing ${systemServices.length} monitored services`} />
+      <PaginationBar />
       <Card><CardBody><h2 className='font-bold text-slate-950'>System message</h2><p className='mt-2 rounded-lg bg-amber-50 p-3 text-sm font-semibold text-amber-800'>Email Service degraded. Automated notifications may be delayed.</p></CardBody></Card>
     </div>
   );
@@ -236,7 +236,7 @@ export function NotificationsPage() {
       <ListFieldBar filters={[{ label: 'Read Status', options: [{ value: 'all', label: 'All notifications' }, { value: 'unread', label: 'Unread' }, { value: 'read', label: 'Read' }] }, { label: 'Notification Type', options: [{ value: 'all', label: 'All types' }, { value: 'class', label: 'Class' }, { value: 'exam', label: 'Exam' }, { value: 'system', label: 'System' }] }]} searchLabel='Search Notifications' searchPlaceholder='Title, message, actor' />
       <div className='flex flex-wrap gap-2'><Button variant='secondary'>Mark All as Read</Button><Button variant='ghost'>Clear Read Notifications</Button></div>
       <Table headers={['Notification', 'Actor', 'Created At', 'Status', 'Action']} rows={rows} />
-      <PaginationBar label={`Showing ${rows.length} notifications`} />
+      <PaginationBar />
     </div>
   );
 }

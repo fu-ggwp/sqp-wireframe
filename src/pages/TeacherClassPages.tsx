@@ -54,7 +54,7 @@ export function TeacherDashboardPage() {
       </div>
       <ListFieldBar filters={[{ label: 'Class Status', options: [{ value: 'all', label: 'All statuses' }, { value: 'active', label: 'Active' }, { value: 'archived', label: 'Archived' }] }, { label: 'Subject Filter', options: [{ value: 'all', label: 'All subjects' }, { value: 'Biology', label: 'Biology' }, { value: 'Mathematics', label: 'Mathematics' }] }]} searchLabel='Search Teaching Work' searchPlaceholder='Class, exam, bank, learner' />
       <TeacherClassTable />
-      <PaginationBar label='Showing 1-2 of 2 classes' />
+      <PaginationBar />
     </div>
   );
 }
@@ -67,7 +67,7 @@ export function TeacherClassesPage() {
     <div className='space-y-6'>
       <PageHeader actions={<Link to='/teacher/classes/create'><Button icon={<Plus size={17} />}>Create Class</Button></Link>} description='Teacher views classes they created or are assigned to.' eyebrow='Class management' title='View Created Classes' />
       <ListFieldBar filters={[{ label: 'Subject Filter', options: [{ value: 'all', label: 'All subjects' }, { value: 'Biology', label: 'Biology' }, { value: 'Mathematics', label: 'Mathematics' }] }, { label: 'Status Filter', options: [{ value: 'all', label: 'All statuses' }, { value: 'active', label: 'Active' }, { value: 'archived', label: 'Archived' }] }, { label: 'Join Policy Filter', options: [{ value: 'all', label: 'All policies' }, { value: 'approval', label: 'Approval required' }, { value: 'auto', label: 'Auto approve' }] }]} onSearchChange={setQuery} searchLabel='Search Classes' searchPlaceholder='Class name, subject, code' searchValue={query} />
-      {filtered.length ? <><TeacherClassTable classesOverride={filtered} /><PaginationBar label={`Showing ${filtered.length} created classes`} /></> : <EmptyState icon={<Users size={22} />} title='No classes found' description='Try another keyword or create a new class.' />}
+      {filtered.length ? <><TeacherClassTable classesOverride={filtered} /><PaginationBar /></> : <EmptyState icon={<Users size={22} />} title='No classes found' description='Try another keyword or create a new class.' />}
     </div>
   );
 }
@@ -129,7 +129,7 @@ export function ClassMembersPage() {
       <PageHeader actions={<Link to={`/teacher/classes/${room.id}/join-requests`}><Button variant='secondary'>Join Requests</Button></Link>} description='Teacher views learner list and can remove a learner from class.' eyebrow='Class members' title='View Class Member List' />
       <ListFieldBar filters={[{ label: 'Member Status', options: [{ value: 'all', label: 'All members' }, { value: 'active', label: 'Active' }, { value: 'removed', label: 'Removed' }] }, { label: 'Premium Filter', options: [{ value: 'all', label: 'All accounts' }, { value: 'premium', label: 'Premium' }, { value: 'free', label: 'Free' }] }]} searchLabel='Search Members' searchPlaceholder='Learner name or email' />
       <Table headers={['Learner', 'Email', 'Premium', 'Status', 'Action']} rows={members.map((member) => [member.fullName, member.email, member.premium ? <Badge tone='amber'>Premium</Badge> : <Badge>Free</Badge>, <StatusPill label={member.status} tone='success' />, <Button icon={<Trash2 size={15} />} onClick={() => setRemoved((current) => [...current, member.id])} size='sm' variant='danger'>Remove</Button>])} />
-      {members.length === 0 ? <EmptyState title='No class members' description='No active learners remain in this class.' /> : <PaginationBar label={`Showing ${members.length} active members`} />}
+      {members.length === 0 ? <EmptyState title='No class members' description='No active learners remain in this class.' /> : <PaginationBar />}
     </div>
   );
 }
@@ -145,7 +145,7 @@ export function JoinRequestsPage() {
       <PageHeader description='Teacher approves learner requests to join the class.' eyebrow='Join requests' title='Approve Class Join Request' />
       <ListFieldBar filters={[{ label: 'Request Status', options: [{ value: 'all', label: 'All requests' }, { value: 'pending', label: 'Pending' }, { value: 'approved', label: 'Approved' }, { value: 'rejected', label: 'Rejected' }] }, { label: 'Requested Date', options: [{ value: 'all', label: 'All dates' }, { value: 'today', label: 'Today' }, { value: 'week', label: 'This week' }] }]} searchLabel='Search Join Requests' searchPlaceholder='Learner name or message' />
       <Table headers={['Learner', 'Message', 'Requested At', 'Status', 'Action']} rows={requests.map((request) => [request.learnerName, request.message, request.requestedAt, approved.includes(request.id) ? <StatusPill label='approved' tone='success' /> : <StatusPill label={request.status} tone={request.status === 'pending' ? 'warning' : 'success'} />, <div className='flex flex-wrap gap-2'><Button disabled={approved.includes(request.id)} icon={<UserCheck size={15} />} onClick={() => setApproved((current) => [...current, request.id])} size='sm'>Approve</Button><Button disabled={approved.includes(request.id)} size='sm' variant='danger'>Reject</Button></div>])} />
-      <PaginationBar label={`Showing ${requests.length} join requests`} />
+      <PaginationBar />
     </div>
   );
 }
