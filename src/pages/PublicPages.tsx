@@ -80,9 +80,14 @@ export function HomePage() {
             <InfoTile label='Account access' value='Classes, exams, saved history' />
           </div>
         </div>
-        <div className='overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm'>
-          <img alt='Students reviewing study cards together' className='h-72 w-full object-cover' src='https://images.unsplash.com/photo-1513258496099-48168024aec0?auto=format&fit=crop&w=1200&q=80' />
-          <div className='grid gap-3 p-4 sm:grid-cols-2'>
+        <div className='rounded-lg border border-slate-200 bg-white p-5 shadow-sm'>
+          <div className='mb-4 flex items-center justify-between gap-3'>
+            <Badge tone='teal'>Sample set</Badge>
+            <span className='text-sm font-bold text-slate-500'>24 questions</span>
+          </div>
+          <h3 className='text-xl font-bold text-slate-950'>Cell Biology Essentials</h3>
+          <p className='mt-2 text-sm leading-6 text-slate-600'>Core flashcards for organelles, membrane transport, and cell cycle.</p>
+          <div className='mt-5 grid gap-3 sm:grid-cols-2'>
             <div className='rounded-lg bg-slate-50 p-4'><p className='text-xs font-bold uppercase text-slate-400'>Term</p><p className='mt-2 font-bold text-slate-900'>Selective permeability</p></div>
             <div className='rounded-lg bg-teal-50 p-4'><p className='text-xs font-bold uppercase text-teal-600'>Definition</p><p className='mt-2 text-sm font-semibold text-teal-900'>Membrane allows some substances through and controls others.</p></div>
           </div>
@@ -217,8 +222,7 @@ export function PublicStudySetDetailPage() {
         title={set.title}
       />
       <div className='grid gap-6 lg:grid-cols-[1.5fr_0.8fr]'>
-        <Card className='overflow-hidden'>
-          <img alt={set.title} className='h-64 w-full object-cover' src={set.coverImage} />
+        <Card>
           <CardBody className='space-y-4'>
             <p className='leading-7 text-slate-600'>{set.description}</p>
             <div className='flex flex-wrap gap-2'>{set.tags.map((tag) => <Badge key={tag} tone='slate'>{tag}</Badge>)}</div>
@@ -238,8 +242,7 @@ export function PublicStudySetDetailPage() {
 
 function StudySetCard({ set }: { set: (typeof studySets)[number] }) {
   return (
-    <Card className='overflow-hidden'>
-      <img alt={set.title} className='h-36 w-full object-cover' src={set.coverImage} />
+    <Card>
       <CardBody className='space-y-3'>
         <div className='flex items-start justify-between gap-3'>
           <div>
